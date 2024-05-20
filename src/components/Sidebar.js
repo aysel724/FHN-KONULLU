@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom/cjs/react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Route, Switch } from "react-router-dom/cjs/react-router-dom.min";
+import { Route, Routes } from "react-router-dom";
 import "../App.css";
 import Login from "../pages/Login";
 import Admin from "../pages/Admin";
@@ -23,6 +23,7 @@ import Citizenship from "../pages/Citizenship";
 import "../App.css";
 import UserInfo from "../pages/UserInfo";
 import Volonteer from "../pages/Volonteer";
+import NewVolonteer from "../pages/NewVolonteer";
 import data from "../data.json";
 import logo from "../components/images/FHNLogo.png";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
@@ -31,8 +32,9 @@ import LanguageLevel from "../pages/LanguageLevel";
 import Notification from "./Notification";
 import Events from "../pages/Events";
 import Trainings from "../pages/Trainings";
-import BloodtypeIcon from '@mui/icons-material/Bloodtype';
-import InsuranceTotal from "../pages/InsuranceTotal"
+import BloodtypeIcon from "@mui/icons-material/Bloodtype";
+import InsuranceTotal from "../pages/InsuranceTotal";
+
 // import TrainingsResults from "../pages/TrainingsResults";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -106,7 +108,7 @@ const items = [
     "Sığorta",
     "20",
     <Link to="/insuranseTotal">
-    <BloodtypeIcon></BloodtypeIcon>
+      <BloodtypeIcon></BloodtypeIcon>
     </Link>
   ),
   getItem(
@@ -368,30 +370,34 @@ const Sidebar = () => {
         </Header>
 
         <Content style={{ padding: "2%" }}>
-          <Route path="/volonteers" exact>
-            {<Volonteer />}
-          </Route>
-          <Route path="/trainings">{<Trainings />}</Route>
-          <Route path="/events"> {<Events />}</Route>
-          <Route path="/reports"> {<Reports />}</Route>
-          <Route path="/login">{<Login />}</Route>
-          <Route path="/admin"> {<Admin />}</Route>
-          <Route path="/users"> {<Users />}</Route>
-<Route path ="/insuranseTotal">{<InsuranceTotal />}</Route>
-          <Route path="/trainingsResults">{<TrainingsResults />}</Route>
-          <Route path="/trainingsAdmin"> {<TrainingsAdmin />}</Route>
-          <Route path="/educationType">{<EducationType />}</Route>
-          <Route path="/educationDegree"> {<EducationDegree />}</Route>
-          <Route path="/insurance"> {<Insurance />}</Route>
-          <Route path="/computerSkills"> {<ComputerSkills />}</Route>
-          <Route path="/computerSkillsDegree">{<ComputerSkillsDegree />}</Route>
-          <Route path="/reason"> {<Reason />}</Route>
-          <Route path="/staff">{<Staff />}</Route>
-          <Route path="/electronDocuments"> {<ElectronDocuments />}</Route>
-          <Route path="/language"> {<Language />}</Route>
-          <Route path="/languagelevel"> {<LanguageLevel />}</Route>
-          <Route path="/citizenship"> {<Citizenship />}</Route>
-          <Route path="/userinfo"> {<UserInfo />}</Route>
+          <Routes>
+            <Route path="/volonteers" element={<Volonteer />} exact />
+            <Route path="/volonteers/:id" element={<UserInfo />} exact />
+            <Route path="/newvolonteer" element={<NewVolonteer />} exact />
+            <Route path="/trainings" element={<Trainings />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/insuranseTotal" element={<InsuranceTotal />} />
+            <Route path="/trainingsResults" element={<TrainingsResults />} />
+            <Route path="/educationType" element={<EducationType />} />
+            <Route path="/educationDegree" element={<EducationDegree />} />
+            <Route path="/insurance" element={<Insurance />} />
+            <Route path="/computerSkills" element={<ComputerSkills />} />
+            <Route
+              path="/computerSkillsDegree"
+              element={<ComputerSkillsDegree />}
+            />
+            <Route path="/reason" element={<Reason />} />
+            <Route path="/staff" element={<Staff />} />
+            <Route path="/electronDocuments" element={<ElectronDocuments />} />
+            <Route path="/language" element={<Language />} />
+            <Route path="/languagelevel" element={<LanguageLevel />} />
+            <Route path="/citizenship" element={<Citizenship />} />
+            <Route path="/userinfo" element={<UserInfo />} />
+          </Routes>
         </Content>
 
         <Footer style={{ background: "#4b7d83", height: "6vh" }}>

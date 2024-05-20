@@ -1,4 +1,6 @@
-import { useMemo, useRef, useState, useNavigate } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 import "../App.css"
 import React from 'react';
 import { Modal } from "react-bootstrap";
@@ -23,12 +25,13 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { fakeData, usStates } from '../makeData';
+import { usersData, usStates } from '../makeData';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 
-const Example = () => {
 
+const Example = () => {
+  const navigate = useNavigate();
   const columnVirtualizerInstanceRef = useRef(null);
   const [validationErrors, setValidationErrors] = useState({});
   const tc = document.querySelector(".css-bbxzxe");
@@ -271,6 +274,14 @@ const Example = () => {
 
     columns,
     data: fetchedUsers,
+    muiTableBodyRowProps: ({ row }) => ({
+      onClick: (event) => {
+        navigate(row.id)
+      },
+      sx: {
+        cursor: 'pointer', //you might want to change the cursor too when adding an onClick
+      },
+    }),
     createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
     editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
@@ -350,13 +361,14 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          navigate("/newvolonteer")
+          // table.setCreatingRow(true); //simplest way to open the create row modal with no default values
+          // //or you can pass in a row object to set default values with the `createRow` helper function
+          // // table.setCreatingRow(
+          // //   createRow(table, {
+          // //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
+          // //   }),
+          // // );
         }}
       >
        Yeni könüllü əlavə edin
@@ -425,7 +437,7 @@ function useGetUsers() {
     queryFn: async () => {
       //send api request here
       await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(fakeData);
+      return Promise.resolve(usersData);
     },
     refetchOnWindowFocus: false,
   });

@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from "../components/images/fhn-logo.png"
 import { Button, Checkbox, Form, Input } from 'antd';
-import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import { Link } from 'react-router-dom';
 const onFinish = (values) => {
   console.log('Success:', values);
 };

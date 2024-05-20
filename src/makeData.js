@@ -1,6 +1,6 @@
 import data from "./data.json";
 
-export const fakeData = [
+export const usersData = [
   {
     id: "1",
     firstName: "Aysel Hesenova",

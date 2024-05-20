@@ -7,7 +7,7 @@ export default function Users(){
         <div>
          <h1>İstifadəçilər</h1>
          <TableForUsers/>
-         <UserInfo/>
+
     
         </div>
     )

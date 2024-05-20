@@ -23,7 +23,7 @@
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
     "react-html-table-to-excel": "^2.0.0",
-    "react-router-dom": "^5.3.4",
+    "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
     "sort-by": "^1.2.0",
     "styled-components": "^6.1.8",
