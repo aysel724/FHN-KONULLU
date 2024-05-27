@@ -24,7 +24,7 @@ import {
 import { fakeData6, results } from '../makeData';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-
+import FileUpload from '../components/FileUpload';
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -351,7 +351,7 @@ const Uxtable = () => (
   //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
-  </QueryClientProvider>
+  </QueryClientProvider> 
 );
 
 export default Uxtable;
@@ -366,4 +366,5 @@ function validateUser(user) {
       : '',
 
   };
+ 
 }

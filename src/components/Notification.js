@@ -1,5 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import { Button, Divider, InputNumber, notification, Space, Switch } from 'antd';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 const Context = React.createContext({
   name: 'Default',
@@ -40,9 +41,9 @@ const Notification = () => {
       {contextHolder}
       <div>
 
-        <Button type="primary" onClick={openNotification}>
+        <NotificationsActiveIcon  onClick={openNotification}>
          Bildiriş
-        </Button>
+        </NotificationsActiveIcon >
       </div>
     </Context.Provider>
   );

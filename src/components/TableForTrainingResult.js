@@ -337,7 +337,7 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
-    trainings: !validateRequired(user.trainings)
+    result: !validateRequired(user.result)
       ? 'First Name is Required'
       : '',
 

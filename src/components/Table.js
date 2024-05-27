@@ -1,6 +1,6 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState} from 'react';
 import { useNavigate } from "react-router-dom";
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import "../App.css"
 import React from 'react';
 import { Modal } from "react-bootstrap";
@@ -32,12 +32,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 const Example = () => {
   const navigate = useNavigate();
-  const columnVirtualizerInstanceRef = useRef(null);
+
   const [validationErrors, setValidationErrors] = useState({});
-  const tc = document.querySelector(".css-bbxzxe");
-  if (tc){
-     tc.innerHTML = "Əməliyyatlar";
-  }
+
  const pagBUTTON = document.querySelector(".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root")
  if(pagBUTTON){
    pagBUTTON.textContent = "Göstərilən"
@@ -271,13 +268,11 @@ const Example = () => {
     // enableColumnPinning: true,
 
   positionActionsColumn: "last",
-
+  enableRowNumbers: true,
     columns,
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
-      onClick: (event) => {
-        navigate(row.id)
-      },
+      
       sx: {
         cursor: 'pointer', //you might want to change the cursor too when adding an onClick
       },
@@ -341,6 +336,11 @@ const Example = () => {
     renderRowActions: ({ row, table  , }) => (
       
       <Box sx={{ display: 'flex', gap: '1rem' }}>
+        <Tooltip title="Ətraflı">
+        <VisibilityIcon style={{ marginTop:"8px"}}onClick={ (event) => {
+        navigate(row.id)
+      }} variant="contained">Ətraflı</VisibilityIcon>
+        </Tooltip>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -355,6 +355,7 @@ const Example = () => {
             <DeleteIcon />
           </IconButton>
         </Tooltip>
+        
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => (<>

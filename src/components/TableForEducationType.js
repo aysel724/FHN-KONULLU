@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
-import "../App.css"
+import { useMemo, useState } from "react";
+import { useLocation } from 'react-router-dom';
+import "../App.css";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
-} from 'material-react-table';
+} from "material-react-table";
 import {
   Box,
   Button,
@@ -13,86 +14,96 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   QueryClient,
   QueryClientProvider,
   useMutation,
   useQuery,
   useQueryClient,
-} from '@tanstack/react-query';
-import { fakeData5, usStates } from '../makeData';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Export } from './Export';
+} from "@tanstack/react-query";
+import { fakeData5, usStates, columnNames, apiData , headerNames} from "../makeData";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Export } from "./Export";
 
 const Example = () => {
+  const location =  useLocation().pathname.substring(1);
   const [validationErrors, setValidationErrors] = useState({});
 
-
   const tc = document.querySelector(".css-bbxzxe");
-  if (tc){
-     tc.innerHTML = "Əməliyyatlar";
+  if (tc) {
+    tc.innerHTML = "Əməliyyatlar";
   }
- const pagBUTTON = document.querySelector(".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root")
- if(pagBUTTON){
-   pagBUTTON.textContent = "Göstərilən say"
- } 
+  const pagBUTTON = document.querySelector(
+    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
+  );
+  if (pagBUTTON) {
+    pagBUTTON.textContent = "Göstərilən say";
+  }
   const columns = useMemo(
-    () => [
-    
-      // {
-      //   accessorKey: 'id',
-      //   header: 'Id',
-      //   enableEditing: false,
-      //   size: 80,
-      // },
-      {
-        accessorKey: 'educationType',
-        header: 'Təhsilin tipi',
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.educationType,
-          helperText: validationErrors?.educationType,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              educationType: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
-     
-      
-      {
-        accessorKey: 'status',
-        header: 'Status',
-        editVariant: 'select',
-        editSelectOptions: usStates,
-        muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.status,
-          helperText: validationErrors?.status,
-        },
-      },
-      {
-        accessorKey: 'prioritet',
-        header: 'Prioritet',
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.prioritet,
-          helperText: validationErrors?.prioritet,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              prioritet: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
-    ],
-    [validationErrors],
+    () =>
+      // [
+      //   // {
+      //   //   accessorKey: 'id',
+      //   //   header: 'Id',
+      //   //   enableEditing: false,
+      //   //   size: 80,
+      //   // },
+
+      //   {
+      //     accessorKey: "educationType",
+      //     header: "Təhsilin tipi",
+      //     muiEditTextFieldProps: {
+      //       required: true,
+      //       error: !!validationErrors?.educationType,
+      //       helperText: validationErrors?.educationType,
+      //       //remove any previous validation errors when user focuses on the input
+      //       onFocus: () =>
+      //         setValidationErrors({
+      //           ...validationErrors,
+      //           educationType: undefined,
+      //         }),
+      //       //optionally add validation checking for onBlur or onChange
+      //     },
+      //   },
+
+      //   {
+      //     accessorKey: "status",
+      //     header: "Status",
+      //     editVariant: "select",
+      //     editSelectOptions: usStates,
+      //     muiEditTextFieldProps: {
+      //       select: true,
+      //       error: !!validationErrors?.status,
+      //       helperText: validationErrors?.status,
+      //     },
+      //   },
+      //   {
+      //     accessorKey: "prioritet",
+      //     header: "Prioritet",
+      //     muiEditTextFieldProps: {
+      //       required: true,
+      //       error: !!validationErrors?.prioritet,
+      //       helperText: validationErrors?.prioritet,
+      //       //remove any previous validation errors when user focuses on the input
+      //       onFocus: () =>
+      //         setValidationErrors({
+      //           ...validationErrors,
+      //           prioritet: undefined,
+      //         }),
+      //       //optionally add validation checking for onBlur or onChange
+      //     },
+      //   },
+      // ],
+      columnNames[location].map((column) => {
+        return {
+          accessorKey: column.accessorKey,
+          header: column.header,
+          editVariant: column.isSelectable ?  "select" : false,
+          editSelectOptions: column.isSelectable ?  column.isSelectable : [],
+        };
+      }),
+    [validationErrors]
   );
 
   //call CREATE hook
@@ -104,7 +115,7 @@ const Example = () => {
     isError: isLoadingUsersError,
     isFetching: isFetchingUsers,
     isLoading: isLoadingUsers,
-  } = useGetUsers();
+  } = useGetUsers(location);
   //call UPDATE hook
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
     useUpdateUser();
@@ -114,7 +125,7 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
+    const newValidationErrors = validateUser(values, location);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
@@ -124,10 +135,9 @@ const Example = () => {
     table.setCreatingRow(null); //exit creating mode
   };
 
-
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
+    const newValidationErrors = validateUser(values, location);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
@@ -139,32 +149,29 @@ const Example = () => {
 
   //DELETE action
   const openDeleteConfirmModal = (row) => {
-    if (window.confirm('təsdiq edirsiz?')) {
+    if (window.confirm("təsdiq edirsiz?")) {
       deleteUser(row.original.id);
     }
   };
 
-  
-
-  const table = useMaterialReactTable({ 
+  const table = useMaterialReactTable({
     positionActionsColumn: "last",
     columns,
     data: fetchedUsers,
-    createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
-    editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
+    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
-          color: 'error',
-          children: 'Error loading data',
+          color: "error",
+          children: "Error loading data",
         }
       : undefined,
     muiTableContainerProps: {
-      sx: {  
-        minHeight: '500px',
+      sx: {
+        minHeight: "500px",
       },
-   
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
@@ -173,14 +180,14 @@ const Example = () => {
     //optionally customize modal content
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h5">Yeni  təhsil tipi əlavə edin</DialogTitle>
+        <DialogTitle variant="h5">Əlavə edin</DialogTitle>
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons  variant="text" table={table} row={row} />
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
@@ -189,25 +196,45 @@ const Example = () => {
       <>
         <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons  
-       variant="text" table={table} row={row} />
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
     renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
+      <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z" stroke="#4B7D83" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z" fill="#4B7D83"/>
-<path d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353" stroke="#4B7D83" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
+                stroke="#4B7D83"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
+                fill="#4B7D83"
+              />
+              <path
+                d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
+                stroke="#4B7D83"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -230,10 +257,10 @@ const Example = () => {
           // );
         }}
       >
-      Yeni  təhsil tipi əlavə edin
+       Əlavə edin
       </Button>
     ),
-  
+
     state: {
       isLoading: isLoadingUsers,
       isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
@@ -256,13 +283,12 @@ function useCreateUser() {
     },
     //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['users'], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: (Math.random())
-         
-        }, 
+          id: Math.random(),
+        },
       ]);
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -270,13 +296,13 @@ function useCreateUser() {
 }
 
 //READ hook (get users from api)
-function useGetUsers() {
+function useGetUsers(location) {
   return useQuery({
-    queryKey: ['users'],
+    queryKey: ["users"],
     queryFn: async () => {
       //send api request here
       await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(fakeData5);
+      return Promise.resolve(apiData[location]);
     },
     refetchOnWindowFocus: false,
   });
@@ -293,10 +319,10 @@ function useUpdateUser() {
     },
     //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['users'], (prevUsers) =>
+      queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser,
-        ),
+          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
+        )
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -314,8 +340,8 @@ function useDeleteUser() {
     },
     //client side optimistic update
     onMutate: (userId) => {
-      queryClient.setQueryData(['users'], (prevUsers) =>
-        prevUsers?.filter((user) => user.id !== userId),
+      queryClient.setQueryData(["users"], (prevUsers) =>
+        prevUsers?.filter((user) => user.id !== userId)
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -324,23 +350,29 @@ function useDeleteUser() {
 
 const queryClient = new QueryClient();
 
-const Uxtable = () => (
+const Uxtable = () => 
+{ 
+  const location =  useLocation().pathname.substring(1);
+  return(
+  
   //Put this with your other react-query providers near root of your app
+  <>
+ <div><h1>{headerNames[location].h1}</h1></div>
+
   <QueryClientProvider client={queryClient}>
     <Example />
-  </QueryClientProvider>
-);
+  </QueryClientProvider></>
+);}
 
 export default Uxtable;
 
 const validateRequired = (value) => !!value.length;
 
+function validateUser(user, location) {
 
-function validateUser(user) {
   return {
-    educationType: !validateRequired(user.educationType)
-      ? 'First Name is Required'
-      : '',
-
+    [location]: !validateRequired(user[location])
+      ? "First Name is Required"
+      : "",
   };
 }

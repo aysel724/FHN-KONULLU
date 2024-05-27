@@ -8,6 +8,7 @@ import "../App.css";
 import data from "../data.json";
 import { Table } from "antd";
 import ImagesForEvents from "./ImagesForEvents";
+import FileUpload from "./FileUpload";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -94,6 +95,7 @@ export default function TabsUser() {
 </ul>
 </div>
       </CustomTabPanel>
+     
 
     </Box>
   );

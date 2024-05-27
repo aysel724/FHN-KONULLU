@@ -27,15 +27,17 @@ import NewVolonteer from "../pages/NewVolonteer";
 import data from "../data.json";
 import logo from "../components/images/FHNLogo.png";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import TableForEducationType from "../components/TableForEducationType"
 import LanguageLevel from "../pages/LanguageLevel";
 import Notification from "./Notification";
 import Events from "../pages/Events";
 import Trainings from "../pages/Trainings";
 import BloodtypeIcon from "@mui/icons-material/Bloodtype";
 import InsuranceTotal from "../pages/InsuranceTotal";
+import TrainingsInfo from "./TrainingsInfo";
+import PassowrdChange from "./PasswordChange";
 
-// import TrainingsResults from "../pages/TrainingsResults";
+
 
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -178,7 +180,7 @@ const items = [
     </Link>,
     [
       getItem(
-        <Link to="/users">
+        <Link to="/users" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -186,17 +188,9 @@ const items = [
         </Link>,
         "6"
       ),
+     
       getItem(
-        <Link to="/citizenship">
-          <FiberManualRecordIcon
-            style={{ fontSize: "small", marginRight: "10px" }}
-          />
-          Vətəndaşlıq
-        </Link>,
-        "7"
-      ),
-      getItem(
-        <Link to="/educationType">
+        <Link to="/educationType" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -205,7 +199,7 @@ const items = [
         "8"
       ),
       getItem(
-        <Link to="/educationDegree">
+        <Link to="/educationDegree" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -214,7 +208,7 @@ const items = [
         "9"
       ),
       getItem(
-        <Link to="/language">
+        <Link to="/language" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -223,7 +217,7 @@ const items = [
         "10"
       ),
       getItem(
-        <Link to="/languagelevel">
+        <Link to="/languageLevel" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -232,7 +226,7 @@ const items = [
         "11"
       ),
       getItem(
-        <Link to="/computerSkills">
+        <Link to="/computerSkills" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -241,7 +235,7 @@ const items = [
         "12"
       ),
       getItem(
-        <Link to="/computerSkillsDegree">
+        <Link to="/computerSkillsLevel" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -250,7 +244,7 @@ const items = [
         "13"
       ),
       getItem(
-        <Link to="/insurance">
+        <Link to="/insurance" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -259,7 +253,7 @@ const items = [
         "14"
       ),
       getItem(
-        <Link to="/reason">
+        <Link to="/reason" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -268,7 +262,7 @@ const items = [
         "15"
       ),
       getItem(
-        <Link to="/staff">
+        <Link to="/staff" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -277,7 +271,7 @@ const items = [
         "16"
       ),
       getItem(
-        <Link to="/electronDocuments">
+        <Link to="/electronDocuments" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -286,7 +280,7 @@ const items = [
         "17"
       ),
       getItem(
-        <Link to="/trainingsAdmin">
+        <Link to="/trainingsAdmin" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -295,7 +289,7 @@ const items = [
         "18"
       ),
       getItem(
-        <Link to="/trainingsResults">
+        <Link to="/trainingsResults" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -327,7 +321,7 @@ const Sidebar = () => {
           borderRadius: "15px",
           padding: 0,
           background: "#4b7d83",
-          height: "100vh",
+          height: "100vh",margin:"5px"
         }}
         collapsible
         collapsed={collapsed}
@@ -353,18 +347,19 @@ const Sidebar = () => {
       </Sider>
 
       <Layout>
-        <Header style={{ borderRadius: "15px", background: "#4b7d83" }}>
+        <Header style={{ borderRadius: "15px", background: "#4b7d83", margin:"5px"}}>
           <div
             style={{
               display: "flex",
               color: "white",
               flexDirection: "row",
               alignItems: "center",
+              alignContent:"center",
               justifyContent: "end",
             }}
           >
             <Notification></Notification>
-            <ManageAccountsIcon />
+            <PassowrdChange/>
             <p>{data.users[0].name}</p>
           </div>
         </Header>
@@ -372,47 +367,48 @@ const Sidebar = () => {
         <Content style={{ padding: "2%" }}>
           <Routes>
             <Route path="/volonteers" element={<Volonteer />} exact />
-            <Route path="/volonteers/:id" element={<UserInfo />} exact />
-            <Route path="/newvolonteer" element={<NewVolonteer />} exact />
+            <Route path="/volonteers/:id" element={<UserInfo />} />
+            <Route path="/newvolonteer" element={<NewVolonteer />} />{" "}
             <Route path="/trainings" element={<Trainings />} />
+            <Route path="/trainings/:id" element={<TrainingsInfo />} />
             <Route path="/events" element={<Events />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/users" element={<Users />} />
             <Route path="/insuranseTotal" element={<InsuranceTotal />} />
-            <Route path="/trainingsResults" element={<TrainingsResults />} />
-            <Route path="/educationType" element={<EducationType />} />
-            <Route path="/educationDegree" element={<EducationDegree />} />
-            <Route path="/insurance" element={<Insurance />} />
-            <Route path="/computerSkills" element={<ComputerSkills />} />
+            <Route path="/trainingsResults" element={<TableForEducationType />} />
+            <Route path="/trainingsAdmin" element={<TableForEducationType />} />
+            <Route path="/educationType" element={<TableForEducationType  />} />
+            <Route path="/educationDegree" element={<TableForEducationType />} />
+            <Route path="/insurance" element={<TableForEducationType />} />
+            <Route path="/computerSkills" element={<TableForEducationType />} />
             <Route
-              path="/computerSkillsDegree"
-              element={<ComputerSkillsDegree />}
+              path="/computerSkillsLevel"
+              element={<TableForEducationType  />}
             />
-            <Route path="/reason" element={<Reason />} />
-            <Route path="/staff" element={<Staff />} />
-            <Route path="/electronDocuments" element={<ElectronDocuments />} />
-            <Route path="/language" element={<Language />} />
-            <Route path="/languagelevel" element={<LanguageLevel />} />
-            <Route path="/citizenship" element={<Citizenship />} />
+            <Route path="/reason" element={<TableForEducationType />} />
+            <Route path="/staff" element={<TableForEducationType />} />
+            <Route path="/electronDocuments" element={<TableForEducationType />} />
+            <Route path="/language" element={<TableForEducationType />} />
+            <Route path="/languageLevel" element={<TableForEducationType  />} />
+
             <Route path="/userinfo" element={<UserInfo />} />
           </Routes>
         </Content>
 
-        <Footer style={{ background: "#4b7d83", height: "6vh" }}>
+        <Footer style={{ borderRadius: "15px", background: "#4b7d83",  height:"7vh", margin:"5px"}}>
           <div
             style={{
-              position: "sticky",
               display: "flex",
               color: "white",
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              bottom: "0",
             }}
           >
-            <p>FHN</p>
+            <p>2023.
+Rəqəmsal Texnologiyalar və İnnovasiyaların İnkişafı Baş İdarəsi</p>
           </div>
         </Footer>
       </Layout>

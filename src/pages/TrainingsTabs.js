@@ -11,7 +11,8 @@ import ImagesForEvents from "../components/ImagesForEvents";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
-  return (
+  return (<> 
+
     <div
       role="tabpanel"
       hidden={value !== index}
@@ -24,7 +25,7 @@ function CustomTabPanel(props) {
           <Typography>{children}</Typography>
         </Box>
       )}
-    </div>
+    </div></> 
   );
 }
 

@@ -1,7 +1,21 @@
 .App {
   text-align: center;
 }
+#cancel{border: 1px solid rgb(75, 125, 131) ;
 
+  color: #4b7d83;
+ 
+}
+.tooltip{
+  border: 1px solid rgb(75, 125, 131) ;
+background-color: #f5f5f5;
+  color: #4b7d83;
+ 
+}
+
+#submit{  background-color: rgb(75, 125, 131) !important;
+  color: white;
+}
 
 .css-sghohy-MuiButtonBase-root-MuiButton-root {
   background-color: rgb(75, 125, 131) !important;

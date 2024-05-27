@@ -230,7 +230,7 @@ const Example = () => {
           // );
         }}
       >
-      Yeni  təhsil tipi əlavə edin
+      Yeni  təhsil dərəcəsi əlavə edin
       </Button>
     ),
   
@@ -338,7 +338,7 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
-    educationType: !validateRequired(user.educationType)
+    educationDegree: !validateRequired(user.educationDegree)
       ? 'First Name is Required'
       : '',
 

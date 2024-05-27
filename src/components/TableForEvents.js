@@ -230,6 +230,7 @@ const Example = () => {
     positionActionsColumn: "last",
     columns,
     data: fetchedUsers,
+    
     createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
     editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
