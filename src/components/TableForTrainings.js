@@ -25,8 +25,56 @@ import {
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { fakeData2, usStates } from '../makeData';
 import DeleteIcon from '@mui/icons-material/Delete';
-import data from "../data.json"
+import { useExcelJS } from "react-use-exceljs"
 const Example = () => {
+
+  const excel = useExcelJS({
+    filename: "Tədbirlər siyahısı.xlsx",
+    worksheets: [
+      {
+        name: "Sheet 1",
+        columns: [
+          {
+            header: "Təlimin adı",
+            key: "name",
+            width: 30,
+          },
+          {
+            header: "Təlimin başlama tarixi",
+            key: "start",
+            width: 32,
+          },
+          {
+            header: "Təlimin bitmə tarixi",
+            width: 30,
+          },
+          {
+            header: "Təlimin keçirilmə ünvanı",
+            key: "adress",
+            width: 30,
+          },
+          {
+            header: "Təlimin müddəti",
+            key: "time",
+            width: 32,
+          },
+          {
+            header: "Təlim üzrə məsul şəxs",
+            key: "couch",
+            width: 30,
+          },
+          {
+            header: "iştirakçı sayı",
+            key: "number",
+            width: 30,
+          },
+        ],
+      },
+    ],
+  })
+  const onClick = () => {
+    excel.download(fakeData2)
+  }
   const navigate = useNavigate();
   const [validationErrors, setValidationErrors] = useState({});
   const tc = document.querySelector(".css-bbxzxe");
@@ -307,7 +355,7 @@ const Example = () => {
         
       </Box>
     ),
-    renderTopToolbarCustomActions: ({ table }) => (
+    renderTopToolbarCustomActions: ({ table }) => ( < div style={{display:"flex", flexDirection:"row", gap:"20px"}}>
       <Button
         variant="contained"
         onClick={() => {
@@ -322,6 +370,7 @@ const Example = () => {
       >
        Yeni təlim əlavə et
       </Button>
+       <Button variant="contained" onClick={onClick}>Excelə export</Button></div>
     ),
   
     state: {

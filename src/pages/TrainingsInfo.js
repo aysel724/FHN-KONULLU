@@ -1,5 +1,5 @@
 import React from "react";
-import TrainingsTabs from "../pages/TrainingsTabs"
+import TrainingsTabs from "./TrainingsTabs"
 export default function TrainingsInfo(){
 return(
     <>

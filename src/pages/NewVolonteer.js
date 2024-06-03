@@ -3,193 +3,252 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-
-import MenuItem from "@mui/material/MenuItem";
-
-import Select from "@mui/material/Select";
-
+import axios from "axios";
 export default function NewVolonteer() {
-  const [age, setAge] = useState("");
-
+  // const [passportData, setFin] = useState({fin:"", seria:"", seriaNum: ""});
   const [fin, setFin] = useState("");
-  const [userData, setUserData] = useState({ firstName: "Bosdur" });
+  const [userData, setUserData] = useState({ firstName: "" });
   const handleChange = (event) => {
-    setAge(event.target.value);
+    setSeria(event.target.value);
   };
+
+  // async function postData() {
+  //   try {
+  //     let result = await fetch(
+  //       "https://webhook.site/c0cdcfe9-8b99-4191-9ae6-b21db9832f1b",
+  //       {
+  //         method: "POST",
+  //         mode: "no-cors",
+  //         headers: {
+  //           Accept: "aplication/json",
+  //           "Content-type": "aplication/json",
+  //         },
+
+  //         body: JSON.stringify({
+  //           Fin: "1sdgfchvbjn",
+  //         }),
+  //       }
+  //     );
+  //     console.log(result);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+  const [seria, setSeria] = useState("Seriya");
+
+  async function getData() { 
+ 
+
+
+
+    const options = {
+      method: 'GET',
+      url: `https://imdb-top-100-movies.p.rapidapi.com/${fin}`,
+      headers: {
+        'X-RapidAPI-Key': 'bf647e4a99msha8138dcc8cc2a78p1c5356jsn037d99130b76',
+        'X-RapidAPI-Host': 'imdb-top-100-movies.p.rapidapi.com'
+      }
+    };
+    
+
+    // const options = {
+    //   method: "GET",
+    //   url: `https://streaming-availability.p.rapidapi.com/shows/${fin}`,
+    //   // url: `https://streaming-availability.p.rapidapi.com/shows/?fin=${passportData.fin}&seria=${passportData.seria}&fin=${passportData.seriaNum}`,
+    //   params: {
+    //     series_granularity: "episode",
+    //     output_language: "en",
+    //   },
+    //   headers: {
+    //     "X-RapidAPI-Key": "bf647e4a99msha8138dcc8cc2a78p1c5356jsn037d99130b76",
+    //     "X-RapidAPI-Host": "streaming-availability.p.rapidapi.com",
+    //   },
+    // };
+
+    try {
+      const response = await axios.request(options);
+      console.log(response.data);
+      setUserData(response.data)
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <>
-      <Box
-        component="form"
-        sx={{
-          "& > :not(style)": { m: 1, width: "25ch" },
-        }}
-        noValidate
-        autoComplete="off"
-      >
-        <TextField
-          id="outlined-basic"
-          label="Outlined"
-          variant="outlined"
-          onChange={(e) => {
-            setFin(e.target.value);
-          }}
-        />
-        <TextField
-          id="filled-basic"
-          variant="filled"
-          value={userData.firstName}
-        />
-        <Button variant="contained" onClick={() => setUserData(usersData[fin])}>
-          Yoxla
-        </Button>
-      </Box>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        {" "}
-        <div></div>
+      {" "}
+      <div style={{ textAlign: "left" }}>
         <Box
           component="form"
           sx={{
-            "& > :not(style)": {
-              m: 2,
-              width: "30ch",
-              display: "flex",
-              flexDirection: "column",
-            },
+            "& > :not(style)": { m: 2, width: "50ch" },
           }}
           noValidate
           autoComplete="off"
         >
           <TextField
+            autoFocus={true}
+            sx={{ boxShadow: "10px 10px 21px -6px rgba(11,77,77,0.47)" }}
             id="outlined-basic"
-            placeholder="state"
+            label="Vətəndaşın fin kodunu daxil edin"
             variant="outlined"
-            value={userData?.state}
+            onChange={(e) => {
+              setFin(e.target.value);
+            }}
           />
-          <TextField
-            id="filled-basic"
-            placeholder="doğum tarixi"
-            variant="filled"
-            value={userData.birthdate}
-          />
-          <TextField
-            id="outlined-basic"
-            placeholder="fəaliyyəta başlama tarixi"
-            variant="outlined"
-            value={userData.start}
-          />
-          <TextField
-            id="filled-basic"
-            placeholder="Outlied"
-            variant="filled"
-            value={userData.gender}
-          />
-          <TextField
-            id="outlined-basic"
-            placeholder="fəaliyyəti bitirmə tarixi"
-            variant="outlined"
-            value={userData.finish}
-          />
-          <TextField
-            id="filled-basic"
-            placeholder="elektro pocht ünvanı"
-            variant="filled"
-            value={userData.mail}
-          />
-          <TextField
-            id="outlined-basic"
-            placeholder="status"
-            variant="outlined"
-            value={userData.status}
-          />
-          <TextField
-            id="filled-basic"
-            placeholder="fin"
-            variant="filled"
-            value={userData.fin}></TextField>
+            <TextField
+            
+              sx={{ boxShadow: "10px 10px 21px -6px rgba(11,77,77,0.47)",}}
+              label="Vətəndaşın seriya kodunu daxil edin"
+              id="outlined-basic"
+           
+              variant="outlined"
+              value={userData.seriya}
+            />
+            <TextField 
+              sx={{ boxShadow: "10px 10px 21px -6px rgba(11,77,77,0.47)", }}
+              label="Vətəndaşın vəsiqəsinin nömrəsi daxil edin"
+              id="outlined-basic"
+ 
+
+              variant="outlined"
+              value={userData.passport}
+            />
          
+          <Button
+            variant="contained"
+            onClick={() => getData()}
+          >
+            Yoxla
+      </Button>
+          {/* <Button variant="contained" onClick={() => postData()}>
+            post
+          </Button>*/} 
+      {/* <Button variant="contained" onClick={() => getData()}>
+    get
+     </Button>  */}
+        </Box>
+      </div>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <Box
+          component="form"
+          sx={{
+            "& > :not(style)": {
+              m: 2,
+              width: "50ch",
+              display: "flex",
+              flexDirection: "column",
+            },
+          }}
+        >
+          <TextField
+            helperText="Ad, soyad, ata adı"
+            id="outlined-basic"
+            variant="outlined"
+            value={userData.title}
+          />
+          <TextField
+            helperText="Cinsi"
+            id="outlined-basic"
+            variant="outlined"
+            value={userData.showType}
+          />
+          <TextField
+            id="filled-basic"
+            helperText="Hərbi mükələfiyyəti*"
+            variant="outlined"
+            value={userData.title}
+          />
+          <TextField
+            id="outlined-basic"
+            helperText="Boy"
+            variant="outlined"
+            value={userData.title}
+          />
+          <TextField
+            id="filled-basic"
+            helperText="Doğulduğu tarix*"
+            variant="outlined"
+            value={userData.title}
+          />
+          <TextField
+            id="outlined-basic"
+            helperText="Vətəndaşlığı*"
+            variant="outlined"
+            value={userData.title}
+          />
+          <TextField
+            id="outlined-basic"
+            helperText="Ailə vəziyyəti*"
+            variant="outlined"
+            value={userData.title}
+          />
+          <TextField
+            id="filled-basic"
+            helperText="Elektron-poçt ünvanı*"
+            variant="outlined"
+            value={userData.title}
+          />
         </Box>
         <Box
           component="form"
           sx={{
             "& > :not(style)": {
               m: 2,
-              width: "30ch",
+              width: "50ch",
               display: "flex",
               flexDirection: "column",
             },
           }}
-          noValidates
-          autoComplete="off"
         >
-           
-          <Select style={{width:"90px"}}
-            value={age}
-            onChange={handleChange}
-            displayEmpty
-            inputProps={{ "aria-label": "Without label" }}
-          >
-            <MenuItem value={userData.passport}>
-            
-            </MenuItem>
-            <MenuItem value={10}>AA</MenuItem>
-            <MenuItem value={20}>AZE</MenuItem>
-           
-          </Select>
+        
           <TextField
             id="outlined-basic"
-            placeholder="state"
+            helperText="Şəxsiyyət vəsiqəsini verən orqanın adı"
             variant="outlined"
-            value={userData.famylystatus}
+            value={userData.title}
           />
           <TextField
             id="filled-basic"
-            placeholder="doğum tarixi"
-            variant="filled"
-            value={userData.army}
+            helperText="Şəxsiyyət vəsiqəsinin verildiyi tarix"
+            variant="outlined"
+            value={userData.title}
+          ></TextField>
+          <TextField
+            id="filled-basic"
+            helperText="Qeydiyyat ünvanı*"
+            variant="outlined"
+            value={userData.title}
           />
           <TextField
             id="outlined-basic"
-            placeholder="fəaliyyəta başlama tarixi"
+            helperText="Faktiki ünvanı*"
             variant="outlined"
-            value={userData.famylystatus}
-          />
-          <TextField
-            id="filled-basic"
-            placeholder="Outlied"
-            variant="filled"
-            value={userData.boy}
+            value={userData.title}
           />
           <TextField
             id="outlined-basic"
-            placeholder="fəaliyyəti bitirmə tarixi"
+            helperText="Əlaqə nömrələri 1*"
             variant="outlined"
-            value={userData.finish}
-          />
-          <TextField
-            id="filled-basic"
-            placeholder="elektro pocht ünvanı"
-            variant="filled"
-            value={userData.mail}
+            value={userData.title}
           />
           <TextField
             id="outlined-basic"
-            placeholder="status"
+            helperText="Əlaqə nömrələri 2*"
             variant="outlined"
-            value={userData.status}
+            value={userData.title}
           />
-          <TextField
-            id="filled-basic"
-            placeholder="fin"
-            variant="filled"
-            value={userData.fin}
+          <img  style={{
+            resizeMode: 'cover',
+        
+            width: 200,
+          }}
+            // type="file"
+            // id="filled-basic"
+            // helperText="docs"
+       
+            src={userData.image}
           />
-          <TextField
-            id="filled-basic"
-            placeholder="fin"
-            variant="filled"
-            value={userData.fin}
-          />{" "}
           <Button variant="contained">Yadda saxla</Button>
         </Box>
       </div>

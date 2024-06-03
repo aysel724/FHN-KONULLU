@@ -23,8 +23,53 @@ import {
 } from '@tanstack/react-query';
 import { fakeData1 } from '../makeData';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import { useExcelJS } from "react-use-exceljs"
 const Example = () => {
+
+
+  const excel = useExcelJS({
+    filename: "Tədbirlər siyahısı.xlsx",
+    worksheets: [
+      {
+        name: "Sheet 1",
+        columns: [
+          {
+            header: "Tədbirin adı",
+            key: "name",
+            width: 30,
+          },
+          {
+            header: "Başlama vaxtı",
+            key: "start",
+            width: 32,
+          },
+          {
+            header: "Bitmə tarixi",
+            key: "finish",
+            width: 30,
+          },
+          {
+            header: "Tədbirin keçirilmə ünvanı",
+            key: "adress",
+            width: 30,
+          },
+          {
+            header: "Tədbirin müddəti",
+            key: "time",
+            width: 32,
+          },
+          {
+            header: "Tədbir üzrə məsul şəxs",
+            key: "couch",
+            width: 30,
+          },
+        ],
+      },
+    ],
+  })
+  const onClick = () => {
+    excel.download(fakeData1)
+  }
   const [validationErrors, setValidationErrors] = useState({});
   const tc = document.querySelector(".css-bbxzxe");
   if (tc){
@@ -298,7 +343,7 @@ const Example = () => {
         </Tooltip>
       </Box>
     ),
-    renderTopToolbarCustomActions: ({ table }) => (
+    renderTopToolbarCustomActions: ({ table }) => (< div style={{display:"flex", flexDirection:"row", gap:"20px"}}>
       <Button
         variant="contained"
         onClick={() => {
@@ -313,6 +358,7 @@ const Example = () => {
       >
        Yeni tədbir əlavə et
       </Button>
+       <Button variant="contained" onClick={onClick}>Excelə export</Button></div>
     ),
   
     state: {

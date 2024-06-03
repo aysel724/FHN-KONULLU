@@ -1,14 +1,14 @@
-import { useMemo, useRef, useState} from 'react';
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import "../App.css"
-import React from 'react';
-import { Modal } from "react-bootstrap";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import "../App.css";
+import React from "react";
+
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
-} from 'material-react-table';
+} from "material-react-table";
 import {
   Box,
   Button,
@@ -17,35 +17,84 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
-} from '@mui/material';
+  GridToolbar
+} from "@mui/material";
 import {
   QueryClient,
   QueryClientProvider,
   useMutation,
   useQuery,
   useQueryClient,
-} from '@tanstack/react-query';
-import { usersData, usStates } from '../makeData';
-import DeleteIcon from '@mui/icons-material/Delete';
+} from "@tanstack/react-query";
+import { usersData, usStates } from "../makeData";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-
+import { useExcelJS } from "react-use-exceljs";
 
 const Example = () => {
+
+
+
+  const excel = useExcelJS({
+    filename: "Könüllülər.xlsx",
+    worksheets: [
+      {
+        name: "Sheet 1",
+        columns: [
+          {
+            header: "status",
+            key: "fin",
+            width: 30,
+          },
+          {
+            header: "Ad soyad",
+            key: "firstName",
+            width: 32,
+          },
+          {
+            header: "Doğum tarixi.",
+            key: "birthdate",
+            width: 30,
+          },
+          {
+            header: "ailə statusu",
+            key: "famylystatus",
+            width: 30,
+          },
+          {
+            header: "start",
+            key: "start",
+            width: 32,
+          },
+          {
+            header: "D.O.B.",
+            key: "finish",
+            width: 30,
+          },
+        ],
+      },
+    ],
+  });
+  const onClick = () => {
+    excel.download(usersData);
+  };
   const navigate = useNavigate();
 
   const [validationErrors, setValidationErrors] = useState({});
 
- const pagBUTTON = document.querySelector(".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root")
- if(pagBUTTON){
-   pagBUTTON.textContent = "Göstərilən"
- }
-
+  const pagBUTTON = document.querySelector(
+    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
+  );
+  if (pagBUTTON) {
+    pagBUTTON.textContent = "Göstərilən";
+  }
 
   const columns = useMemo(
     () => [
-      {  size: 90,
-        accessorKey: 'fin',
-        header: 'FİN KOD',
+      {
+        size: 90,
+        accessorKey: "fin",
+        header: "FİN KOD",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.fin,
@@ -59,7 +108,7 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-    
+
       // {
       //   accessorKey: 'id',
       //   header: 'Id',
@@ -67,8 +116,8 @@ const Example = () => {
       //   size: 90,
       // },
       {
-        accessorKey: 'firstName',
-        header: 'Ad soyad',
+        accessorKey: "firstName",
+        header: "Ad soyad",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.firstName,
@@ -82,9 +131,10 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-      {size: 90,
-        accessorKey: 'gender',
-        header: 'Cins',
+      {
+        size: 90,
+        accessorKey: "gender",
+        header: "Cins",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.gender,
@@ -99,7 +149,7 @@ const Example = () => {
         },
       },
       {
-        accessorKey: 'status',
+        accessorKey: "status",
         header: "Status",
         muiEditTextFieldProps: {
           required: true,
@@ -109,14 +159,14 @@ const Example = () => {
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-             status: undefined,
+              status: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
-        accessorKey: 'birthdate',
-        header: 'Doğum tarixi',
+        accessorKey: "birthdate",
+        header: "Doğum tarixi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.birthdate,
@@ -130,10 +180,11 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-     
-      {size: 50,
-        accessorKey: 'famylystatus',
-        header: ' Ailə statusu',
+
+      {
+        size: 50,
+        accessorKey: "famylystatus",
+        header: " Ailə statusu",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.famylystatus,
@@ -147,10 +198,10 @@ const Example = () => {
         },
       },
       {
-        accessorKey: 'mail',
-        header: 'Email',
+        accessorKey: "mail",
+        header: "Email",
         muiEditTextFieldProps: {
-          type: 'email',
+          type: "email",
           required: true,
           error: !!validationErrors?.mail,
           helperText: validationErrors?.mail,
@@ -163,11 +214,11 @@ const Example = () => {
         },
       },
       {
-        accessorKey: 'start',
-        header: 'Fəaliyyətə başlama tarixi',
+        accessorKey: "start",
+        header: "Fəaliyyətə başlama tarixi",
         muiEditTextFieldProps: {
-          label :"",
-          type: 'date',
+          label: "",
+          type: "date",
           required: true,
           error: !!validationErrors?.start,
           helperText: validationErrors?.start,
@@ -178,12 +229,13 @@ const Example = () => {
               start: undefined,
             }),
         },
-      }, {
-        accessorKey: 'finish',
-        header: 'Fəaliyyətin bitmə vaxtı',
+      },
+      {
+        accessorKey: "finish",
+        header: "Fəaliyyətin bitmə vaxtı",
         muiEditTextFieldProps: {
-          type: 'date',
-          label :"",
+          type: "date",
+          label: "",
 
           required: true,
           error: !!validationErrors?.finish,
@@ -196,11 +248,11 @@ const Example = () => {
             }),
         },
       },
-      
+
       {
-        accessorKey: 'state',
-        header: 'Status',
-        editVariant: 'select',
+        accessorKey: "state",
+        header: "Status",
+        editVariant: "select",
         editSelectOptions: usStates,
         muiEditTextFieldProps: {
           select: true,
@@ -209,13 +261,13 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors],
+    [validationErrors]
   );
- 
+
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
     useCreateUser();
-  
+
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -232,7 +284,6 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-   
     const newValidationErrors = validateUser(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
@@ -242,7 +293,6 @@ const Example = () => {
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
   };
-
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
@@ -258,44 +308,45 @@ const Example = () => {
 
   //DELETE action
   const openDeleteConfirmModal = (row) => {
-    if (window.confirm('təsdiq edirsiz?')) {
+    if (window.confirm("təsdiq edirsiz?")) {
       deleteUser(row.original.id);
     }
   };
 
-  const table = useMaterialReactTable({ 
-    // enableRowNumbers : true,
-    // enableColumnPinning: true,
+  const table = useMaterialReactTable({
 
-  positionActionsColumn: "last",
-  enableRowNumbers: true,
+ 
+    
+    positionActionsColumn: "last",
+    enableRowNumbers: true,
     columns,
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
-      
       sx: {
-        cursor: 'pointer', //you might want to change the cursor too when adding an onClick
+        cursor: "pointer", //you might want to change the cursor too when adding an onClick
       },
     }),
-    createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
-    editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
+    MRT_EditActionButtons,
+
+    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
+    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
     initialState: {
-      columnPinning: { right: ['mrt-row-actions'] },
+      header: "rtyuio",
+      columnPinning: { right: ["mrt-row-actions"] },
     },
 
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
-          color: 'error',
-          children: 'Error loading data',
+          color: "error",
+          children: "Error loading data",
         }
       : undefined,
     muiTableContainerProps: {
-      sx: {  
-        minHeight: '500px',
+      sx: {
+        minHeight: "500px",
       },
-   
     },
 
     onCreatingRowCancel: () => setValidationErrors({}),
@@ -306,48 +357,73 @@ const Example = () => {
 
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-      
         <DialogTitle variant="h5">Yeni könüllü əlavə edin</DialogTitle>
-        <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+        <DialogContent  
+          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
-        <DialogActions >
-          <MRT_EditActionButtons variant="text" table={table} row={row}  />
+        <DialogActions>
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
     //optionally customize modal content
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
+        <DialogTitle variant="h3">Düzəliş edin</DialogTitle >
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons  
-       variant="text" table={table} row={row} />
+          <MRT_EditActionButtons  variant="text" table={table} row={row}  
+  />
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table  , }) => (
-      
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
+    renderRowActions: ({ row, table }) => (
+      <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Ətraflı">
-        <VisibilityIcon style={{ marginTop:"8px"}}onClick={ (event) => {
-        navigate(row.id)
-      }} variant="contained">Ətraflı</VisibilityIcon>
+          <VisibilityIcon
+            style={{ marginTop: "8px" }}
+            onClick={(event) => {
+              navigate(row.id);
+            }}
+            variant="contained"
+          >
+            Ətraflı
+          </VisibilityIcon>
         </Tooltip>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z" stroke="#4B7D83" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z" fill="#4B7D83"/>
-<path d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353" stroke="#4B7D83" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
+                stroke="#4B7D83"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
+                fill="#4B7D83"
+              />
+              <path
+                d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
+                stroke="#4B7D83"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -355,46 +431,32 @@ const Example = () => {
             <DeleteIcon />
           </IconButton>
         </Tooltip>
-        
       </Box>
     ),
-    renderTopToolbarCustomActions: ({ table }) => (<>
-      <Button
-        variant="contained"
-        onClick={() => {
-          navigate("/newvolonteer")
-          // table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          // //or you can pass in a row object to set default values with the `createRow` helper function
-          // // table.setCreatingRow(
-          // //   createRow(table, {
-          // //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          // //   }),
-          // // );
-        }}
-      >
-       Yeni könüllü əlavə edin
-      </Button>
+    renderTopToolbarCustomActions: ({ table }) => (
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            navigate("/newvolonteer");
+            // table.setCreatingRow(true); //simplest way to open the create row modal with no default values
+            // //or you can pass in a row object to set default values with the `createRow` helper function
+            // // table.setCreatingRow(
+            // //   createRow(table, {
+            // //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
+            // //   }),
+            // // );
+          }}
+        >
+          Yeni könüllü əlavə edin
+        </Button>
 
-<Button  
-variant="contained"
-onClick={() => {
-  table.setCreatingRow(true); 
-
- 
-  //simplest way to open the create row modal with no default values
-  //or you can pass in a row object to set default values with the `createRow` helper function
-  // table.setCreatingRow(
-  //   createRow(table, {
-  //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-  //   }),
-  // );
-}}
->
-IAMAS INTEGRASIYA
-
-</Button> </>
+        <Button variant="contained" onClick={onClick}>
+          Excelə export
+        </Button>
+      </div>
     ),
-  
+
     state: {
       isLoading: isLoadingUsers,
       isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
@@ -403,12 +465,11 @@ IAMAS INTEGRASIYA
     },
   });
 
-  return <MaterialReactTable table={table}  />;
+  return <MaterialReactTable table={table} />;
 };
 
 //CREATE hook (post new user to api)
 function useCreateUser() {
-  
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
@@ -418,13 +479,12 @@ function useCreateUser() {
     },
     //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['users'], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: (Math.random())
-         
-        }, 
+          id: Math.random(),
+        },
       ]);
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -434,7 +494,7 @@ function useCreateUser() {
 //READ hook (get users from api)
 function useGetUsers() {
   return useQuery({
-    queryKey: ['users'],
+    queryKey: ["users"],
     queryFn: async () => {
       //send api request here
       await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
@@ -455,10 +515,10 @@ function useUpdateUser() {
     },
     //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['users'], (prevUsers) =>
+      queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser,
-        ),
+          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
+        )
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -476,8 +536,8 @@ function useDeleteUser() {
     },
     //client side optimistic update
     onMutate: (userId) => {
-      queryClient.setQueryData(['users'], (prevUsers) =>
-        prevUsers?.filter((user) => user.id !== userId),
+      queryClient.setQueryData(["users"], (prevUsers) =>
+        prevUsers?.filter((user) => user.id !== userId)
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -501,15 +561,15 @@ const validateEmail = (mail) =>
   mail
     .toLowerCase()
     .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
 
 function validateUser(user) {
   return {
     firstName: !validateRequired(user.firstName)
-      ? 'First Name is Required'
-      : '',
-    lastName: !validateRequired(user.fin) ? 'Last Name is Required' : '',
-    email: !validateEmail(user.mail) ? 'Incorrect Email Format' : '',
+      ? "First Name is Required"
+      : "",
+    lastName: !validateRequired(user.fin) ? "Last Name is Required" : "",
+    email: !validateEmail(user.mail) ? "Incorrect Email Format" : "",
   };
 }

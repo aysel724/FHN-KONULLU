@@ -41,7 +41,7 @@ const Notification = () => {
       {contextHolder}
       <div>
 
-        <NotificationsActiveIcon  onClick={openNotification}>
+        <NotificationsActiveIcon   style={{ marginTop:"20px"}} onClick={openNotification}>
          Bildiriş
         </NotificationsActiveIcon >
       </div>

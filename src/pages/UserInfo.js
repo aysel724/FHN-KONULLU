@@ -2,8 +2,7 @@ import React from "react";
 import TabsUser from "../components/TabsUser";
 import image from "../components/images/volonteer.png";
 import { Routes, Route, useParams } from 'react-router-dom';
-import FileUpload from "../components/FileUpload";
-import data from "../data.json";
+
 import {usersData} from "../makeData"
 
 
@@ -57,7 +56,7 @@ let userInfo = usersData[userId]
         </div>
       </div>
       <TabsUser />
-      <FileUpload/>
+
     </div>
   );
 }

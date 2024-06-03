@@ -6,7 +6,7 @@ export default function Events() {
   return( <>
   <h1>Tədbirlər</h1>
      <TableForEvents/>
-     <TabsEvents/></>
+     </>
      
   )
  

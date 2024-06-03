@@ -268,6 +268,64 @@ function useCreateUser() {
   });
 }
 
+
+
+
+// import { useMutation, useQueryClient } from 'react-query';
+
+// // CREATE hook (post new user to api)
+// function useCreateUser() {
+//   const queryClient = useQueryClient();
+
+//   // This hook returns a mutation function that you can call to create a new user
+//   return useMutation({
+//     // The mutation function takes a user object as a parameter
+//     mutationFn: async (user) => {
+//       try {
+//         // Here you would make your API request to create a new user
+//         // You can replace the placeholder with your actual API endpoint
+//         const response = await fetch('your-api-endpoint', {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           body: JSON.stringify(user),
+//         });
+
+//         // Assuming the API returns a JSON response
+//         const data = await response.json();
+
+//         // Assuming the API response contains the created user data
+//         // You can handle the response data here if needed
+
+//         // For demonstration purposes, simulating a delay with setTimeout
+//         await new Promise((resolve) => setTimeout(resolve, 1000));
+
+//         // After successfully creating the user, you can optionally
+//         // update your local data cache with the new user data
+//         queryClient.invalidateQueries('users');
+
+//         // Return a resolved promise indicating success
+//         return Promise.resolve();
+//       } catch (error) {
+//         // Handle any errors that occur during the API request
+//         console.error('Error creating user:', error);
+//         // Return a rejected promise with the error
+//         return Promise.reject(error);
+//       }
+//     },
+//     // Optional: You can provide additional options to the useMutation hook here
+//     // For example, you can specify onSuccess or onError callbacks
+//     // and other options like mutationKeys, retry, etc.
+//   });
+// }
+
+
+
+
+
+
+
 //READ hook (get users from api)
 function useGetUsers() {
   return useQuery({

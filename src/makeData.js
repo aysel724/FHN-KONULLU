@@ -28,37 +28,17 @@ export const headerNames = {
   staff: {
     h1: "Əşya və ləvazimatların növü",
   },
-  electronDocuments:{
+  electronDocuments: {
     h1: "Elektron sənədlərin növü",
   },
-trainingsAdmin:{
-  h1: "Təlimlər",
-},
-trainingsResults:{
-  h1: "Təlimlərin nəticəsi",
-},}
-
-export const headerNames1 = {
-  educationType: 
-    "Təhsilin tipi",
- 
-  educationDegree: 
-   "Təhsilin səviyyəsi",
-
-  language: 
-   "Dil biliyi",
-
-  languageLevel:
-    "Dil biliyinin  səviyyəsi",
-
-  computerSkills: 
-   "Kompüter bilikləri",
- 
-
-
-
-
+  trainingsAdmin: {
+    h1: "Təlimlər",
+  },
+  trainingsResults: {
+    h1: "Təlimlərin nəticəsi",
+  },
 };
+
 export const columnNames = {
   educationType: [
     {
@@ -216,9 +196,6 @@ export const columnNames = {
     },
     { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
   ],
-
-  
-  
 };
 export const apiData = {
   educationDegree: [
@@ -433,7 +410,7 @@ export const apiData = {
 
     {
       id: "2",
-     electronDocuments: "Sertifikat",
+      electronDocuments: "Sertifikat",
       status: "active",
       prioritet: " 2",
     },
@@ -460,7 +437,7 @@ export const apiData = {
 
     {
       id: "2",
-    trainingsAdmin: "Yeni nəsil texnologiyalar",
+      trainingsAdmin: "Yeni nəsil texnologiyalar",
       status: "active",
       prioritet: " 2",
     },
@@ -472,7 +449,7 @@ export const apiData = {
     },
     {
       id: "4",
-     trainingsAdmin: "Yanğın söndürmə",
+      trainingsAdmin: "Yanğın söndürmə",
       status: "active",
       prioritet: " 1",
     },
@@ -487,7 +464,7 @@ export const apiData = {
 
     {
       id: "2",
-    trainingsResults: "Yaxşı",
+      trainingsResults: "Yaxşı",
       status: "active",
       prioritet: " 2",
     },
@@ -499,7 +476,7 @@ export const apiData = {
     },
     {
       id: "4",
-     trainingsResults: "Qeyri-kafi",
+      trainingsResults: "Qeyri-kafi",
       status: "active",
       prioritet: " 4",
     },
@@ -507,7 +484,13 @@ export const apiData = {
 };
 
 export const usersData = [
-  {
+  {seriya:"fghj",
+
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
     id: "1",
     firstName: "Aysel Hesenova",
     gender: "qadin",
@@ -526,10 +509,12 @@ export const usersData = [
     boy: 190,
   },
 
-
-
- 
-  {
+  {seriya:"fghj",
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
     id: "2",
     firstName: "Ceyhun Asgerov",
     status: "Fəaliyyəti dəvam edən",
@@ -544,7 +529,12 @@ export const usersData = [
     army: "---",
     boy: 190,
   },
-  {
+  {seriya:" aze",
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
     id: "3",
     firstName: "Ayla Asgarova",
     gender: "qadin",
@@ -557,6 +547,11 @@ export const usersData = [
     finish: "23.10.2022",
   },
   {
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
     id: "4",
     firstName: `Veli Aliyev`,
     gender: "kişi",
@@ -569,6 +564,11 @@ export const usersData = [
     finish: "23.10.2022",
   },
   {
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
     id: "5",
     firstName: `Aynur Rustamzade`,
     gender: "qadin",
@@ -580,6 +580,8 @@ export const usersData = [
     start: "21.08.2022",
     finish: "23.10.2022",
   },
+
+  
 ];
 
 //50 us states array

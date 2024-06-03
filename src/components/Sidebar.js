@@ -1,25 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import "../App.css";
 import Login from "../pages/Login";
 import Admin from "../pages/Admin";
-import Language from "../pages/Language";
 import Users from "../pages/Users";
-import TrainingsAdmin from "../pages/TrainingsAdmin";
-import { Layout, Menu, theme } from "antd";
-import TrainingsResults from "../pages/TrainingsResults";
-import EducationType from "../pages/EducationType";
-import EducationDegree from "../pages/EducationDegree";
-import Insurance from "../pages/Insurance";
-import ComputerSkills from "../pages/ComputerSkills";
-import ComputerSkillsDegree from "../pages/ComputerSkillsDegree";
-import Reason from "../pages/Reason";
-import Staff from "../pages/Staff";
-import ElectronDocuments from "../pages/ElectronDocuments";
+import { Layout, Menu, theme, Button } from "antd";
 import Reports from "../pages/Reports";
-import Citizenship from "../pages/Citizenship";
+
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import "../App.css";
 import UserInfo from "../pages/UserInfo";
 import Volonteer from "../pages/Volonteer";
@@ -27,18 +17,15 @@ import NewVolonteer from "../pages/NewVolonteer";
 import data from "../data.json";
 import logo from "../components/images/FHNLogo.png";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import TableForEducationType from "../components/TableForEducationType"
-import LanguageLevel from "../pages/LanguageLevel";
+import TableForEducationType from "../components/TableForEducationType";
 import Notification from "./Notification";
 import Events from "../pages/Events";
 import Trainings from "../pages/Trainings";
 import BloodtypeIcon from "@mui/icons-material/Bloodtype";
 import InsuranceTotal from "../pages/InsuranceTotal";
-import TrainingsInfo from "./TrainingsInfo";
+import TrainingsInfo from "../pages/TrainingsInfo";
 import PassowrdChange from "./PasswordChange";
-
-
-
+import EventInfo from "../pages/EventInfo";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -106,13 +93,7 @@ const items = [
       </svg>
     </Link>
   ),
-  getItem(
-    "Sığorta",
-    "20",
-    <Link to="/insuranseTotal">
-      <BloodtypeIcon></BloodtypeIcon>
-    </Link>
-  ),
+
   getItem(
     "Hesabatlar",
     "4",
@@ -188,7 +169,7 @@ const items = [
         </Link>,
         "6"
       ),
-     
+
       getItem(
         <Link to="/educationType" reloadDocument="true">
           <FiberManualRecordIcon
@@ -303,116 +284,178 @@ const items = [
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
-  const spansymbol = document.querySelector(".anticon");
-  if (spansymbol) {
-    spansymbol.innerHTML = "&#9776";
-  }
 
   // &#9776;
   return (
-    <Layout
-      style={{
-        minHeight: "100vh",
-        width: "100vw",
-      }}
-    >
-      <Sider
+    <>
+      {/* <Login /> */}
+      <Layout
         style={{
-          borderRadius: "15px",
-          padding: 0,
-          background: "#4b7d83",
-          height: "100vh",margin:"5px"
+          minHeight: "100vh",
+          width: "100vw",
         }}
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="logo-container">
-          <img src={logo} style={{ width: "80px" }}></img>
-          <h6 style={{ color: "white" }}>FHN KÖNÜLLÜLƏRİ</h6>
-        </div>
-        <Menu
-          theme="dark"
+        <Sider
+          trigger={null}
           style={{
-            color: "white",
-            textAlign: "left",
+            borderRadius: "15px",
             padding: 0,
             background: "#4b7d83",
+            height: "100vh",
+            margin: "5px", width:"100vw"
           }}
-          defaultSelectedKeys={["1"]}
-          darkitemselectedbg="#001529"
-          mode="inline"
-          items={items}
-        />
-      </Sider>
-
-      <Layout>
-        <Header style={{ borderRadius: "15px", background: "#4b7d83", margin:"5px"}}>
-          <div
+          collapsible
+          collapsed={collapsed}
+          onCollapse={(value) => setCollapsed(value)}
+        >
+          <div className="logo-container">
+            <img src={logo} style={{ width: "80px" }}></img>
+            <h6 style={{ color: "white" }}>FHN KÖNÜLLÜLƏRİ</h6>
+          </div>
+          <Menu
+            theme="dark"
             style={{
-              display: "flex",
               color: "white",
-              flexDirection: "row",
-              alignItems: "center",
-              alignContent:"center",
-              justifyContent: "end",
+              textAlign: "left",
+              padding: 0,
+              background: "#4b7d83",
+            }}
+            defaultSelectedKeys={["1"]}
+            darkitemselectedbg="#001529"
+            mode="inline"
+            items={items}
+          />
+        </Sider>
+
+        <Layout>
+          <Header
+            style={{ display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center",
+              margin: "5px",
+              borderRadius: "15px",
+              position: "relative",
+              background: "#4b7d83",
+              padding: "0 50px"
             }}
           >
-            <Notification></Notification>
-            <PassowrdChange/>
-            <p>{data.users[0].name}</p>
-          </div>
-        </Header>
+            {/* <div
+              style={{
+                display: "flex",
+                color: "white",
+                flexDirection: "row",
+                alignItems: "center",
 
-        <Content style={{ padding: "2%" }}>
-          <Routes>
-            <Route path="/volonteers" element={<Volonteer />} exact />
-            <Route path="/volonteers/:id" element={<UserInfo />} />
-            <Route path="/newvolonteer" element={<NewVolonteer />} />{" "}
-            <Route path="/trainings" element={<Trainings />} />
-            <Route path="/trainings/:id" element={<TrainingsInfo />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/insuranseTotal" element={<InsuranceTotal />} />
-            <Route path="/trainingsResults" element={<TableForEducationType />} />
-            <Route path="/trainingsAdmin" element={<TableForEducationType />} />
-            <Route path="/educationType" element={<TableForEducationType  />} />
-            <Route path="/educationDegree" element={<TableForEducationType />} />
-            <Route path="/insurance" element={<TableForEducationType />} />
-            <Route path="/computerSkills" element={<TableForEducationType />} />
-            <Route
-              path="/computerSkillsLevel"
-              element={<TableForEducationType  />}
-            />
-            <Route path="/reason" element={<TableForEducationType />} />
-            <Route path="/staff" element={<TableForEducationType />} />
-            <Route path="/electronDocuments" element={<TableForEducationType />} />
-            <Route path="/language" element={<TableForEducationType />} />
-            <Route path="/languageLevel" element={<TableForEducationType  />} />
+                justifyContent: "space-between",
+              }}
+            >
+         */}
+              <div>
+                <Button
+                  type="text"
+                  icon={
+                    collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
+                  }
+                  onClick={() => setCollapsed(!collapsed)}
+                  style={{ 
+                   
+                    color: "white",
+                    fontSize: "16px",
+                    width: 64,
+                    height: 64,
+                    marginLeft:"-50px"
+                  
+                  }}
+                />
+              </div>
+              <div style={{ display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center", color:"white", alignContent:"center", height:"50px"}} >
+                <Notification></Notification>
 
-            <Route path="/userinfo" element={<UserInfo />} />
-          </Routes>
-        </Content>
+                <p style={{  padding:"10px"}} >{data.users[0].name}</p>
+              </div>
+            {/* </div> */}
+          </Header>
 
-        <Footer style={{ borderRadius: "15px", background: "#4b7d83",  height:"7vh", margin:"5px"}}>
-          <div
+          <Content style={{ padding: "2%" , margin:"0"}}>
+            <Routes>
+              <Route element={<Navigate to="login" />} path="/" />
+
+              <Route path="/volonteers" element={<Volonteer />} />
+              <Route path="/volonteers/:id" element={<UserInfo />} />
+              <Route path="/newvolonteer" element={<NewVolonteer />} />
+              <Route path="/trainings" element={<Trainings />} />
+              <Route path="/trainings/:id" element={<TrainingsInfo />} />
+              <Route path="/events/:id" element={<EventInfo />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/insuranseTotal" element={<InsuranceTotal />} />
+              <Route
+                path="/trainingsResults"
+                element={<TableForEducationType />}
+              />
+              <Route
+                path="/trainingsAdmin"
+                element={<TableForEducationType />}
+              />
+              <Route
+                path="/educationType"
+                element={<TableForEducationType />}
+              />
+              <Route
+                path="/educationDegree"
+                element={<TableForEducationType />}
+              />
+              <Route path="/insurance" element={<TableForEducationType />} />
+              <Route
+                path="/computerSkills"
+                element={<TableForEducationType />}
+              />
+              <Route
+                path="/computerSkillsLevel"
+                element={<TableForEducationType />}
+              />
+              <Route path="/reason" element={<TableForEducationType />} />
+              <Route path="/staff" element={<TableForEducationType />} />
+              <Route
+                path="/electronDocuments"
+                element={<TableForEducationType />}
+              />
+              <Route path="/language" element={<TableForEducationType />} />
+              <Route
+                path="/languageLevel"
+                element={<TableForEducationType />}
+              />
+
+              <Route path="/userinfo" element={<UserInfo />} />
+            </Routes>
+          </Content>
+          <Footer
             style={{
-              display: "flex",
-              color: "white",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
+              borderRadius: "15px",
+              background: "#4b7d83",
+              height: "7vh",
+              margin: "5px",
             }}
           >
-            <p>2023.
-Rəqəmsal Texnologiyalar və İnnovasiyaların İnkişafı Baş İdarəsi</p>
-          </div>
-        </Footer>
+            <div
+              style={{
+                display: "flex",
+                color: "white",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <p>
+                2023. Rəqəmsal Texnologiyalar və İnnovasiyaların İnkişafı Baş
+                İdarəsi
+              </p>
+            </div>
+          </Footer>
+        </Layout>
       </Layout>
-    </Layout>
+    </>
   );
 };
 export default Sidebar;
