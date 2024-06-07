@@ -6,6 +6,7 @@ import { Routes, Route, useParams } from 'react-router-dom';
 import {usersData} from "../makeData"
 
 
+
 export default function UserInfo() {
 
 let params = useParams();
@@ -21,7 +22,7 @@ let userInfo = usersData[userId]
         }}
       >
         <div style={{ textAlign: "left", margin: "2%" }}>
-          <h1>{userInfo.firstName}</h1>
+          <h1>{userInfo.name}{userInfo.surname} {userInfo.surname} </h1>
           <p>
             <strong>FIN:</strong>
             {userInfo.fin}
@@ -56,6 +57,7 @@ let userInfo = usersData[userId]
         </div>
       </div>
       <TabsUser />
+
 
     </div>
   );

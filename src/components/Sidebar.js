@@ -25,6 +25,7 @@ import BloodtypeIcon from "@mui/icons-material/Bloodtype";
 import InsuranceTotal from "../pages/InsuranceTotal";
 import TrainingsInfo from "../pages/TrainingsInfo";
 import PassowrdChange from "./PasswordChange";
+import { Divider } from 'antd';
 import EventInfo from "../pages/EventInfo";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -150,7 +151,7 @@ const items = [
         <defs>
           <clipPath id="clip0_3_866">
             <rect
-              width="24"
+              width="94"
               height="23.8125"
               fill="white"
               transform="translate(0 0.359375)"
@@ -161,7 +162,7 @@ const items = [
     </Link>,
     [
       getItem(
-        <Link to="/users" reloadDocument="true">
+        <Link to="/users" >
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -171,7 +172,7 @@ const items = [
       ),
 
       getItem(
-        <Link to="/educationType" reloadDocument="true">
+        <Link to="/educationType" >
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -180,7 +181,7 @@ const items = [
         "8"
       ),
       getItem(
-        <Link to="/educationDegree" reloadDocument="true">
+        <Link to="/educationDegree">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -189,7 +190,7 @@ const items = [
         "9"
       ),
       getItem(
-        <Link to="/language" reloadDocument="true">
+        <Link to="/language" >
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -198,7 +199,7 @@ const items = [
         "10"
       ),
       getItem(
-        <Link to="/languageLevel" reloadDocument="true">
+        <Link to="/languageLevel" >
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -207,7 +208,7 @@ const items = [
         "11"
       ),
       getItem(
-        <Link to="/computerSkills" reloadDocument="true">
+        <Link to="/computerSkills">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -216,7 +217,7 @@ const items = [
         "12"
       ),
       getItem(
-        <Link to="/computerSkillsLevel" reloadDocument="true">
+        <Link to="/computerSkillsLevel" >
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -225,7 +226,7 @@ const items = [
         "13"
       ),
       getItem(
-        <Link to="/insurance" reloadDocument="true">
+        <Link to="/insurance" >
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -234,7 +235,7 @@ const items = [
         "14"
       ),
       getItem(
-        <Link to="/reason" reloadDocument="true">
+        <Link to="/reason">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -243,7 +244,7 @@ const items = [
         "15"
       ),
       getItem(
-        <Link to="/staff" reloadDocument="true">
+        <Link to="/staff">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -252,7 +253,7 @@ const items = [
         "16"
       ),
       getItem(
-        <Link to="/electronDocuments" reloadDocument="true">
+        <Link to="/electronDocuments">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -261,7 +262,7 @@ const items = [
         "17"
       ),
       getItem(
-        <Link to="/trainingsAdmin" reloadDocument="true">
+        <Link to="/trainingsAdmin">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -270,7 +271,7 @@ const items = [
         "18"
       ),
       getItem(
-        <Link to="/trainingsResults" reloadDocument="true">
+        <Link to="/trainingsResults" >
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -310,7 +311,8 @@ const Sidebar = () => {
         >
           <div className="logo-container">
             <img src={logo} style={{ width: "80px" }}></img>
-            <h6 style={{ color: "white" }}>FHN KÖNÜLLÜLƏRİ</h6>
+            <p style={{color:"white", fontSize:"10px"}}>FÖVQƏLADƏ HALLAR KÖNÜLLÜLƏRİ</p>
+            <Divider style={{backgroundColor:'white', opacity:"50%"}}/>
           </div>
           <Menu
             theme="dark"
@@ -374,7 +376,7 @@ const Sidebar = () => {
             {/* </div> */}
           </Header>
 
-          <Content style={{ padding: "2%" , margin:"0"}}>
+           <Content style={{ padding: "2%" , margin:"0"}}>
             <Routes>
               <Route element={<Navigate to="login" />} path="/" />
 
@@ -386,7 +388,7 @@ const Sidebar = () => {
               <Route path="/events/:id" element={<EventInfo />} />
               <Route path="/events" element={<Events />} />
               <Route path="/reports" element={<Reports />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={<Login />} /> 
               <Route path="/admin" element={<Admin />} />
               <Route path="/users" element={<Users />} />
               <Route path="/insuranseTotal" element={<InsuranceTotal />} />
@@ -428,7 +430,7 @@ const Sidebar = () => {
               />
 
               <Route path="/userinfo" element={<UserInfo />} />
-            </Routes>
+            </Routes> 
           </Content>
           <Footer
             style={{

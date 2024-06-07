@@ -148,3 +148,22 @@ ul {
     overflow: auto!important;
     position: relative;
   } 
+  .ant-popover-content{ 
+    width: 300px!important;
+  }
+/* Assuming your table container has a class name of .table-container */
+.table-container {
+  overflow-x: scroll!important;
+}
+
+/* Force the scrollbar to always be visible */
+.table-container::-webkit-scrollbar {
+  -webkit-appearance: none!important;
+  width: 8px!important;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  border-radius: 4px!important;
+  background-color: rgba(0, 0, 0, 0.5)!important;
+  box-shadow: 0 0 1px rgba(255, 255, 255, 0.5)!important;
+}

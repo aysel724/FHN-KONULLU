@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import "../App.css";
 import React from "react";
-
+import {useVirtual} from 'react-virtual'
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -32,7 +32,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useExcelJS } from "react-use-exceljs";
 
 const Example = () => {
-
+const virtual = useRef<HTMLDivElement>(null)
 
 
   const excel = useExcelJS({
@@ -465,7 +465,9 @@ const Example = () => {
     },
   });
 
-  return <MaterialReactTable table={table} />;
+  return( <div className="table-container">
+    <MaterialReactTable table={table} /></div>
+  ) 
 };
 
 //CREATE hook (post new user to api)
@@ -473,7 +475,7 @@ function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
+      //send api update request here\\\https://10.70.3.176/api/v1/Volunteers?page=1&pageSize=0
       await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
       return Promise.resolve();
     },
