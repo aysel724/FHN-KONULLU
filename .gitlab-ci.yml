@@ -1,0 +1,33 @@
+variables:
+  WORKING_DIR:  "/home/gitlab-runner/fhn-volunteers-frontend"
+  HOME_DIR:     "/home/gitlab-runner"
+before_script:
+- echo  "Check for changes in remote repository"
+- cd $WORKING_DIR
+- git pull
+build:
+  stage: build
+  only:
+  - main
+  tags:
+  - volunteers_ui
+  script:
+  - echo "Building containers"
+  - cd $HOME_DIR
+  - docker-compose build volunteers.ui
+deploy:
+  stage: deploy
+  only:
+  - main
+  tags:
+  - volunteers_ui
+  script:
+  - echo "Recreating imagess"
+  - cd $HOME_DIR
+  - docker-compose up  volunteers.ui -d --force-recreate
+after_script:
+- echo   "Pruning Docker containerss"
+- docker container prune -f || exit 1
+- echo   "Pruning Docker images"
+- docker image prune -f || exit 1
+
