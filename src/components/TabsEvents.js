@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import "../App.css";
-import data from "../data.json";
+// import data from "../data.json";
 import { Table } from "antd";
 
 function CustomTabPanel(props) {
@@ -174,8 +174,8 @@ export default function TabsUser() {
             boxShadow: "0 10px 30px 5px rgba(0, 0, 0, 0.9);",
             textAlign: "left",
           }}
-        >
-          <p>
+        ></div>
+          {/* <p>
             <strong>Tədbirin başlama tarixi:</strong>
             {data.users[0].events[0].start}
           </p>
@@ -196,14 +196,14 @@ export default function TabsUser() {
             {data.users[0].events[0].couch}
           </p>
           <p>
-            <strong>İştirak edən könüllü sayı: </strong> {data.users.length}
-          </p>
+            {/* <strong>İştirak edən könüllü sayı: </strong> {data.users.length} */}
+          {/* </p>
           <p>
             <strong>Qeyd: </strong>
-            {data.users[0].events[0].note}
-          </p>
-        </div>
-      </CustomTabPanel>
+            {/* {data.users[0].events[0].note} */}
+          {/* </p>
+       
+      </CustomTabPanel> 
       <CustomTabPanel value={value} index={1}>
         <div
           style={{
@@ -216,12 +216,12 @@ export default function TabsUser() {
         >
           <div>
             <ol>
-              <li> {data.users[0].name}</li>
+              {/* <li> {data.users[0].name}</li>
               <li> {data.users[1].name}</li>
-              <li> {data.users[2].name}</li>
-            </ol>
+              <li> {data.users[2].name}</li> */}
+            {/* </ol>
           </div>
-        </div>
+        </div> */}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}></CustomTabPanel>
     </Box>

@@ -202,7 +202,7 @@ const Example = () => {
     data: fetchedUsers,
     createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
     editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
-    enableEditing: true,
+    enableEditing: false,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {

@@ -1,49 +1,96 @@
-import data from "./data.json";
+
 
 export const headerNames = {
-  educationType: {
+  EducationTypes: {
     h1: "Təhsilin tipi",
   },
-  educationDegree: {
+  EducationDegrees: {
     h1: "Təhsilin səviyyəsi",
   },
-  language: {
+  LanguageNames: {
     h1: "Dil biliyi",
   },
-  languageLevel: {
+  LanguageProficiencyLevels: {
     h1: "Dil biliyinin  səviyyəsi",
   },
-  computerSkills: {
+  ComputerSkillName: {
     h1: "Kompüter bilikləri",
   },
-  computerSkillsLevel: {
+  SkillLevels: {
     h1: "Kompüter biliklərinin səviyyəsi",
   },
-  insurance: {
+  InsuranceCompaniesnce: {
     h1: "Sığorta şirkətləri",
   },
-  reason: {
+  MesVoluntaryActivityEndReasons: {
     h1: "Fəaliyyətin bitmə səbəbləri",
   },
-  staff: {
+  SupplyTypes: {
     h1: "Əşya və ləvazimatların növü",
   },
-  electronDocuments: {
+  ElectronicDocumentTypes: {
     h1: "Elektron sənədlərin növü",
   },
-  trainingsAdmin: {
+  MesTrainingNames: {
     h1: "Təlimlər",
   },
-  trainingsResults: {
+  TrainingResults: {
     h1: "Təlimlərin nəticəsi",
   },
 };
 
+
+
+
+// <Route
+// path="/TrainingResults"
+// element={<TableForEducationType />}
+// />
+// <Route
+// path="/MesTrainingNames"
+// element={<TableForEducationType />}
+// />
+// <Route
+// path="/EducationTypes"
+// element={<TableForEducationType />}
+// />
+// <Route
+// path="/EducationDegrees"
+// element={<TableForEducationType />}
+// />
+// <Route
+// path="/InsuranceCompaniesnce"
+// element={<TableForEducationType />}
+// />
+// <Route
+// path="/ComputerSkillName"
+// element={<TableForEducationType />}
+// />
+// <Route path="/SkillLevels" element={<TableForEducationType />} />
+// <Route
+// path="/MesVoluntaryActivityEndReasons"
+// element={<TableForEducationType />}
+// />
+// <Route path="/SupplyTypes" element={<TableForEducationType />} />
+// <Route
+// path="/ElectronicDocumentTypes"
+// element={<TableForEducationType />}
+// />
+// <Route
+// path="/LanguageNames"
+// element={<TableForEducationType />}
+// />
+// <Route
+// path="/LanguageProficiencyLevelseLevel"
+// element={<TableForEducationType />}
+
+
+
 export const columnNames = {
-  educationType: [
+  EducationTypes: [
     {
       header: "Təhsilin tipi",
-      accessorKey: "educationType",
+      accessorKey: "EducationTypes",
       isSelectable: false,
     },
     {
@@ -51,12 +98,12 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  educationDegree: [
+  EducationDegrees: [
     {
       header: "Təhsilin dərəcəsi",
-      accessorKey: "educationDegree",
+      accessorKey: "EducationDegrees",
       isSelectable: false,
     },
     {
@@ -64,25 +111,20 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  language: [
+  LanguageNames: [
     {
       header: "Dil biliyi",
-      accessorKey: "language",
+      accessorKey: "LanguageNames",
       isSelectable: false,
     },
-    {
-      header: "Status",
-      accessorKey: "status",
-      isSelectable: ["əla", "yaxhi", "zəif", "yaxhi"],
-    },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  languageLevel: [
+  LanguageProficiencyLevels: [
     {
       header: "Dil biliyi səviyyəsi",
-      accessorKey: "languageLevel",
+      accessorKey: "LanguageProficiencyLevels",
       isSelectable: false,
     },
     {
@@ -92,10 +134,10 @@ export const columnNames = {
     },
     { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
   ],
-  computerSkills: [
+  ComputerSkillName: [
     {
       header: "Kompüter biliyinin adı",
-      accessorKey: "computerSkills",
+      accessorKey: "ComputerSkillName",
       isSelectable: false,
     },
     {
@@ -103,12 +145,12 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  computerSkillsLevel: [
+  SkillLevels: [
     {
       header: "Kompüter biliyinin səviyyəsi",
-      accessorKey: "computerSkillsLevel",
+      accessorKey: "SkillLevels",
       isSelectable: false,
     },
     {
@@ -116,12 +158,12 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  insurance: [
+  InsuranceCompaniesnce: [
     {
       header: "Sığotra şirkəti",
-      accessorKey: "insurance",
+      accessorKey: "InsuranceCompaniesnce",
       isSelectable: false,
     },
     {
@@ -129,12 +171,12 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  reason: [
+  MesVoluntaryActivityEndReasons: [
     {
       header: "Fəaliyyətin bitmə səbəbi",
-      accessorKey: "reason",
+      accessorKey: "MesVoluntaryActivityEndReasons",
       isSelectable: false,
     },
     {
@@ -142,12 +184,12 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  staff: [
+  SupplyTypes: [
     {
       header: "Əşya və ləvazimatların növü",
-      accessorKey: "staff",
+      accessorKey: "SupplyTypes",
       isSelectable: false,
     },
     {
@@ -155,12 +197,12 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  electronDocuments: [
+  ElectronicDocumentTypes: [
     {
       header: "Elektron sənədlərin növü",
-      accessorKey: "electronDocuments",
+      accessorKey: "ElectronicDocumentTypes",
       isSelectable: false,
     },
     {
@@ -168,12 +210,12 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  trainingsAdmin: [
+  MesTrainingNames: [
     {
       header: "Təlimin adı",
-      accessorKey: "trainingsAdmin",
+      accessorKey: "MesTrainingNames",
       isSelectable: false,
     },
     {
@@ -181,12 +223,12 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  trainingsResults: [
+  TrainingResults: [
     {
       header: "Təlimlərin nəticəsi",
-      accessorKey: "trainingsResults",
+      accessorKey: "TrainingResults",
       isSelectable: false,
     },
     {
@@ -194,29 +236,29 @@ export const columnNames = {
       accessorKey: "status",
       isSelectable: ["Active", "Inactive"],
     },
-    { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
+    { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
 };
 export const apiData = {
-  educationDegree: [
+  EducationDegrees: [
     {
       id: "1",
-      educationDegree: "Bakalavr",
+      EducationDegrees: "Bakalavr",
       status: "active",
-      prioritet: " 3",
+      priority: " 3",
     },
 
     {
       id: "2",
-      educationDegree: "Maqistr",
+      EducationDegrees: "Maqistr",
       status: "active",
-      prioritet: " 2",
+      priority: " 2",
     },
     {
       id: "3",
-      educationDegree: "Doctor",
+      EducationDegrees: "Doctor",
       status: "active",
-      prioritet: " 1",
+      priority: " 1",
     },
   ],
   educationType: [
@@ -240,7 +282,7 @@ export const apiData = {
       prioritet: " 1",
     },
   ],
-  language: [
+  LanguageNames: [
     {
       id: "1",
       language: "İngilis",
@@ -261,7 +303,7 @@ export const apiData = {
       prioritet: " 1",
     },
   ],
-  languageLevel: [
+  LanguageProficiencyLevels: [
     {
       id: "1",
       languageLevel: "A1",
@@ -454,7 +496,7 @@ export const apiData = {
       prioritet: " 1",
     },
   ],
-  trainingsResults: [
+  TrainingResults: [
     {
       id: "1",
       trainingsResults: "Əla",
@@ -580,6 +622,200 @@ export const usersData = [
     start: "21.08.2022",
     finish: "23.10.2022",
   },
+  {seriya:"fghj",
+
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "1",
+    firstName: "Aysel Hesenova",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+    state: "acvive",
+    famylystatus: "evli",
+    phone: "+994504962260",
+    mail: "aska-hesenova94@mail.ru",
+    army: "---",
+    boy: 190,
+  },
+
+  {seriya:"fghj",
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "2",
+    firstName: "Ceyhun Asgerov",
+    status: "Fəaliyyəti dəvam edən",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    fin: "1y97krw",
+    famylystatus: "evli",
+    phone: "+994504962260",
+    mail: "aska-hesenova94@mail.ru",
+    start: "23.09.2022",
+    finish: "--",
+    army: "---",
+    boy: 190,
+  },
+  {seriya:" aze",
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "3",
+    firstName: "Ayla Asgarova",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+  },
+  {
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "4",
+    firstName: `Veli Aliyev`,
+    gender: "kişi",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+  },
+  {
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "5",
+    firstName: `Aynur Rustamzade`,
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "aynur@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "21.08.2022",
+    finish: "23.10.2022",
+  },
+
+  {seriya:"fghj",
+
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "1",
+    firstName: "Aysel Hesenova",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+    state: "acvive",
+    famylystatus: "evli",
+    phone: "+994504962260",
+    mail: "aska-hesenova94@mail.ru",
+    army: "---",
+    boy: 190,
+  },
+
+  {seriya:"fghj",
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "2",
+    firstName: "Ceyhun Asgerov",
+    status: "Fəaliyyəti dəvam edən",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    fin: "1y97krw",
+    famylystatus: "evli",
+    phone: "+994504962260",
+    mail: "aska-hesenova94@mail.ru",
+    start: "23.09.2022",
+    finish: "--",
+    army: "---",
+    boy: 190,
+  },
+  {seriya:" aze",
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "3",
+    firstName: "Ayla Asgarova",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+  },
+  {
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "4",
+    firstName: `Veli Aliyev`,
+    gender: "kişi",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+  },
+  {
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "5",
+    firstName: `Aynur Rustamzade`,
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "aynur@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "21.08.2022",
+    finish: "23.10.2022",
+  },
+
 
   
 ];

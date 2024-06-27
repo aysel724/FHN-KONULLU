@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import "../App.css";
 import React from "react";
-import {useVirtual} from 'react-virtual'
+import axios from "axios";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -32,9 +32,26 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useExcelJS } from "react-use-exceljs";
 
 const Example = () => {
-const virtual = useRef<HTMLDivElement>(null)
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sorting, setSorting] = useState([]);
+  const virtualizerInstanceRef = useRef(null);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setData(usersData);
+      setIsLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
+    //scroll to the top of the table when the sorting changes
+    try {
+      virtualizerInstanceRef.current?.scrollToIndex?.(0);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [sorting]);
   const excel = useExcelJS({
     filename: "Könüllülər.xlsx",
     worksheets: [
@@ -48,12 +65,12 @@ const virtual = useRef<HTMLDivElement>(null)
           },
           {
             header: "Ad soyad",
-            key: "firstName",
+            key: "name",
             width: 32,
           },
           {
             header: "Doğum tarixi.",
-            key: "birthdate",
+            key: "birthDate",
             width: 30,
           },
           {
@@ -76,7 +93,7 @@ const virtual = useRef<HTMLDivElement>(null)
     ],
   });
   const onClick = () => {
-    excel.download(usersData);
+    excel.download(data);
   };
   const navigate = useNavigate();
 
@@ -91,8 +108,25 @@ const virtual = useRef<HTMLDivElement>(null)
 
   const columns = useMemo(
     () => [
+
       {
-        size: 90,
+        accessorKey: "name",
+        header: "Ad soyad",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              name: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+      {
+        size: 160,
         accessorKey: "fin",
         header: "FİN KOD",
         muiEditTextFieldProps: {
@@ -108,29 +142,21 @@ const virtual = useRef<HTMLDivElement>(null)
           //optionally add validation checking for onBlur or onChange
         },
       },
-
-      // {
-      //   accessorKey: 'id',
-      //   header: 'Id',
-      //   enableEditing: false,
-      //   size: 90,
-      // },
-      {
-        accessorKey: "firstName",
-        header: "Ad soyad",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.firstName,
-          helperText: validationErrors?.firstName,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              firstName: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
+      // form.append('name', userData.name);
+      // form.append('surname', userData.surname);
+      // form.append('fatherName', userData.fatherName);
+      // form.append('gender', userData.gender);
+      // form.append('militaryReward', userData.militaryReward);
+      // form.append('birthDate', userData.birthDate);
+      // form.append('height', userData.height);
+      // form.append('citizenship', userData.citizenship);
+      // form.append('maritalStatus', userData.maritalStatus);
+      // form.append('identityCardGivenStructureName', userData.identityCardGivenStructureName);
+      // form.append('identityCardReceivingDate', userData.identityCardReceivingDate);
+      // form.append('registrationAddress', userData.registrationAddress);
+      // form.append('currentAddress', userData.currentAddress);
+      // form.append('photo', userData.photo); 
+     
       {
         size: 90,
         accessorKey: "gender",
@@ -165,41 +191,41 @@ const virtual = useRef<HTMLDivElement>(null)
         },
       },
       {
-        accessorKey: "birthdate",
+        accessorKey: "birthDate",
         header: "Doğum tarixi",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.birthdate,
-          helperText: validationErrors?.birthdate,
+          error: !!validationErrors?.birthDate,
+          helperText: validationErrors?.birthDate,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              birthdate: undefined,
+              birthDate: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
 
       {
-        size: 50,
-        accessorKey: "famylystatus",
+   
+        accessorKey: "maritalStatus",
         header: " Ailə statusu",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.famylystatus,
-          helperText: validationErrors?.famylystatus,
+          error: !!validationErrors?.maritalStatus,
+          helperText: validationErrors?.maritalStatus,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              famylystatus: undefined,
+              maritalStatus: undefined,
             }),
         },
       },
       {
         accessorKey: "mail",
-        header: "Email",
+        header: "E-poçt ünvanı",
         muiEditTextFieldProps: {
           type: "email",
           required: true,
@@ -210,6 +236,22 @@ const virtual = useRef<HTMLDivElement>(null)
             setValidationErrors({
               ...validationErrors,
               mail: undefined,
+            }),
+        },
+      },
+      {
+        accessorKey: "phoneNumber1",
+        header: "Əlaqə nömrəsi",
+        muiEditTextFieldProps: {
+          type: "email",
+          required: true,
+          error: !!validationErrors?.phoneNumber1,
+          helperText: validationErrors?.phoneNumber1,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              phoneNumber1: undefined,
             }),
         },
       },
@@ -249,17 +291,7 @@ const virtual = useRef<HTMLDivElement>(null)
         },
       },
 
-      {
-        accessorKey: "state",
-        header: "Status",
-        editVariant: "select",
-        editSelectOptions: usStates,
-        muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.state,
-          helperText: validationErrors?.state,
-        },
-      },
+    
     ],
     [validationErrors]
   );
@@ -314,27 +346,39 @@ const virtual = useRef<HTMLDivElement>(null)
   };
 
   const table = useMaterialReactTable({
-
- 
-    
+    className:"table-1",
     positionActionsColumn: "last",
+
+    muiTableContainerProps: { sx: { maxHeight: '600px' } },
+    enableColumnVirtualization: false,
+    enableGlobalFilterModes: true,
+    enableRowVirtualization: true,
+    enablePagination:true,
     enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
     columns,
+    rowCount:5,
+    onSortingChange: setSorting,
+    state: { isLoading, sorting },
+    virtualizerInstanceRef, //optional
+    rowVirtualizerOptions: { overscan: 2 }, //optionally customize the row virtualizer
+    virtualizerProps: { overscan: 2 },
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
-      sx: {
+      sx: {   
         cursor: "pointer", //you might want to change the cursor too when adding an onClick
       },
     }),
     MRT_EditActionButtons,
-
     createDisplayMode: "modal", //default ('row', and 'custom' are also available)
     editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
-    initialState: {
-      header: "rtyuio",
-      columnPinning: { right: ["mrt-row-actions"] },
+    initialState: { 
+      columnPinning: { right: ["mrt-row-actions"] ,},
     },
+    displayColumnDefOptions: { 'mrt-row-actions': { size: 150 } },
+    
 
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -364,7 +408,7 @@ const virtual = useRef<HTMLDivElement>(null)
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
+          <MRT_EditActionButtons variant="text"  table={table} row={row} />
         </DialogActions>
       </>
     ),
@@ -389,6 +433,7 @@ const virtual = useRef<HTMLDivElement>(null)
           <VisibilityIcon
             style={{ marginTop: "8px" }}
             onClick={(event) => {
+              console.log(row.id);
               navigate(row.id);
             }}
             variant="contained"
@@ -439,13 +484,6 @@ const virtual = useRef<HTMLDivElement>(null)
           variant="contained"
           onClick={() => {
             navigate("/newvolonteer");
-            // table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-            // //or you can pass in a row object to set default values with the `createRow` helper function
-            // // table.setCreatingRow(
-            // //   createRow(table, {
-            // //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-            // //   }),
-            // // );
           }}
         >
           Yeni könüllü əlavə edin
@@ -498,13 +536,24 @@ function useGetUsers() {
   return useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(usersData);
+      try {
+        const response = await axios.get("https://api-volunteers.fhn.gov.az/api/v1/Volunteers?page=1&pageSize=0");
+        console.log(response.data);
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     refetchOnWindowFocus: false,
   });
-}
+} 
+      
+
+
+
 
 //UPDATE hook (put user in api)
 function useUpdateUser() {

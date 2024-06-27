@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useId, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "../App.css";
 import {
   MRT_EditActionButtons,
@@ -22,18 +22,15 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { fakeData5, usStates, columnNames, apiData , headerNames} from "../makeData";
+import axios from "axios";
+import { columnNames, apiData, headerNames } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Export } from "./Export";
 
 const Example = () => {
-  const location =  useLocation().pathname.substring(1);
+  const location = useLocation().pathname.substring(1);
   const [validationErrors, setValidationErrors] = useState({});
 
-  const tc = document.querySelector(".css-bbxzxe");
-  if (tc) {
-    tc.innerHTML = "Əməliyyatlar";
-  }
   const pagBUTTON = document.querySelector(
     ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
   );
@@ -41,68 +38,67 @@ const Example = () => {
     pagBUTTON.textContent = "Göstərilən say";
   }
   const columns = useMemo(
-    () =>
-      // [
-      //   // {
-      //   //   accessorKey: 'id',
-      //   //   header: 'Id',
-      //   //   enableEditing: false,
-      //   //   size: 80,
-      //   // },
+    () => [
+      {
+        accessorKey: 'id',
+        header: 'Id',
+        enableEditing: false,
+        size: 80,
+      },
 
-      //   {
-      //     accessorKey: "educationType",
-      //     header: "Təhsilin tipi",
-      //     muiEditTextFieldProps: {
-      //       required: true,
-      //       error: !!validationErrors?.educationType,
-      //       helperText: validationErrors?.educationType,
-      //       //remove any previous validation errors when user focuses on the input
-      //       onFocus: () =>
-      //         setValidationErrors({
-      //           ...validationErrors,
-      //           educationType: undefined,
-      //         }),
-      //       //optionally add validation checking for onBlur or onChange
-      //     },
-      //   },
+      {
+        accessorKey: "name",
+        header: headerNames[location].h1,
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              name: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
 
-      //   {
-      //     accessorKey: "status",
-      //     header: "Status",
-      //     editVariant: "select",
-      //     editSelectOptions: usStates,
-      //     muiEditTextFieldProps: {
-      //       select: true,
-      //       error: !!validationErrors?.status,
-      //       helperText: validationErrors?.status,
-      //     },
+      // {
+      //   accessorKey: "status",
+      //   header: "Status",
+      //   editVariant: "select",
+      //   editSelectOptions: usStates,
+      //   muiEditTextFieldProps: {
+      //     select: true,
+      //     error: !!validationErrors?.status,
+      //     helperText: validationErrors?.status,
       //   },
-      //   {
-      //     accessorKey: "prioritet",
-      //     header: "Prioritet",
-      //     muiEditTextFieldProps: {
-      //       required: true,
-      //       error: !!validationErrors?.prioritet,
-      //       helperText: validationErrors?.prioritet,
-      //       //remove any previous validation errors when user focuses on the input
-      //       onFocus: () =>
-      //         setValidationErrors({
-      //           ...validationErrors,
-      //           prioritet: undefined,
-      //         }),
-      //       //optionally add validation checking for onBlur or onChange
-      //     },
-      //   },
-      // ],
-      columnNames[location].map((column) => {
-        return {
-          accessorKey: column.accessorKey,
-          header: column.header,
-          editVariant: column.isSelectable ?  "select" : false,
-          editSelectOptions: column.isSelectable ?  column.isSelectable : [],
-        };
-      }),
+      // },
+      {
+        accessorKey: "priority",
+        header: "Prioritet",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.priority,
+          helperText: validationErrors?.priority,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              priority: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+    ],
+    columnNames[location].map((column) => {
+      return {
+        accessorKey: column.accessorKey,
+        header: column.header,
+        editVariant: column.isSelectable ? "select" : false,
+        editSelectOptions: column.isSelectable ? column.isSelectable : [],
+      };
+    }),
     [validationErrors]
   );
 
@@ -125,24 +121,29 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values, location);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
-    setValidationErrors({});
+    const newValidationErrors = validateUser(values);
+
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
+
+    // setValidationErrors({});
+
     await createUser(values);
+
     table.setCreatingRow(null); //exit creating mode
   };
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values, location);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
     setValidationErrors({});
+
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
   };
@@ -157,6 +158,7 @@ const Example = () => {
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
     columns,
+    enableRowNumbers: true,
     data: fetchedUsers,
     createDisplayMode: "modal", //default ('row', and 'custom' are also available)
     editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
@@ -219,9 +221,9 @@ const Example = () => {
               <path
                 d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
                 stroke="#4B7D83"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
               <path
                 d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
@@ -230,9 +232,9 @@ const Example = () => {
               <path
                 d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
                 stroke="#4B7D83"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </IconButton>
@@ -257,7 +259,7 @@ const Example = () => {
           // );
         }}
       >
-       Əlavə edin
+        Əlavə edin
       </Button>
     ),
 
@@ -272,14 +274,29 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
 function useCreateUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
+      console.log(user);
       //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+
+      axios
+        .post(url, user, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
     //client side optimistic update
     onMutate: (newUserInfo) => {
@@ -287,7 +304,7 @@ function useCreateUser() {
         ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random(),
+          id: (Math.random() + 1).toString(36).substring(7),
         },
       ]);
     },
@@ -295,14 +312,27 @@ function useCreateUser() {
   });
 }
 
-//READ hook (get users from api)
-function useGetUsers(location) {
+function useGetUsers() {
+  const location = useLocation().pathname.substring(1);
   return useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(apiData[location]);
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/${location}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     refetchOnWindowFocus: false,
   });
@@ -310,13 +340,33 @@ function useGetUsers(location) {
 
 //UPDATE hook (put user in api)
 function useUpdateUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
+
+      const data = { ...user, isDeleted: true };
+      console.log(data);
       //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      console.log(user);
+      axios
+        .put(url, data, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
+    //client side optimistic update
     //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
@@ -331,12 +381,27 @@ function useUpdateUser() {
 
 //DELETE hook (delete user in api)
 function useDeleteUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/${location}/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {
@@ -350,29 +415,30 @@ function useDeleteUser() {
 
 const queryClient = new QueryClient();
 
-const Uxtable = () => 
-{ 
-  const location =  useLocation().pathname.substring(1);
-  return(
-  
-  //Put this with your other react-query providers near root of your app
-  <>
- <div><h1>{headerNames[location].h1}</h1></div>
+const Uxtable = () => {
+  const location = useLocation().pathname.substring(1);
+  return (
+    //Put this with your other react-query providers near root of your app
+    <>
+      <div>
+        <h1>{headerNames[location].h1}</h1>
+      </div>
 
-  <QueryClientProvider client={queryClient}>
-    <Example />
-  </QueryClientProvider></>
-);}
+      <QueryClientProvider client={queryClient}>
+        <Example />
+      </QueryClientProvider>
+    </>
+  );
+};
 
 export default Uxtable;
-
-const validateRequired = (value) => !!value.length;
+const validateRequired = (value) => {
+  return !!value && !!value.length;
+};
 
 function validateUser(user, location) {
-
+  const value = user[location];
   return {
-    [location]: !validateRequired(user[location])
-      ? "First Name is Required"
-      : "",
+    [location]: !validateRequired(value) ? "First Name is Required" : "",
   };
 }

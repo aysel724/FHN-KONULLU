@@ -354,7 +354,7 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
-    activity: !validateRequired(user.activity)
+ start: !validateRequired(user.start)
       ? 'First Name is Required'
       : '',
 

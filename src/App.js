@@ -23,10 +23,8 @@ import TrainingsInfo from "./pages/TrainingsInfo";
 import EventInfo from "./pages/EventInfo";
 
 function App() {
-
   return (
     <div className="App">
-   
       {" "}
       <>
         <Routes>
@@ -44,37 +42,48 @@ function App() {
             <Route path="/reports" element={<Reports />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/insuranseTotal" element={<InsuranceTotal />} />
+        
+            
             <Route
-              path="/trainingsResults"
+              path="/TrainingResults"
               element={<TableForEducationType />}
             />
-            <Route path="/trainingsAdmin" element={<TableForEducationType />} />
-            <Route path="/educationType" element={<TableForEducationType />} />
             <Route
-              path="/educationDegree"
+              path="/MesTrainingNames"
               element={<TableForEducationType />}
             />
-            <Route path="/insurance" element={<TableForEducationType />} />
-            <Route path="/computerSkills" element={<TableForEducationType />} />
+            <Route path="/EducationTypes" element={<TableForEducationType />} />
             <Route
-              path="/computerSkillsLevel"
+              path="/EducationDegrees"
               element={<TableForEducationType />}
             />
-            <Route path="/reason" element={<TableForEducationType />} />
-            <Route path="/staff" element={<TableForEducationType />} />
             <Route
-              path="/electronDocuments"
+              path="/InsuranceCompaniesnce"
               element={<TableForEducationType />}
             />
-            <Route path="/language" element={<TableForEducationType />} />
-            <Route path="/languageLevel" element={<TableForEducationType />} />
+            <Route
+              path="/ComputerSkillName"
+              element={<TableForEducationType />}
+            />
+            <Route path="/SkillLevels" element={<TableForEducationType />} />
+            <Route
+              path="/MesVoluntaryActivityEndReasons"
+              element={<TableForEducationType />}
+            />
+            <Route path="/SupplyTypes" element={<TableForEducationType />} />
+            <Route
+              path="/ElectronicDocumentTypes"
+              element={<TableForEducationType />}
+            />
+            <Route path="/LanguageNames" element={<TableForEducationType />} />
+            <Route
+              path="/LanguageProficiencyLevels"
+              element={<TableForEducationType />}
+            />
             <Route path="/userinfo" element={<UserInfo />} />{" "}
           </Route>
         </Routes>
       </>
-
     </div>
   );
 }

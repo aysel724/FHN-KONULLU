@@ -29,10 +29,6 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
 
-  const tc = document.querySelector(".css-bbxzxe");
-  if (tc){
-     tc.innerHTML = "Əməliyyatlar";
-  }
  const pagBUTTON = document.querySelector(".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root")
  if(pagBUTTON){
    pagBUTTON.textContent = "Göstərilən say"
@@ -150,6 +146,7 @@ const Example = () => {
     positionActionsColumn: "last",
     columns,
     data: fetchedUsers,
+    enableRowNumbers: true,
     createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
     editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,

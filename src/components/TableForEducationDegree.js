@@ -29,10 +29,7 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
 
-  const tc = document.querySelector(".css-bbxzxe");
-  if (tc){
-     tc.innerHTML = "Əməliyyatlar";
-  }
+
  const pagBUTTON = document.querySelector(".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root")
  if(pagBUTTON){
    pagBUTTON.textContent = "Göstərilən say"

@@ -1,4 +1,5 @@
 .App {
+ 
   text-align: center;
 }
 #cancel{border: 1px solid rgb(75, 125, 131) ;
@@ -17,6 +18,9 @@ background-color: #011713!important;
   padding: 10px 10px!important;
 
  
+}
+.MuiTable-root{
+  overflow-x: scroll;
 }
 
 #submit{  background-color: rgb(75, 125, 131) !important;
@@ -132,15 +136,6 @@ ul {
 .ant-btn-primary {
   background-color: #4b7d83;
 }
-/* .ant-layout-sider{  flex:  0 0 320px!important;
-
-
-  }
- 
-  aside{
-    width: 320px!important;
-  } */
-
  .css-131pszo-MuiTableFooter-root
   {
     width: 100%;
@@ -151,19 +146,6 @@ ul {
   .ant-popover-content{ 
     width: 300px!important;
   }
-/* Assuming your table container has a class name of .table-container */
-.table-container {
-  overflow-x: scroll!important;
-}
-
-/* Force the scrollbar to always be visible */
-.table-container::-webkit-scrollbar {
-  -webkit-appearance: none!important;
-  width: 8px!important;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-  border-radius: 4px!important;
-  background-color: rgba(0, 0, 0, 0.5)!important;
-  box-shadow: 0 0 1px rgba(255, 255, 255, 0.5)!important;
+.table-1{
+  max-height: 400px;
 }

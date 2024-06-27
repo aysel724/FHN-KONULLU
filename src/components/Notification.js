@@ -19,10 +19,8 @@ const Notification = () => {
   });
   const openNotification = () => {
     api.open({
-      message: 'Notification GHJK',
-      description: `${Array(Math.round(Math.random() * 5) + 1)
-        .fill('This is the content of the notification.')
-        .join('\n')}`,
+      message: 'Bildiriş',
+      description: `Bildiriş yoxdur`,
       duration: null,
    
     });

@@ -1,11 +1,10 @@
-import { useMemo, useState, } from 'react';
-import { useNavigate } from 'react-router-dom';
-import "../App.css"
+import { useMemo, useState } from "react";
+import "../App.css";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
-} from 'material-react-table';
+} from "material-react-table";
 import {
   Box,
   Button,
@@ -14,19 +13,21 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   QueryClient,
   QueryClientProvider,
   useMutation,
   useQuery,
   useQueryClient,
-} from '@tanstack/react-query';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { fakeData2, usStates } from '../makeData';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useExcelJS } from "react-use-exceljs"
+} from "@tanstack/react-query";
+import { fakeData1 } from "../makeData";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useExcelJS } from "react-use-exceljs";
+import axios from "axios";
+import { useEffect } from "react";
 const Example = () => {
+  const url = "https://reqres.in/api/users?page=2";
 
   const excel = useExcelJS({
     filename: "Tədbirlər siyahısı.xlsx",
@@ -35,69 +36,57 @@ const Example = () => {
         name: "Sheet 1",
         columns: [
           {
-            header: "Təlimin adı",
+            header: "Tədbirin adı",
             key: "name",
             width: 30,
           },
           {
-            header: "Təlimin başlama tarixi",
+            header: "Başlama vaxtı",
             key: "start",
             width: 32,
           },
           {
-            header: "Təlimin bitmə tarixi",
+            header: "Bitmə tarixi",
+            key: "finish",
             width: 30,
           },
           {
-            header: "Təlimin keçirilmə ünvanı",
+            header: "Tədbirin keçirilmə ünvanı",
             key: "adress",
             width: 30,
           },
           {
-            header: "Təlimin müddəti",
+            header: "Tədbirin müddəti",
             key: "time",
             width: 32,
           },
           {
-            header: "Təlim üzrə məsul şəxs",
+            header: "Tədbir üzrə məsul şəxs",
             key: "couch",
-            width: 30,
-          },
-          {
-            header: "iştirakçı sayı",
-            key: "number",
             width: 30,
           },
         ],
       },
     ],
-  })
+  });
   const onClick = () => {
-    excel.download(fakeData2)
+    excel.download(fakeData1);
+  };
+  const pagBUTTON = document.querySelector(
+    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
+  );
+  if (pagBUTTON) {
+    pagBUTTON.textContent = "Göstərilən";
   }
-  const navigate = useNavigate();
+
   const [validationErrors, setValidationErrors] = useState({});
-  const tc = document.querySelector(".css-bbxzxe");
-  if (tc){
-     tc.innerHTML = "Əməliyyatlar";
-  }
- const pagBUTTON = document.querySelector(".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root")
- if(pagBUTTON){
-   pagBUTTON.textContent = "Göstərilən"
- }
 
   const columns = useMemo(
     () => [
-    
-      // {
-      //   accessorKey: 'id',
-      //   header: 'Id',
-      //   enableEditing: false,
-      //   size: 80,
-      // },
+     
       {
-        accessorKey: 'name',
-        header: 'Təlimin adı',
+        accessorKey: `mesTrainingName.name`,
+        header: "Tədbirin adı",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.name,
@@ -106,110 +95,125 @@ const Example = () => {
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              name: undefined,
+             name: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
-        accessorKey: 'start',
-        header: 'Təlimin başlama tarixi',
+        accessorKey: "startDate",
+        header: "Tədbirin başlama tarixi",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.start,
-          helperText: validationErrors?.start,
+          error: !!validationErrors?.startDate,
+          helperText: validationErrors?.startDate,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              start: undefined,
+              startDate: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
-        accessorKey: 'finish',
-        header: "Təlimin bitmə tarixi",
+        accessorKey: "finishDate",
+        header: "Tədbirin başlama tarixi",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.finish,
-          helperText: validationErrors?.finish,
+          error: !!validationErrors?.finishDate,
+          helperText: validationErrors?.finishDate,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              finish: undefined,
+              finishDate: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
-        accessorKey: 'time',
-        header: 'Təlimin müddəti',
+        accessorKey: "trainingDuration",
+        header: "Tədbirin müddəti",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.time,
-          helperText: validationErrors?.time,
+          error: !!validationErrors?.trainingDuration,
+          helperText: validationErrors?.trainingDuration,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              time: undefined,
+              trainingDuration: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
-        accessorKey: 'adress',
-        header: 'Təlimin keçirilmə yeri',
+        accessorKey: "trainingPlace",
+        header: "Tədbirin keçirilmə yeri",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.adress,
-          helperText: validationErrors?.addres,
+          error: !!validationErrors?.trainingPlace,
+          helperText: validationErrors?.trainingPlace,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              adress: undefined,
+              trainingPlace: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
-        accessorKey: 'couch',
-        header: ' Təlim üzrə məsul şəxs',
+        accessorKey: "trainingMaster",
+        header: " Tədbir üzrə məsul şəxs",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.couch,
-          helperText: validationErrors?.couch,
+          error: !!validationErrors?.trainingMaster,
+          helperText: validationErrors?.trainingMaster,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              couch: undefined,
+              trainingMaster: undefined,
             }),
         },
       },
       {
-        accessorKey: 'number',
-        header: 'iştirakçı sayı',
+        accessorKey: "volunteer",
+        header: "iştirakçı sayı",
         muiEditTextFieldProps: {
-          
           required: true,
-          error: !!validationErrors?.number,
-          helperText: validationErrors?.number,
+          error: !!validationErrors?.volunteer,
+          helperText: validationErrors?.volunteer,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              number: undefined,
+              volunteer: undefined,
             }),
         },
       },
-      
       {
-        accessorKey: 'note',
-        header: 'qeyd',
+        accessorKey: `trainingResult.name`,
+        header: "Tədbirin nəticəsi",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+             name: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+
+      {
+        accessorKey: "note",
+        header: "qeyd",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.note,
@@ -223,7 +227,7 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors],
+    [validationErrors]
   );
 
   //call CREATE hook
@@ -255,7 +259,6 @@ const Example = () => {
     table.setCreatingRow(null); //exit creating mode
   };
 
-
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values);
@@ -270,32 +273,55 @@ const Example = () => {
 
   //DELETE action
   const openDeleteConfirmModal = (row) => {
-    if (window.confirm('təsdiq edirsiz?')) {
+    if (window.confirm("təsdiq edirsiz?")) {
       deleteUser(row.original.id);
     }
   };
 
-  
-
-  const table = useMaterialReactTable({ 
+  const table = useMaterialReactTable({
     positionActionsColumn: "last",
+
+    muiTableContainerProps: { sx: { maxHeight: '600px' } },
+    enableColumnVirtualization: false,
+    enableGlobalFilterModes: true,
+    enableRowVirtualization: true,
+    enablePagination:true,
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
     columns,
+    rowCount:5,
+  
+ 
+    rowVirtualizerOptions: { overscan: 2 }, //optionally customize the row virtualizer
+    virtualizerProps: { overscan: 2 },
     data: fetchedUsers,
-    createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
-    editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
+    muiTableBodyRowProps: ({ row }) => ({
+      sx: {   
+        cursor: "pointer", //you might want to change the cursor too when adding an onClick
+      },
+    }),
+    MRT_EditActionButtons,
+    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
+    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
+    initialState: { 
+      columnPinning: { right: ["mrt-row-actions"] ,},
+    },
+    displayColumnDefOptions: { 'mrt-row-actions': { size: 150 } },
+    
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
-          color: 'error',
-          children: 'Error loading data',
+          color: "error",
+          children: "Error loading data",
         }
       : undefined,
     muiTableContainerProps: {
-      sx: {  
-        minHeight: '500px',
+      sx: {
+        minHeight: "500px",
       },
-   
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
@@ -304,14 +330,14 @@ const Example = () => {
     //optionally customize modal content
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h5">Yeni təlim əlavə edin</DialogTitle>
+        <DialogTitle variant="h5">Yeni tədbir əlavə edin</DialogTitle>
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons  variant="text" table={table} row={row} />
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
@@ -320,31 +346,45 @@ const Example = () => {
       <>
         <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons  
-       variant="text" table={table} row={row} />
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table  , }) => (
-      
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Tooltip title="Ətraflı">
-        <VisibilityIcon style={{ marginTop:"8px"}}onClick={ (event) => {
-        navigate(row.id)
-      }} variant="contained">Ətraflı</VisibilityIcon>
-        </Tooltip>
+    renderRowActions: ({ row, table }) => (
+      <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z" stroke="#4B7D83" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z" fill="#4B7D83"/>
-<path d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353" stroke="#4B7D83" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
+                stroke="#4B7D83"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
+                fill="#4B7D83"
+              />
+              <path
+                d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
+                stroke="#4B7D83"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -352,27 +392,30 @@ const Example = () => {
             <DeleteIcon />
           </IconButton>
         </Tooltip>
-        
       </Box>
     ),
-    renderTopToolbarCustomActions: ({ table }) => ( < div style={{display:"flex", flexDirection:"row", gap:"20px"}}>
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
-        }}
-      >
-       Yeni təlim əlavə et
-      </Button>
-       <Button variant="contained" onClick={onClick}>Excelə export</Button></div>
+    renderTopToolbarCustomActions: ({ table }) => (
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            table.setCreatingRow(true); //simplest way to open the create row modal with no default values
+            //or you can pass in a row object to set default values with the `createRow` helper function
+            // table.setCreatingRow(
+            //   createRow(table, {
+            //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
+            //   }),
+            // );
+          }}
+        >
+          Yeni tədbir əlavə et
+        </Button>
+        <Button variant="contained" onClick={onClick}>
+          Excelə export
+        </Button>
+      </div>
     ),
-  
+
     state: {
       isLoading: isLoadingUsers,
       isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
@@ -389,59 +432,81 @@ function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      try {
+        // Send API update request using Axios
+        await axios.post("https://reqres.in/api/users", user);
+
+        // Fake delay for demonstration purposes
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        return Promise.resolve();
+      } catch (error) {
+        // Handle errors
+        return Promise.reject(error);
+      }
     },
-    //client side optimistic update
+    // Client-side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['events'], (prevEvets) => [
-        ...prevEvets,
+      queryClient.setQueryData(["users"], (prevEvents) => [
+        ...prevEvents,
         {
           ...newUserInfo,
-          id: (Math.random()+1)
-         
-        }, 
+          id: Math.random() + 1,
+        },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // refetch users after mutation, disabled for demo
   });
 }
 
-//READ hook (get users from api)
 function useGetUsers() {
   return useQuery({
-    queryKey: ['events'],
+    queryKey: ["users"],
     queryFn: async () => {
-      //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(fakeData2);
+      try {
+        const response = await axios.get("https://api-volunteers.fhn.gov.az/api/v1/MesTrainings");
+        console.log(response.data);
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     refetchOnWindowFocus: false,
   });
-}
+} 
 
-//UPDATE hook (put user in api)
 function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (event) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+    mutationFn: async (user) => {
+      try {
+        // Make API call using Axios
+        await axios.put("https://reqres.in/api/users/2", user);
+
+        // Fake delay for demonstration
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        return Promise.resolve();
+      } catch (error) {
+        // Handle error
+        console.error("Error updating user:", error);
+        throw error;
+      }
     },
-    //client side optimistic update
+    // Client side optimistic update
     onMutate: (newEventInfo) => {
-      queryClient.setQueryData(['events'], (prevEvets) =>
-        prevEvets?.map((prevEvets) =>
-          prevEvets.id === newEventInfo.id ? newEventInfo : prevEvets,
-        ),
+      queryClient.setQueryData(["users"], (prevEvents) =>
+        prevEvents?.map((prevEvent) =>
+          prevEvent.id === newEventInfo.id ? newEventInfo : prevEvent
+        )
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // refetch users after mutation, disabled for demo
   });
 }
-
 //DELETE hook (delete user in api)
 function useDeleteUser() {
   const queryClient = useQueryClient();
@@ -453,8 +518,8 @@ function useDeleteUser() {
     },
     //client side optimistic update
     onMutate: (eventId) => {
-      queryClient.setQueryData(['events'], (prevEvets) =>
-      prevEvets?.filter((event) => event.id !== eventId),
+      queryClient.setQueryData(["events"], (prevEvets) =>
+        prevEvets?.filter((event) => event.id !== eventId)
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -474,13 +539,10 @@ export default Uxtable;
 
 const validateRequired = (value) => !!value.length;
 
-
 function validateUser(user) {
   return {
-    name: !validateRequired(user.name)
-      ? 'First Name is Required'
-      : '',
-   start: !validateRequired(user.start) ? 'Last Name is Required' : '',
- 
+   name: !validateRequired(user.name)
+      ? "First Name is Required"
+      : "",
   };
 }

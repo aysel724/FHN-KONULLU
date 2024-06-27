@@ -14,7 +14,7 @@ import "../App.css";
 import UserInfo from "../pages/UserInfo";
 import Volonteer from "../pages/Volonteer";
 import NewVolonteer from "../pages/NewVolonteer";
-import data from "../data.json";
+
 import logo from "../components/images/FHNLogo.png";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import TableForEducationType from "../components/TableForEducationType";
@@ -24,9 +24,10 @@ import Trainings from "../pages/Trainings";
 import BloodtypeIcon from "@mui/icons-material/Bloodtype";
 import InsuranceTotal from "../pages/InsuranceTotal";
 import TrainingsInfo from "../pages/TrainingsInfo";
-import PassowrdChange from "./PasswordChange";
-import { Divider } from 'antd';
+
+import { Divider } from "antd";
 import EventInfo from "../pages/EventInfo";
+import { key } from "localforage";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -160,19 +161,13 @@ const items = [
         </defs>
       </svg>
     </Link>,
+
+
     [
-      getItem(
-        <Link to="/users" >
-          <FiberManualRecordIcon
-            style={{ fontSize: "small", marginRight: "10px" }}
-          />
-          İstifadəçilər
-        </Link>,
-        "6"
-      ),
+      
 
       getItem(
-        <Link to="/educationType" >
+        <Link to="/EducationTypes" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -181,7 +176,7 @@ const items = [
         "8"
       ),
       getItem(
-        <Link to="/educationDegree">
+        <Link to="/EducationDegrees" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -190,7 +185,7 @@ const items = [
         "9"
       ),
       getItem(
-        <Link to="/language" >
+        <Link to="/LanguageNames" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -199,7 +194,7 @@ const items = [
         "10"
       ),
       getItem(
-        <Link to="/languageLevel" >
+        <Link to="/LanguageProficiencyLevels" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -208,7 +203,7 @@ const items = [
         "11"
       ),
       getItem(
-        <Link to="/computerSkills">
+        <Link to="/ComputerSkillName" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -217,7 +212,7 @@ const items = [
         "12"
       ),
       getItem(
-        <Link to="/computerSkillsLevel" >
+        <Link to="/SkillLevels" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -226,7 +221,7 @@ const items = [
         "13"
       ),
       getItem(
-        <Link to="/insurance" >
+        <Link to="/InsuranceCompaniesnce" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -235,7 +230,7 @@ const items = [
         "14"
       ),
       getItem(
-        <Link to="/reason">
+        <Link to="/MesVoluntaryActivityEndReasons" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -244,7 +239,7 @@ const items = [
         "15"
       ),
       getItem(
-        <Link to="/staff">
+        <Link to="/SupplyTypes" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -253,7 +248,7 @@ const items = [
         "16"
       ),
       getItem(
-        <Link to="/electronDocuments">
+        <Link to="/ElectronicDocumentTypes" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -262,7 +257,7 @@ const items = [
         "17"
       ),
       getItem(
-        <Link to="/trainingsAdmin">
+        <Link to="/MesTrainingNames" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -271,7 +266,7 @@ const items = [
         "18"
       ),
       getItem(
-        <Link to="/trainingsResults" >
+        <Link to="/TrainingResults" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -285,7 +280,6 @@ const items = [
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
-
   // &#9776;
   return (
     <>
@@ -297,13 +291,13 @@ const Sidebar = () => {
         }}
       >
         <Sider
+          width={330}
           trigger={null}
           style={{
             borderRadius: "15px",
             padding: 0,
             background: "#4b7d83",
-            height: "100vh",
-            margin: "5px", width:"100vw"
+            margin: "5px",
           }}
           collapsible
           collapsed={collapsed}
@@ -311,8 +305,10 @@ const Sidebar = () => {
         >
           <div className="logo-container">
             <img src={logo} style={{ width: "80px" }}></img>
-            <p style={{color:"white", fontSize:"10px"}}>FÖVQƏLADƏ HALLAR KÖNÜLLÜLƏRİ</p>
-            <Divider style={{backgroundColor:'white', opacity:"50%"}}/>
+            <p style={{ color: "white", fontSize: "10px" }}>
+              FÖVQƏLADƏ HALLAR KÖNÜLLÜLƏRİ
+            </p>
+            <Divider style={{ backgroundColor: "white", opacity: "50%" }} />
           </div>
           <Menu
             theme="dark"
@@ -322,7 +318,7 @@ const Sidebar = () => {
               padding: 0,
               background: "#4b7d83",
             }}
-            defaultSelectedKeys={["1"]}
+            defaultOpenKeys={["5"]}
             darkitemselectedbg="#001529"
             mode="inline"
             items={items}
@@ -331,52 +327,51 @@ const Sidebar = () => {
 
         <Layout>
           <Header
-            style={{ display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center",
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
               margin: "5px",
               borderRadius: "15px",
               position: "relative",
               background: "#4b7d83",
-              padding: "0 50px"
+              padding: "0 50px",
             }}
           >
-            {/* <div
+            <div>
+              <Button
+                type="text"
+                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                onClick={() => setCollapsed(!collapsed)}
+                style={{
+                  color: "white",
+                  fontSize: "16px",
+                  width: 64,
+                  height: 64,
+                  marginLeft: "-50px",
+                }}
+              />
+            </div>
+            <div
               style={{
                 display: "flex",
-                color: "white",
                 flexDirection: "row",
-                alignItems: "center",
-
                 justifyContent: "space-between",
+                alignItems: "center",
+                color: "white",
+                alignContent: "center",
+                height: "50px",
               }}
             >
-         */}
-              <div>
-                <Button
-                  type="text"
-                  icon={
-                    collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
-                  }
-                  onClick={() => setCollapsed(!collapsed)}
-                  style={{ 
-                   
-                    color: "white",
-                    fontSize: "16px",
-                    width: 64,
-                    height: 64,
-                    marginLeft:"-50px"
-                  
-                  }}
-                />
-              </div>
-              <div style={{ display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center", color:"white", alignContent:"center", height:"50px"}} >
-                <Notification></Notification>
+              <Notification></Notification>
 
-                <p style={{  padding:"10px"}} >{data.users[0].name}</p>
-              </div>
+              <p >ertyguhi</p>
+            </div>
             {/* </div> */}
           </Header>
 
-           <Content style={{ padding: "2%" , margin:"0"}}>
+          <Content style={{ padding: "2%", margin: "0", height: "80vh" }}>
             <Routes>
               <Route element={<Navigate to="login" />} path="/" />
 
@@ -388,72 +383,74 @@ const Sidebar = () => {
               <Route path="/events/:id" element={<EventInfo />} />
               <Route path="/events" element={<Events />} />
               <Route path="/reports" element={<Reports />} />
-              <Route path="/login" element={<Login />} /> 
+              <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/insuranseTotal" element={<InsuranceTotal />} />
+            
+
               <Route
-                path="/trainingsResults"
+                path="/TrainingResults"
                 element={<TableForEducationType />}
               />
               <Route
-                path="/trainingsAdmin"
+                path="/MesTrainingNames"
                 element={<TableForEducationType />}
               />
               <Route
-                path="/educationType"
+                path="/EducationTypes"
                 element={<TableForEducationType />}
               />
               <Route
-                path="/educationDegree"
-                element={<TableForEducationType />}
-              />
-              <Route path="/insurance" element={<TableForEducationType />} />
-              <Route
-                path="/computerSkills"
+                path="/EducationDegrees"
                 element={<TableForEducationType />}
               />
               <Route
-                path="/computerSkillsLevel"
+                path="/InsuranceCompaniesnce"
                 element={<TableForEducationType />}
               />
-              <Route path="/reason" element={<TableForEducationType />} />
-              <Route path="/staff" element={<TableForEducationType />} />
               <Route
-                path="/electronDocuments"
+                path="/ComputerSkillName"
                 element={<TableForEducationType />}
               />
-              <Route path="/language" element={<TableForEducationType />} />
+              <Route path="/SkillLevels" element={<TableForEducationType />} />
               <Route
-                path="/languageLevel"
+                path="/MesVoluntaryActivityEndReasons"
+                element={<TableForEducationType />}
+              />
+              <Route path="/SupplyTypes" element={<TableForEducationType />} />
+              <Route
+                path="/ElectronicDocumentTypes"
+                element={<TableForEducationType />}
+              />
+              <Route
+                path="/LanguageNames"
+                element={<TableForEducationType />}
+              />
+              <Route
+                path="/LanguageProficiencyLevels"
                 element={<TableForEducationType />}
               />
 
               <Route path="/userinfo" element={<UserInfo />} />
-            </Routes> 
+            </Routes>
           </Content>
           <Footer
-            style={{
-              borderRadius: "15px",
-              background: "#4b7d83",
-              height: "7vh",
+            style={{  position:"sticky",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
               margin: "5px",
+              borderRadius: "15px",
+
+              background: "#4b7d83",
+              padding: "0 50px",
+              color: "white",
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                color: "white",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <p>
-                2023. Rəqəmsal Texnologiyalar və İnnovasiyaların İnkişafı Baş
-                İdarəsi
-              </p>
-            </div>
+            <p>
+              2023. Rəqəmsal Texnologiyalar və İnnovasiyaların İnkişafı Baş
+              İdarəsi
+            </p>
           </Footer>
         </Layout>
       </Layout>

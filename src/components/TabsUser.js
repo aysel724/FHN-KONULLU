@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import "../App.css";
-import data from "../data.json";
+
 import TableForlanguageTabs from "../tabcomponents/TableForlanguageTabs";
 import TableForEducationTabs from "../tabcomponents/TableForEducationTabs";
 import TableForLanguage from "../components/TableForLanguage";
@@ -172,7 +172,7 @@ export default function TabsUser() {
           aria-label="scrollable force tabs example"
         >
           <Tab className="tabs" label="Şəxsi məlumatlar" {...a11yProps(0)} />
-          <Tab className="tabs" label="Təhsil məlumatları" {...a11yProps(1)} />
+          <Tab className="tabs" label="FHN-də könüllülük fəaliyəti" {...a11yProps(1)} />
           <Tab className="tabs" label="Dil bilikləri" {...a11yProps(2)} />
           <Tab className="tabs" label="Kompüter bilikləri" {...a11yProps(3)} />
           <Tab className="tabs" label="Kurs və təlimlər" {...a11yProps(4)} />
@@ -193,7 +193,7 @@ export default function TabsUser() {
           />
           <Tab
             className="tabs"
-            label="FHN-də könüllülük fəaliyəti"
+            label="Təhsil məlumatları" 
             {...a11yProps(12)}
           />
           <Tab className="tabs" label="Əmək fəaliyyəti " {...a11yProps(13)} />
@@ -217,11 +217,11 @@ export default function TabsUser() {
         >
           <p>
             <strong>Hərbi mükələfiyyəti:</strong>
-            {data.users[0].job.name}
+            {/* {data.users[0].job.name} */}
           </p>
           <p>
             <strong>Boy: </strong>
-            {data.users[0].boy}
+            {/* {data.users[0].boy} */}
           </p>
           <p>
             <strong>Vətəndaşlığı: </strong>08.10.2002
@@ -241,11 +241,11 @@ export default function TabsUser() {
           </p>
           <p>
             <strong>Şəxsiyyət vəsiqəsini verən orqanın adı: </strong>
-            {data.users[0].job.name}
+            {/* {data.users[0].job.name} */}
           </p>
           <p>
             <strong>Qeydiyyat ünvan: </strong>
-            {data.users[0].boy}
+          
           </p>
           <p>
             <strong>Faktiki ünvanı: </strong>08.10.2002
@@ -259,7 +259,7 @@ export default function TabsUser() {
         </div>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <TableForEducationTabs />
+      <TableForFHNactivityTab />   
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         <TableForlanguageTabs />
@@ -292,7 +292,7 @@ export default function TabsUser() {
         <TableForActivitiTab />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={12}>
-        <TableForFHNactivityTab />
+      <TableForEducationTabs />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={13}>
         <TableForJob/>
