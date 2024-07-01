@@ -14,7 +14,7 @@ import "../App.css";
 import UserInfo from "../pages/UserInfo";
 import Volonteer from "../pages/Volonteer";
 import NewVolonteer from "../pages/NewVolonteer";
-
+import TableForEducationDegree from"../components/TableForEducationDegree"
 import logo from "../components/images/FHNLogo.png";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import TableForEducationType from "../components/TableForEducationType";
@@ -42,7 +42,7 @@ const items = [
   getItem(
     "Könüllülər",
     "1",
-    <Link to="/volonteers">
+    <Link to="/Volonteers">
       <svg
         width="30"
         height="24"
@@ -60,7 +60,7 @@ const items = [
   getItem(
     "Təlimlər",
     "2",
-    <Link to="/trainings">
+    <Link to="/MesTrainings">
       <svg
         width="22"
         height="23"
@@ -203,7 +203,7 @@ const items = [
         "11"
       ),
       getItem(
-        <Link to="/ComputerSkillName" reloadDocument="true">
+        <Link to="/ComputerSkillNames" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -221,7 +221,7 @@ const items = [
         "13"
       ),
       getItem(
-        <Link to="/InsuranceCompaniesnce" reloadDocument="true">
+        <Link to="/InsuranceCompanies" reloadDocument="true">
           <FiberManualRecordIcon
             style={{ fontSize: "small", marginRight: "10px" }}
           />
@@ -293,7 +293,11 @@ const Sidebar = () => {
         <Sider
           width={330}
           trigger={null}
-          style={{
+          style={{    
+          minHeight: '100vh',
+
+        
+      
             borderRadius: "15px",
             padding: 0,
             background: "#4b7d83",
@@ -325,7 +329,7 @@ const Sidebar = () => {
           />
         </Sider>
 
-        <Layout>
+        <Layout style=   {{minHeight: '100vh'}}>
           <Header
             style={{
               display: "flex",
@@ -371,14 +375,16 @@ const Sidebar = () => {
             {/* </div> */}
           </Header>
 
-          <Content style={{ padding: "2%", margin: "0", height: "80vh" }}>
+          <Content   style={{
+                  padding:"20px"
+                }} >
             <Routes>
               <Route element={<Navigate to="login" />} path="/" />
 
-              <Route path="/volonteers" element={<Volonteer />} />
-              <Route path="/volonteers/:id" element={<UserInfo />} />
+              <Route path="/Volonteers" element={<Volonteer />} />
+              <Route path="/Volonteers/:id" element={<UserInfo />} />
               <Route path="/newvolonteer" element={<NewVolonteer />} />
-              <Route path="/trainings" element={<Trainings />} />
+              <Route path="/MesTrainings" element={<Trainings />} />
               <Route path="/trainings/:id" element={<TrainingsInfo />} />
               <Route path="/events/:id" element={<EventInfo />} />
               <Route path="/events" element={<Events />} />
@@ -401,14 +407,14 @@ const Sidebar = () => {
               />
               <Route
                 path="/EducationDegrees"
+                element={<TableForEducationDegree />}
+              />
+              <Route
+                path="/InsuranceCompanies"
                 element={<TableForEducationType />}
               />
               <Route
-                path="/InsuranceCompaniesnce"
-                element={<TableForEducationType />}
-              />
-              <Route
-                path="/ComputerSkillName"
+                path="/ComputerSkillNames"
                 element={<TableForEducationType />}
               />
               <Route path="/SkillLevels" element={<TableForEducationType />} />
@@ -434,21 +440,20 @@ const Sidebar = () => {
             </Routes>
           </Content>
           <Footer
-            style={{  position:"sticky",
+            style={{ 
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
               margin: "5px",
               borderRadius: "15px",
-
               background: "#4b7d83",
               padding: "0 50px",
               color: "white",
             }}
           >
             <p>
-              2023. Rəqəmsal Texnologiyalar və İnnovasiyaların İnkişafı Baş
+            ©{new Date().getFullYear()} Rəqəmsal Texnologiyalar və İnnovasiyaların İnkişafı Baş
               İdarəsi
             </p>
           </Footer>

@@ -78,6 +78,7 @@ const Example = () => {
         accessorKey: "priority",
         header: "Prioritet",
         muiEditTextFieldProps: {
+        type:"number",
           required: true,
           error: !!validationErrors?.priority,
           helperText: validationErrors?.priority,
@@ -90,7 +91,25 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
+      // {
+      //   accessorKey: "EducationTypes",
+      //   header: "Təhsilin tipi",
+      //   muiEditTextFieldProps: {
+      //   type:"number",
+      //     required: true,
+      //     error: !!validationErrors?.EducationTypes,
+      //     helperText: validationErrors?.EducationTypes,
+      //     //remove any previous validation errors when user focuses on the input
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         EducationTypes: undefined,
+      //       }),
+      //     //optionally add validation checking for onBlur or onChange
+      //   },
+      // },
     ],
+
     columnNames[location].map((column) => {
       return {
         accessorKey: column.accessorKey,
@@ -123,12 +142,12 @@ const Example = () => {
   const handleCreateUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values);
 
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
 
-    // setValidationErrors({});
+    setValidationErrors({});
 
     await createUser(values);
 
@@ -137,12 +156,12 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values, location);
+    // const newValidationErrors = validateUser(values);
     // if (Object.values(newValidationErrors).some((error) => error)) {
     //   setValidationErrors(newValidationErrors);
     //   return;
     // }
-    setValidationErrors({});
+    // setValidationErrors({});
 
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -167,7 +186,7 @@ const Example = () => {
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+   children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -304,7 +323,7 @@ function useCreateUser() {
         ...prevUsers,
         {
           ...newUserInfo,
-          id: (Math.random() + 1).toString(36).substring(7),
+       
         },
       ]);
     },
@@ -436,9 +455,17 @@ const validateRequired = (value) => {
   return !!value && !!value.length;
 };
 
-function validateUser(user, location) {
-  const value = user[location];
+function validateUser(user) {
+
   return {
-    [location]: !validateRequired(value) ? "First Name is Required" : "",
+    name: !validateRequired(user.name) ? "Xana boş qala bilməz" : "",
+    priority:!validateRequired(user.priority) ? "Xana boş qala bilməz" : "",
   };
 }
+// return {
+//   firstName: !validateRequired(user.firstName)
+//     ? "First Name is Required"
+//     : "",
+//   lastName: !validateRequired(user.fin) ? "Last Name is Required" : "",
+//   email: !validateEmail(user.mail) ? "Incorrect Email Format" : "",
+// };

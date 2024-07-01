@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState , useNavigate} from "react";
 import "../App.css";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Button,
@@ -72,6 +73,7 @@ const Example = () => {
   const onClick = () => {
     excel.download(fakeData1);
   };
+  // const navigate = useNavigate();
   const pagBUTTON = document.querySelector(
     ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
   );
@@ -83,6 +85,12 @@ const Example = () => {
 
   const columns = useMemo(
     () => [
+      {
+        accessorKey: 'id',
+        header: 'Id',
+        enableEditing: false,
+        size: 80,
+      },
      
       {
         accessorKey: `mesTrainingName.name`,
@@ -226,6 +234,39 @@ const Example = () => {
             }),
         },
       },
+      {
+        accessorKey: "priority",
+        header: "Prioritet",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.priority,
+          helperText: validationErrors?.priority,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              priority: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+      {
+        accessorKey: 'file',
+        header: 'Fayl',
+        muiEditTextFieldProps: {
+          required: true,
+          type:"file",
+          error: !!validationErrors?.file,
+          helperText: validationErrors?.file,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+             file: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
     ],
     [validationErrors]
   );
@@ -315,7 +356,7 @@ const Example = () => {
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -357,6 +398,18 @@ const Example = () => {
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Ətraflı">
+          <VisibilityIcon
+            style={{ marginTop: "8px" }}
+            // onClick={(event) => {
+            //   console.log(row.id);
+            //   navigate(row.id);
+            // }}
+            variant="contained"
+          >
+            Ətraflı
+          </VisibilityIcon>
+        </Tooltip>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
             <svg
@@ -432,26 +485,33 @@ function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
-      try {
-        // Send API update request using Axios
-        await axios.post("https://reqres.in/api/users", user);
+      console.log(user);
+      //send api update request here
 
-        // Fake delay for demonstration purposes
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Mestrainings`;
 
-        return Promise.resolve();
-      } catch (error) {
-        // Handle errors
-        return Promise.reject(error);
-      }
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "multipart/form-data",
+      };
+
+      axios
+        .post(url, user, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+          console.log(user);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
-    // Client-side optimistic update
+    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevEvents) => [
-        ...prevEvents,
+      queryClient.setQueryData(["users"], (prevUsers) => [
+        ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random() + 1,
+          id: (Math.random() + 1).toString(36).substring(7),
         },
       ]);
     },
@@ -497,10 +557,10 @@ function useUpdateUser() {
       }
     },
     // Client side optimistic update
-    onMutate: (newEventInfo) => {
-      queryClient.setQueryData(["users"], (prevEvents) =>
-        prevEvents?.map((prevEvent) =>
-          prevEvent.id === newEventInfo.id ? newEventInfo : prevEvent
+    onMutate: (newUserInfo) => {
+      queryClient.setQueryData(["users"], (prevUsers) =>
+      prevUsers?.map((prevUser) =>
+          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
         )
       );
     },
@@ -511,15 +571,15 @@ function useUpdateUser() {
 function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (eventId) => {
+    mutationFn: async (userId) => {
       //send api update request here
       await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
       return Promise.resolve();
     },
     //client side optimistic update
-    onMutate: (eventId) => {
-      queryClient.setQueryData(["events"], (prevEvets) =>
-        prevEvets?.filter((event) => event.id !== eventId)
+    onMutate: (userId) => {
+      queryClient.setQueryData(["users"], (prevUsers) =>
+        prevUsers?.filter((user) => user.id !== userId)
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -537,11 +597,13 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
+const validateRequired = (value) => {
+  return !!value && !!value.length;
+};
 
 function validateUser(user) {
   return {
-   name: !validateRequired(user.name)
+    name: !validateRequired(user.name)
       ? "First Name is Required"
       : "",
   };

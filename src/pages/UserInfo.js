@@ -3,17 +3,60 @@ import TabsUser from "../components/TabsUser";
 import image from "../components/images/volonteer.png";
 import { Routes, Route, useParams } from 'react-router-dom';
 
-import {usersData} from "../makeData"
+import axios from "axios";
 
-
+import { useEffect, useState } from "react";
 
 export default function UserInfo() {
 
-let params = useParams();
-let userId = params.id - 1
-let userInfo = usersData[userId]
-  return (
+
+  let params = useParams();
+  let userId = params.id
+  console.log(userId);
+
+  const [userData, setUserData] = useState({
+   
+    name: "",
+    surname: "",
+    fatherName: "",
+    gender: "",
+    militaryReward: "",
+    height: "",
+    birthDate: "",
+    citizenship: "",
+    maritalStatus: "",
+    identityCardGivenStructureName: "",
+    identityCardReceivingDate: "",
+    registrationAddress: "",
+    currentAddress: "",
+    photo:"",
+    phoneNumber1: "",
+    phoneNumber2: "",
+    email: "",
+    isIAMASInfo:""
+  });
+
+
+  useEffect(() => {
+    axios.get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`)
+      .then(response => { 
+        console.log(response);
+        setUserData(response.data.data);  
+        
+        return userData ; 
+      })
+      .catch(error => {
+        console.error('Error fetching data: ', error);
+      });
+  }, []); // Empty dependency array means this effect runs once after initial render
+
+ 
+
+
+  return ( 
+
     <div>
+
       <div
         style={{
           display: "flex",
@@ -22,28 +65,25 @@ let userInfo = usersData[userId]
         }}
       >
         <div style={{ textAlign: "left", margin: "2%" }}>
-          <h1>{userInfo.name}{userInfo.surname} {userInfo.surname} </h1>
-          <p>
+          <h1>{userData.name} {userData.surname} {userData.fatherName}</h1> 
+           <p>
             <strong>FIN:</strong>
-            {userInfo.fin}
+            {userData.fin}
           </p>
           <p>
             <strong>Cinsi: </strong>
-            {userInfo.gender}
-          </p>
-          <p>
+            {userData.gender}
+          </p> 
+           <p>
             <strong>Doğulduğu tarix (gün, ay, il): </strong>
-            {userInfo.birthdate}
+            {userData.birthDate}
+          </p>
+       
+          <p> 
+            <strong>Status:</strong> {userData.status}
           </p>
           <p>
-            <strong>Doğulduğu yer (ölkə, şəhər və ya rayon, kənd):</strong>{" "}
-            {userInfo.start}
-          </p>
-          <p>
-            <strong>Status:</strong>Fəaliyyəti dəvam edən
-          </p>
-          <p>
-            <strong>Fəaliyyətə başlama tarixi:</strong> 10.02.2024
+            <strong>Fəaliyyətə başlama tarixi:</strong>  {userData.fin}
           </p>
         </div>
         <div
@@ -53,12 +93,19 @@ let userInfo = usersData[userId]
             justifyContent: "space-around",
           }}
         >
-          <img src={image} style={{ width: "180px", marginLeft: "20px" }}></img>
+        {userData && userData.photo && (
+              <img 
+                src={`data:image/jpeg;base64,${userData.photo}`}
+                alt="volunteer"
+                width={"80%"}
+                style={{padding:"2%"}}
+              />
+            )}
         </div>
       </div>
       <TabsUser />
 
-
+        
     </div>
   );
 }

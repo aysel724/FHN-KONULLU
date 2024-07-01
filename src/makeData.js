@@ -1,5 +1,3 @@
-
-
 export const headerNames = {
   EducationTypes: {
     h1: "Təhsilin tipi",
@@ -13,13 +11,13 @@ export const headerNames = {
   LanguageProficiencyLevels: {
     h1: "Dil biliyinin  səviyyəsi",
   },
-  ComputerSkillName: {
+  ComputerSkillNames: {
     h1: "Kompüter bilikləri",
   },
   SkillLevels: {
     h1: "Kompüter biliklərinin səviyyəsi",
   },
-  InsuranceCompaniesnce: {
+  InsuranceCompanies: {
     h1: "Sığorta şirkətləri",
   },
   MesVoluntaryActivityEndReasons: {
@@ -38,9 +36,6 @@ export const headerNames = {
     h1: "Təlimlərin nəticəsi",
   },
 };
-
-
-
 
 // <Route
 // path="/TrainingResults"
@@ -84,8 +79,6 @@ export const headerNames = {
 // path="/LanguageProficiencyLevelseLevel"
 // element={<TableForEducationType />}
 
-
-
 export const columnNames = {
   EducationTypes: [
     {
@@ -112,6 +105,11 @@ export const columnNames = {
       isSelectable: ["Active", "Inactive"],
     },
     { header: "Prioritet", accessorKey: "priority", isSelectable: false },
+    {
+      header: "Təhsilin tipi",
+      accessorKey: "EducationTypes",
+      isSelectable: false,
+    },
   ],
   LanguageNames: [
     {
@@ -134,7 +132,7 @@ export const columnNames = {
     },
     { header: "Prioritet", accessorKey: "prioritet", isSelectable: false },
   ],
-  ComputerSkillName: [
+  ComputerSkillNames: [
     {
       header: "Kompüter biliyinin adı",
       accessorKey: "ComputerSkillName",
@@ -160,7 +158,7 @@ export const columnNames = {
     },
     { header: "Prioritet", accessorKey: "priority", isSelectable: false },
   ],
-  InsuranceCompaniesnce: [
+  InsuranceCompanies: [
     {
       header: "Sığotra şirkəti",
       accessorKey: "InsuranceCompaniesnce",
@@ -526,7 +524,8 @@ export const apiData = {
 };
 
 export const usersData = [
-  {seriya:"fghj",
+  {
+    seriya: "fghj",
 
     given: "12.12.2020",
     expired: "12.12.2030",
@@ -551,7 +550,8 @@ export const usersData = [
     boy: 190,
   },
 
-  {seriya:"fghj",
+  {
+    seriya: "fghj",
     given: "12.12.2020",
     expired: "12.12.2030",
     givenBy: "Baku, asan xidmet",
@@ -571,7 +571,8 @@ export const usersData = [
     army: "---",
     boy: 190,
   },
-  {seriya:" aze",
+  {
+    seriya: " aze",
     given: "12.12.2020",
     expired: "12.12.2030",
     givenBy: "Baku, asan xidmet",
@@ -622,7 +623,8 @@ export const usersData = [
     start: "21.08.2022",
     finish: "23.10.2022",
   },
-  {seriya:"fghj",
+  {
+    seriya: "fghj",
 
     given: "12.12.2020",
     expired: "12.12.2030",
@@ -647,7 +649,8 @@ export const usersData = [
     boy: 190,
   },
 
-  {seriya:"fghj",
+  {
+    seriya: "fghj",
     given: "12.12.2020",
     expired: "12.12.2030",
     givenBy: "Baku, asan xidmet",
@@ -667,104 +670,8 @@ export const usersData = [
     army: "---",
     boy: 190,
   },
-  {seriya:" aze",
-    given: "12.12.2020",
-    expired: "12.12.2030",
-    givenBy: "Baku, asan xidmet",
-    address: "Baku, akademik H aliyev",
-    address2: "Baku",
-    id: "3",
-    firstName: "Ayla Asgarova",
-    gender: "qadin",
-    birthdate: "24.10.1994",
-    mail: "Jerod14@hotmail.com",
-    status: "Fealiyyete davam eden",
-    fin: "1797krw",
-    famylystatus: "evli",
-    start: "23.09.2022",
-    finish: "23.10.2022",
-  },
   {
-    given: "12.12.2020",
-    expired: "12.12.2030",
-    givenBy: "Baku, asan xidmet",
-    address: "Baku, akademik H aliyev",
-    address2: "Baku",
-    id: "4",
-    firstName: `Veli Aliyev`,
-    gender: "kişi",
-    birthdate: "24.10.1994",
-    mail: "Jerod14@hotmail.com",
-    status: "Fealiyyete davam eden",
-    fin: "1797krw",
-    famylystatus: "evli",
-    start: "23.09.2022",
-    finish: "23.10.2022",
-  },
-  {
-    given: "12.12.2020",
-    expired: "12.12.2030",
-    givenBy: "Baku, asan xidmet",
-    address: "Baku, akademik H aliyev",
-    address2: "Baku",
-    id: "5",
-    firstName: `Aynur Rustamzade`,
-    gender: "qadin",
-    birthdate: "24.10.1994",
-    mail: "aynur@hotmail.com",
-    status: "Fealiyyete davam eden",
-    fin: "1797krw",
-    famylystatus: "evli",
-    start: "21.08.2022",
-    finish: "23.10.2022",
-  },
-
-  {seriya:"fghj",
-
-    given: "12.12.2020",
-    expired: "12.12.2030",
-    givenBy: "Baku, asan xidmet",
-    address: "Baku, akademik H aliyev",
-    address2: "Baku",
-    id: "1",
-    firstName: "Aysel Hesenova",
-    gender: "qadin",
-    birthdate: "24.10.1994",
-    mail: "Jerod14@hotmail.com",
-    status: "Fealiyyete davam eden",
-    fin: "1797krw",
-    famylystatus: "evli",
-    start: "23.09.2022",
-    finish: "23.10.2022",
-    state: "acvive",
-    famylystatus: "evli",
-    phone: "+994504962260",
-    mail: "aska-hesenova94@mail.ru",
-    army: "---",
-    boy: 190,
-  },
-
-  {seriya:"fghj",
-    given: "12.12.2020",
-    expired: "12.12.2030",
-    givenBy: "Baku, asan xidmet",
-    address: "Baku, akademik H aliyev",
-    address2: "Baku",
-    id: "2",
-    firstName: "Ceyhun Asgerov",
-    status: "Fəaliyyəti dəvam edən",
-    gender: "qadin",
-    birthdate: "24.10.1994",
-    fin: "1y97krw",
-    famylystatus: "evli",
-    phone: "+994504962260",
-    mail: "aska-hesenova94@mail.ru",
-    start: "23.09.2022",
-    finish: "--",
-    army: "---",
-    boy: 190,
-  },
-  {seriya:" aze",
+    seriya: " aze",
     given: "12.12.2020",
     expired: "12.12.2030",
     givenBy: "Baku, asan xidmet",
@@ -816,8 +723,105 @@ export const usersData = [
     finish: "23.10.2022",
   },
 
+  {
+    seriya: "fghj",
 
-  
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "1",
+    firstName: "Aysel Hesenova",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+    state: "acvive",
+    famylystatus: "evli",
+    phone: "+994504962260",
+    mail: "aska-hesenova94@mail.ru",
+    army: "---",
+    boy: 190,
+  },
+
+  {
+    seriya: "fghj",
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "2",
+    firstName: "Ceyhun Asgerov",
+    status: "Fəaliyyəti dəvam edən",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    fin: "1y97krw",
+    famylystatus: "evli",
+    phone: "+994504962260",
+    mail: "aska-hesenova94@mail.ru",
+    start: "23.09.2022",
+    finish: "--",
+    army: "---",
+    boy: 190,
+  },
+  {
+    seriya: " aze",
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "3",
+    firstName: "Ayla Asgarova",
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+  },
+  {
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "4",
+    firstName: `Veli Aliyev`,
+    gender: "kişi",
+    birthdate: "24.10.1994",
+    mail: "Jerod14@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "23.09.2022",
+    finish: "23.10.2022",
+  },
+  {
+    given: "12.12.2020",
+    expired: "12.12.2030",
+    givenBy: "Baku, asan xidmet",
+    address: "Baku, akademik H aliyev",
+    address2: "Baku",
+    id: "5",
+    firstName: `Aynur Rustamzade`,
+    gender: "qadin",
+    birthdate: "24.10.1994",
+    mail: "aynur@hotmail.com",
+    status: "Fealiyyete davam eden",
+    fin: "1797krw",
+    famylystatus: "evli",
+    start: "21.08.2022",
+    finish: "23.10.2022",
+  },
 ];
 
 //50 us states array

@@ -32,14 +32,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useExcelJS } from "react-use-exceljs";
 
 const Example = () => {
-  const [data, setData] = useState([]);
+  const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sorting, setSorting] = useState([]);
   const virtualizerInstanceRef = useRef(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setData(usersData);
+ 
       setIsLoading(false);
     }
   }, []);
@@ -52,6 +52,10 @@ const Example = () => {
       console.error(error);
     }
   }, [sorting]);
+
+
+
+
   const excel = useExcelJS({
     filename: "Könüllülər.xlsx",
     worksheets: [
@@ -59,13 +63,13 @@ const Example = () => {
         name: "Sheet 1",
         columns: [
           {
-            header: "status",
-            key: "fin",
+            header: "fin",
+            key: "userData.fin",
             width: 30,
           },
           {
             header: "Ad soyad",
-            key: "name",
+            key: "userData.name",
             width: 32,
           },
           {
@@ -75,25 +79,16 @@ const Example = () => {
           },
           {
             header: "ailə statusu",
-            key: "famylystatus",
+            key: "maritalStatus",
             width: 30,
           },
-          {
-            header: "start",
-            key: "start",
-            width: 32,
-          },
-          {
-            header: "D.O.B.",
-            key: "finish",
-            width: 30,
-          },
+         
         ],
       },
     ],
   });
   const onClick = () => {
-    excel.download(data);
+    excel.download(usersData);
   };
   const navigate = useNavigate();
 
@@ -108,6 +103,12 @@ const Example = () => {
 
   const columns = useMemo(
     () => [
+      {
+        accessorKey: 'userId',
+        header: 'Id',
+        enableEditing: false,
+        size: 80,
+      },
 
       {
         accessorKey: "name",
@@ -224,7 +225,7 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "mail",
+        accessorKey: "email", 
         header: "E-poçt ünvanı",
         muiEditTextFieldProps: {
           type: "email",
@@ -256,40 +257,39 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "start",
+        accessorKey:`startDate`,
         header: "Fəaliyyətə başlama tarixi",
         muiEditTextFieldProps: {
           label: "",
-          type: "date",
+     
           required: true,
-          error: !!validationErrors?.start,
-          helperText: validationErrors?.start,
+          error: !!validationErrors?.startDate,
+          helperText: validationErrors?.startDate,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              start: undefined,
+              startDate: undefined,
             }),
         },
       },
-      {
-        accessorKey: "finish",
-        header: "Fəaliyyətin bitmə vaxtı",
-        muiEditTextFieldProps: {
-          type: "date",
-          label: "",
-
-          required: true,
-          error: !!validationErrors?.finish,
-          helperText: validationErrors?.finish,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              finish: undefined,
-            }),
-        },
-      },
+      // {
+      //   accessorKey: `mesTrainings.finishDate`,
+      //   header: "Fəaliyyətin bitmə vaxtı",
+      //   muiEditTextFieldProps: {
+    
+      //     label: "",
+      //     required: true,
+      //     error: !!validationErrors?.finishDate,
+      //     helperText: validationErrors?.finishDate,
+      //     //remove any previous validation errors when user focuses on the input
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         finishDate: undefined,
+      //       }),
+      //   },
+      // },
 
     
     ],
@@ -384,7 +384,7 @@ const Example = () => {
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -538,7 +538,9 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get("https://api-volunteers.fhn.gov.az/api/v1/Volunteers?page=1&pageSize=0");
-        console.log(response.data);
+        console.log(response.data.data[0].mesTrainings[0].startDate);
+
+       
         // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {

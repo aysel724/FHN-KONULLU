@@ -32,10 +32,10 @@ function App() {
 
           <Route path="/" element={<Sidebar />}>
             <Route element={<Navigate to="login" />} path="/login" />
-            <Route path="/volonteers" element={<Volonteer />} />
-            <Route path="/volonteers/:id" element={<UserInfo />} />
+            <Route path="/Volonteers" element={<Volonteer />} />
+            <Route path="/Volonteers/:id" element={<UserInfo />} />
             <Route path="/newvolonteer" element={<NewVolonteer />} />
-            <Route path="/trainings" element={<Trainings />} />
+            <Route path="/MesTrainings" element={<Trainings />} />
             <Route path="/trainings/:id" element={<TrainingsInfo />} />
             <Route path="/events/:id" element={<EventInfo />} />
             <Route path="/events" element={<Events />} />
@@ -58,11 +58,11 @@ function App() {
               element={<TableForEducationType />}
             />
             <Route
-              path="/InsuranceCompaniesnce"
+              path="/InsuranceCompanies"
               element={<TableForEducationType />}
             />
             <Route
-              path="/ComputerSkillName"
+              path="/ComputerSkillNames"
               element={<TableForEducationType />}
             />
             <Route path="/SkillLevels" element={<TableForEducationType />} />
