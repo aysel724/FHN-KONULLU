@@ -545,7 +545,6 @@ export default function NewVolonteer() {
                 });}}
             />
             <TextField disabled={userData.isIAMASInfo}
-       
               name="identityCardReceivingDate"
               id="filled-basic"
               label="Şəxsiyyət vəsiqəsinin verildiyi tarix"
