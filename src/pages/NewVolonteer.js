@@ -12,7 +12,7 @@ import Backdrop from "@mui/material/Backdrop";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-
+import { DatePicker, Space } from 'antd';
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import UploadImage from "../components/UploadImage";
@@ -277,10 +277,11 @@ export default function NewVolonteer() {
         style={{
           display: "flex",
           flexDirection: "row",
-          gap: "25px",
+          gap: "23px",
           padding: "1%",
         }}
       >
+         <DatePicker onChange={onChange} />
         <TextField
           autoFocus={true}
           sx={{
