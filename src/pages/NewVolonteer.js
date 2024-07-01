@@ -103,7 +103,7 @@ export default function NewVolonteer() {
     formData.append(
       "IdentityCardReceivingDate",
       convertDate(userData.identityCardReceivingDate)
-    );
+    ); console.log(userData.identityCardReceivingDate);
     formData.append("Gender", userData.gender);
     formData.append("Citizenship", userData.citizenship);
     formData.append("MaritalStatus", userData.maritalStatus);
@@ -207,7 +207,7 @@ export default function NewVolonteer() {
 
     try {
       const response = await axios.request(options);
-      console.log(response.data);
+      console.log(response.data.data);
       setLoading(false);
       setUserData((pre) => ({
         ...pre,
@@ -224,7 +224,7 @@ export default function NewVolonteer() {
         identityCardGivenStructureName:
           response.data.data.identityCardGivenStructureName,
         identityCardReceivingDate: response.data.data.identityCardReceivingDate,
-        // identityCardReceivingDate: response.data.data.identityCardReceivingDate.toISOString(),
+
         registrationAddress: response.data.data.registrationAddress,
         currentAddress: response.data.data.currentAddress,
         photo: response.data.data.photo,
@@ -460,15 +460,16 @@ export default function NewVolonteer() {
                 });}}
             />
             <TextField disabled={userData.isIAMASInfo}
+
               id="vj"
               name="birthDate"
               label="Doğulduğu tarix*"
               variant="outlined"
-              value={userData.birthDate}
+              value={userData?.birthDate}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
-                  const data = { ...prev,birthDate: e.target.value };
+                  const data = { ...prev, birthDate: e.target.value };
 
                   return data;
                 });}}
@@ -544,6 +545,7 @@ export default function NewVolonteer() {
                 });}}
             />
             <TextField disabled={userData.isIAMASInfo}
+       
               name="identityCardReceivingDate"
               id="filled-basic"
               label="Şəxsiyyət vəsiqəsinin verildiyi tarix"
