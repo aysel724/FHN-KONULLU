@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
-import "../App.css"
+import { useMemo, useState } from "react";
+import "../App.css";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
-} from 'material-react-table';
+} from "material-react-table";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Button,
@@ -13,82 +14,68 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   QueryClient,
   QueryClientProvider,
   useMutation,
   useQuery,
   useQueryClient,
-} from '@tanstack/react-query';
-import { fakeData6, usStates } from '../makeData';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Export } from './Export';
-
+} from "@tanstack/react-query";
+import { fakeData6, usStates } from "../makeData";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Export } from "./Export";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
- 
- const pagBUTTON = document.querySelector(".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root")
- if(pagBUTTON){
-   pagBUTTON.textContent = "Göstərilən"
- }
 
+  const pagBUTTON = document.querySelector(
+    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
+  );
+  if (pagBUTTON) {
+    pagBUTTON.textContent = "Göstərilən";
+  }
+  const navigate = useNavigate();
   const columns = useMemo(
     () => [
-    
-      // {
-      //   accessorKey: 'id',
-      //   header: 'Id',
-      //   enableEditing: false,
-      //   size: 80,
-      // },
       {
-        accessorKey: 'language',
-        header: 'Dil',
+        accessorKey: "id",
+        header: "Id",
+        enableEditing: false,
+        size: 80,
+      },
+      {
+        accessorKey: "name",
+        header: "Ad soyad",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.language,
-          helperText: validationErrors?.language,
-          //remove any previous validation errors when user focuses on the input
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              educationType: undefined,
+              name: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
-     
-      
+
       {
-        accessorKey: 'status',
-        header: 'Status',
-        editVariant: 'select',
-        editSelectOptions: usStates,
-        muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.status,
-          helperText: validationErrors?.status,
-        },
-      },
-      {
-        accessorKey: 'prioritet',
-        header: 'Prioritet',
+        accessorKey: "pinCode",
+        header: "fin",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.prioritet,
-          helperText: validationErrors?.prioritet,
-          //remove any previous validation errors when user focuses on the input
+          error: !!validationErrors?.fin,
+          helperText: validationErrors?.fin,
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              prioritet: undefined,
+              fin: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
     ],
-    [validationErrors],
+    [validationErrors]
   );
 
   //call CREATE hook
@@ -120,7 +107,6 @@ const Example = () => {
     table.setCreatingRow(null); //exit creating mode
   };
 
-
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values);
@@ -135,32 +121,29 @@ const Example = () => {
 
   //DELETE action
   const openDeleteConfirmModal = (row) => {
-    if (window.confirm('təsdiq edirsiz?')) {
+    if (window.confirm("təsdiq edirsiz?")) {
       deleteUser(row.original.id);
     }
   };
 
-  
-
-  const table = useMaterialReactTable({ 
+  const table = useMaterialReactTable({
     positionActionsColumn: "last",
     columns,
     data: fetchedUsers,
-    createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
-    editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
+    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
-          color: 'error',
-          children: 'Error loading data',
+          color: "error",
+          children: "Error loading data",
         }
       : undefined,
     muiTableContainerProps: {
-      sx: {  
-        minHeight: '500px',
+      sx: {
+        minHeight: "500px",
       },
-   
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
@@ -169,42 +152,28 @@ const Example = () => {
     //optionally customize modal content
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h5">Yeni  dil əlavə edin</DialogTitle>
+        <DialogTitle variant="h5">Tədbirə könüllü əlavə edin</DialogTitle>
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons  variant="text" table={table} row={row} />
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
-    //optionally customize modal content
-    renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
-        <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
-        >
-          {internalEditComponents} {/* or render custom edit components here */}
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons  
-       variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
-    ),
+
     renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z" stroke="#4B7D83" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z" fill="#4B7D83"/>
-<path d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353" stroke="#4B7D83" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-          </IconButton>
+      <Box sx={{ display: "flex", gap: "1rem" }}>
+        <Tooltip title="Ətraflı">
+          <VisibilityIcon
+            style={{ marginTop: "8px" }}
+            onClick={() => navigate(`/events/${row.id}`)}
+            variant="contained"
+          >
+            Ətraflı
+          </VisibilityIcon>
         </Tooltip>
         <Tooltip title="Sil">
           <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
@@ -213,23 +182,23 @@ const Example = () => {
         </Tooltip>
       </Box>
     ),
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
-        }}
-      >
-      Yeni dil biliyi əlavə edin
-      </Button>
-    ),
-  
+    // renderTopToolbarCustomActions: ({ table }) => (
+    //   <Button
+    //     variant="contained"
+    //     onClick={() => {
+    //       table.setCreatingRow(true); //simplest way to open the create row modal with no default values
+    //       //or you can pass in a row object to set default values with the `createRow` helper function
+    //       // table.setCreatingRow(
+    //       //   createRow(table, {
+    //       //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
+    //       //   }),
+    //       // );
+    //     }}
+    //   >
+    //     Tədbirə yeni könüllü əlavə edin
+    //   </Button>
+    // ),
+
     state: {
       isLoading: isLoadingUsers,
       isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
@@ -252,13 +221,12 @@ function useCreateUser() {
     },
     //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['users'], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: (Math.random())
-         
-        }, 
+          id: Math.random(),
+        },
       ]);
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -268,11 +236,29 @@ function useCreateUser() {
 //READ hook (get users from api)
 function useGetUsers() {
   return useQuery({
-    queryKey: ['users'],
+    queryKey: ["users"],
     queryFn: async () => {
-      //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(fakeData6);
+      try {
+        const response = await axios.get(
+          "https://api-volunteers.fhn.gov.az/api/v1/Volunteers"
+        );
+        // console.log(response.data.data);
+        // const names = response.data.data.map(
+        //   (e) => e.name + "  " + e.surname + " " + e.fatherName
+        // );
+        // console.log(names);
+        // return response.data.data;
+
+        const users = response.data.data.map((user) => ({
+          ...user,
+          fullName: `${user.name} ${user.surname} ${user.fatherName}`.trim(),
+        }));
+        return users;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     refetchOnWindowFocus: false,
   });
@@ -289,10 +275,10 @@ function useUpdateUser() {
     },
     //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['users'], (prevUsers) =>
+      queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser,
-        ),
+          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
+        )
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -310,8 +296,8 @@ function useDeleteUser() {
     },
     //client side optimistic update
     onMutate: (userId) => {
-      queryClient.setQueryData(['users'], (prevUsers) =>
-        prevUsers?.filter((user) => user.id !== userId),
+      queryClient.setQueryData(["users"], (prevUsers) =>
+        prevUsers?.filter((user) => user.id !== userId)
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -331,12 +317,10 @@ export default Uxtable;
 
 const validateRequired = (value) => !!value.length;
 
-
 function validateUser(user) {
   return {
-    language: !validateRequired(user.language)
-      ? 'First Name is Required'
-      : '',
-
+    volunteer: !validateRequired(user.volunteer)
+      ? "First Name is Required"
+      : "",
   };
 }

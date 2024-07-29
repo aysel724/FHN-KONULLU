@@ -14,6 +14,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   QueryClient,
   QueryClientProvider,
@@ -25,10 +26,11 @@ import { fakeData1 } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useExcelJS } from "react-use-exceljs";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { H1 } from "@blueprintjs/core";
 const Example = () => {
-  const url = "https://reqres.in/api/users?page=2";
-
+  const navigate = useNavigate();
   const excel = useExcelJS({
     filename: "Tədbirlər siyahısı.xlsx",
     worksheets: [
@@ -42,17 +44,17 @@ const Example = () => {
           },
           {
             header: "Başlama vaxtı",
-            key: "start",
+            key: "startDate",
             width: 32,
           },
           {
             header: "Bitmə tarixi",
-            key: "finish",
+            key: "finishDate",
             width: 30,
           },
           {
             header: "Tədbirin keçirilmə ünvanı",
-            key: "adress",
+            key: "eventPlace",
             width: 30,
           },
           {
@@ -70,7 +72,7 @@ const Example = () => {
     ],
   });
   const onClick = () => {
-    excel.download(fakeData1);
+    excel.download();
   };
   const pagBUTTON = document.querySelector(
     ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
@@ -78,17 +80,56 @@ const Example = () => {
   if (pagBUTTON) {
     pagBUTTON.textContent = "Göstərilən";
   }
+  const [types, setTypes] = useState([]);
+  useEffect(() => {
+    const TypesData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data.data);
+        const newData = response.data.data.map((e) => {
+          const user = {
+            name: e.name,
+          };
+
+          return user;
+        });
+
+        console.log(newData);
+        setTypes(newData);
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    };
+    TypesData();
+  }, []);
+
+  function getTypesNames(arr) {
+    console.log(arr); // This logs the input array `arr`
+
+    // Mapping over the array to create objects with index as `key` and `name` from each element
+    const mappedArray = arr.map((e) => e);
+    console.log(mappedArray); // This logs the mapped array with `key` and `name`
+
+    return mappedArray; // Returning the mapped array
+  }
 
   const [validationErrors, setValidationErrors] = useState({});
 
   const columns = useMemo(
     () => [
-      // {
-      //   accessorKey: 'id',
-      //   header: 'Id',
-      //   enableEditing: false,
-      //   size: 80,
-      // },
+      {
+        accessorKey: "id",
+        header: "Id",
+        enableEditing: true,
+        size: 80,
+      },
       {
         accessorKey: "name",
         header: "Tədbirin adı",
@@ -123,7 +164,7 @@ const Example = () => {
       },
       {
         accessorKey: "finishDate",
-        header: "Tədbirin başlama tarixi",
+        header: "Tədbirin bitmə tarixi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,
@@ -184,21 +225,6 @@ const Example = () => {
             }),
         },
       },
-      {
-        accessorKey: "volunteerIds",
-        header: "iştirakçı sayı",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.volunteerIds,
-          helperText: validationErrors?.volunteerIds,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              volunteerIds: undefined,
-            }),
-        },
-      },
 
       {
         accessorKey: "note",
@@ -213,6 +239,33 @@ const Example = () => {
               ...validationErrors,
               note: undefined,
             }),
+        },
+      },
+      // {
+      //   accessorKey: "volunteers",
+      //   header: "konulluler",
+      //   muiEditTextFieldProps: {
+      //     required: true,
+      //     error: !!validationErrors?.volunteers,
+      //     helperText: validationErrors?.volunteers,
+      //     //remove any previous validation errors when user focuses on the input
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         volunteers: undefined,
+      //       }),
+      //   },
+      // },
+
+      {
+        accessorKey: "volunteers",
+        header: "konulluler",
+        editVariant: "select",
+        editSelectOptions: getTypesNames(types),
+        muiEditTextFieldProps: {
+          select: true,
+          error: !!validationErrors?.state,
+          helperText: validationErrors?.state,
         },
       },
     ],
@@ -236,18 +289,20 @@ const Example = () => {
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
 
-  //CREATE action
   const handleCreateUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values);
+
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
     }
+
     setValidationErrors({});
+
     await createUser(values);
+
     table.setCreatingRow(null); //exit creating mode
   };
-
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values);
@@ -270,17 +325,35 @@ const Example = () => {
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
 
-    columns,
-    data: fetchedUsers,
+    muiTableContainerProps: { sx: { maxHeight: "600px" } },
+
     enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
+    columns,
+
+    //optionally customize the row virtualizer
+
+    data: fetchedUsers,
+    muiTableBodyRowProps: ({ row }) => ({
+      sx: {
+        cursor: "pointer", //you might want to change the cursor too when adding an onClick
+      },
+    }),
+    MRT_EditActionButtons,
     createDisplayMode: "modal", //default ('row', and 'custom' are also available)
     editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
+    initialState: {
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    displayColumnDefOptions: { "mrt-row-actions": { size: 150 } },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -322,6 +395,15 @@ const Example = () => {
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
+        <Tooltip title="Ətraflı">
+          <VisibilityIcon
+            style={{ marginTop: "8px" }}
+            onClick={() => navigate(`/events/${row.id}`)}
+            variant="contained"
+          >
+            Ətraflı
+          </VisibilityIcon>
+        </Tooltip>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
             <svg
@@ -364,13 +446,7 @@ const Example = () => {
         <Button
           variant="contained"
           onClick={() => {
-            table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-            //or you can pass in a row object to set default values with the `createRow` helper function
-            // table.setCreatingRow(
-            //   createRow(table, {
-            //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-            //   }),
-            // );
+            table.setCreatingRow(true);
           }}
         >
           Yeni tədbir əlavə et
@@ -392,35 +468,33 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
 function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
-      try {
-        // Send API update request using Axios
-        await axios.post("https://reqres.in/api/users", user);
-
-        // Fake delay for demonstration purposes
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        return Promise.resolve();
-      } catch (error) {
-        // Handle errors
-        return Promise.reject(error);
-      }
+      console.log(user);
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Events`;
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      axios
+        .post(url, user, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
-    // Client-side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevEvents) => [
-        ...prevEvents,
+      queryClient.setQueryData(["users"], (prevUsers) => [
+        ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random() + 1,
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // refetch users after mutation, disabled for demo
   });
 }
 
@@ -429,7 +503,9 @@ function useGetUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const response = await axios.get("https://api-volunteers.fhn.gov.az/api/v1/Events?page=1&pageSize=0");
+        const response = await axios.get(
+          "https://api-volunteers.fhn.gov.az/api/v1/Events"
+        );
         console.log(response.data);
         // Assuming your API returns data in response.data
         return response.data.data;
@@ -441,50 +517,74 @@ function useGetUsers() {
     },
     refetchOnWindowFocus: false,
   });
-} 
+}
 
+//UPDATE hook (put user in api)
 function useUpdateUser() {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      try {
-        // Make API call using Axios
-        await axios.put("https://reqres.in/api/users/2", user);
+      const data = { ...user };
+      console.log(data);
+      //send api update request here
 
-        // Fake delay for demonstration
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Events`;
 
-        return Promise.resolve();
-      } catch (error) {
-        // Handle error
-        console.error("Error updating user:", error);
-        throw error;
-      }
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      console.log(user);
+      axios
+        .put(url, data, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
-    // Client side optimistic update
-    onMutate: (newEventInfo) => {
-      queryClient.setQueryData(["users"], (prevEvents) =>
-        prevEvents?.map((prevEvent) =>
-          prevEvent.id === newEventInfo.id ? newEventInfo : prevEvent
+    //client side optimistic update
+    //client side optimistic update
+    onMutate: (newUserInfo) => {
+      queryClient.setQueryData(["users"], (prevUsers) =>
+        prevUsers?.map((prevUser) =>
+          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
         )
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
-//DELETE hook (delete user in api)
+
 function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (eventId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+    mutationFn: async (userId) => {
+      console.log(userId);
+
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
-    onMutate: (eventId) => {
-      queryClient.setQueryData(["events"], (prevEvets) =>
-        prevEvets?.filter((event) => event.id !== eventId)
+    onMutate: (userId) => {
+      queryClient.setQueryData(["users"], (prevUsers) =>
+        prevUsers?.filter((user) => user.id !== userId)
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -506,8 +606,13 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
-   name: !validateRequired(user.name)
-      ? "First Name is Required"
+    name: !validateRequired(user.name) ? "Xana boş qala bilməz" : "",
+    startDate: !validateRequired(user.startDate) ? "Xana boş qala bilməz" : "",
+    personInCharge: !validateRequired(user.personInCharge)
+      ? "Xana boş qala bilməz"
+      : "",
+    finishDate: !validateRequired(user.finishDate)
+      ? "Xana boş qala bilməz"
       : "",
   };
 }

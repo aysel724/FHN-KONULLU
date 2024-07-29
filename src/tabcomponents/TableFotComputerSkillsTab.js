@@ -14,6 +14,7 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
+import { useParams } from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
@@ -23,7 +24,7 @@ import {
 } from '@tanstack/react-query';
 import { fakeData6, usStates } from '../makeData';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import axios from 'axios';
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -39,17 +40,17 @@ const Example = () => {
       //   size: 80,
       // },
       {
-        accessorKey: 'computerSkill',
-        header: 'Dil',
+        accessorKey: 'computerSkills',
+        header: 'Kompyuter bilikləri',
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.computerSkill,
-          helperText: validationErrors?.computerSkill,
+          error: !!validationErrors?.computerSkills,
+          helperText: validationErrors?.computerSkills,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              computerSkill: undefined,
+              computerSkills: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
@@ -57,14 +58,14 @@ const Example = () => {
      
       
       {
-        accessorKey: 'status',
+        accessorKey: 'skillLevels',
         header: 'Bilik səviyyəsi',
         editVariant: 'select',
         editSelectOptions: usStates,
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.status,
-          helperText: validationErrors?.status,
+          error: !!validationErrors?.skillLevels,
+          helperText: validationErrors?.skillLevels,
         },
       },
       {
@@ -262,14 +263,22 @@ function useCreateUser() {
   });
 }
 
-//READ hook (get users from api)
 function useGetUsers() {
+  let params = useParams();
+  let userId = params.id;
+  console.log(userId);
   return useQuery({
-    queryKey: ['users'],
+    queryKey: ["users"],
     queryFn: async () => {
-      //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(fakeData6);
+      try {
+        const response = await axios.get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`);
+
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Xəta:", error);
+        throw error;
+      }
     },
     refetchOnWindowFocus: false,
   });

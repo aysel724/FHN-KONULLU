@@ -1,4 +1,5 @@
-import { useMemo, useState , useNavigate} from "react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../App.css";
 import {
   MRT_EditActionButtons,
@@ -6,6 +7,7 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+
 import {
   Box,
   Button,
@@ -28,7 +30,6 @@ import { useExcelJS } from "react-use-exceljs";
 import axios from "axios";
 import { useEffect } from "react";
 const Example = () => {
-  const url = "https://reqres.in/api/users?page=2";
 
   const excel = useExcelJS({
     filename: "Tədbirlər siyahısı.xlsx",
@@ -43,27 +44,27 @@ const Example = () => {
           },
           {
             header: "Başlama vaxtı",
-            key: "start",
+            key: "startDate",
             width: 32,
           },
           {
             header: "Bitmə tarixi",
-            key: "finish",
+            key: "finishDate",
             width: 30,
           },
           {
             header: "Tədbirin keçirilmə ünvanı",
-            key: "adress",
+            key: "trainingPlace",
             width: 30,
           },
           {
             header: "Tədbirin müddəti",
-            key: "time",
-            width: 32,
+            key: "trainingDuration",
+            width: 60,
           },
           {
             header: "Tədbir üzrə məsul şəxs",
-            key: "couch",
+            key: "trainingMaster",
             width: 30,
           },
         ],
@@ -71,17 +72,19 @@ const Example = () => {
     ],
   });
   const onClick = () => {
-    excel.download(fakeData1);
+    excel.download(table);
   };
-  // const navigate = useNavigate();
+
   const pagBUTTON = document.querySelector(
     ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
   );
   if (pagBUTTON) {
     pagBUTTON.textContent = "Göstərilən";
   }
-
+  const navigate = useNavigate();
   const [validationErrors, setValidationErrors] = useState({});
+
+
 
   const columns = useMemo(
     () => [
@@ -94,7 +97,7 @@ const Example = () => {
      
       {
         accessorKey: `mesTrainingName.name`,
-        header: "Tədbirin adı",
+        header: "Təlimin adı",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.name,
@@ -110,7 +113,7 @@ const Example = () => {
       },
       {
         accessorKey: "startDate",
-        header: "Tədbirin başlama tarixi",
+        header: "Təlimin başlama tarixi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -126,7 +129,7 @@ const Example = () => {
       },
       {
         accessorKey: "finishDate",
-        header: "Tədbirin başlama tarixi",
+        header: "Təlimin bitmə tarixi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,
@@ -140,9 +143,9 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-      {
+      { size:200,
         accessorKey: "trainingDuration",
-        header: "Tədbirin müddəti",
+        header: "Təlimin müddəti",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.trainingDuration,
@@ -158,7 +161,7 @@ const Example = () => {
       },
       {
         accessorKey: "trainingPlace",
-        header: "Tədbirin keçirilmə yeri",
+        header: "Təlimin keçirilmə yeri",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.trainingPlace,
@@ -174,7 +177,7 @@ const Example = () => {
       },
       {
         accessorKey: "trainingMaster",
-        header: " Tədbir üzrə məsul şəxs",
+        header: " Təlim üzrə məsul şəxs",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.trainingMaster,
@@ -194,7 +197,7 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.volunteer,
           helperText: validationErrors?.volunteer,
-          //remove any previous validation errors when user focuses on the input
+   
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -202,20 +205,18 @@ const Example = () => {
             }),
         },
       },
-      {
+      { size:200,
         accessorKey: `trainingResult.name`,
-        header: "Tədbirin nəticəsi",
+        header: "Təlimin nəticəsi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.name,
           helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
              name: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
@@ -241,32 +242,14 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.priority,
           helperText: validationErrors?.priority,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               priority: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
-      {
-        accessorKey: 'file',
-        header: 'Fayl',
-        muiEditTextFieldProps: {
-          required: true,
-          type:"file",
-          error: !!validationErrors?.file,
-          helperText: validationErrors?.file,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-             file: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
+  
     ],
     [validationErrors]
   );
@@ -331,7 +314,7 @@ const Example = () => {
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
     columns,
-    rowCount:5,
+
   
  
     rowVirtualizerOptions: { overscan: 2 }, //optionally customize the row virtualizer
@@ -339,12 +322,12 @@ const Example = () => {
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
       sx: {   
-        cursor: "pointer", //you might want to change the cursor too when adding an onClick
+        cursor: "pointer",
       },
     }),
     MRT_EditActionButtons,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal",
     enableEditing: true,
     initialState: { 
       columnPinning: { right: ["mrt-row-actions"] ,},
@@ -375,7 +358,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -389,7 +372,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -398,18 +381,14 @@ const Example = () => {
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
-          <Tooltip title="Ətraflı">
+            <Tooltip title="Ətraflı"> 
           <VisibilityIcon
             style={{ marginTop: "8px" }}
-            // onClick={(event) => {
-            //   console.log(row.id);
-            //   navigate(row.id);
-            // }}
+            onClick={() => navigate(`/MesTrainings/${row.id}`)}
             variant="contained"
           >
-            Ətraflı
-          </VisibilityIcon>
-        </Tooltip>
+            Ətraflı 
+          </VisibilityIcon> </Tooltip>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
             <svg
@@ -452,16 +431,11 @@ const Example = () => {
         <Button
           variant="contained"
           onClick={() => {
-            table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-            //or you can pass in a row object to set default values with the `createRow` helper function
-            // table.setCreatingRow(
-            //   createRow(table, {
-            //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-            //   }),
-            // );
+  
+              navigate("/newtrainings");
           }}
         >
-          Yeni tədbir əlavə et
+          Yeni təlim əlavə et
         </Button>
         <Button variant="contained" onClick={onClick}>
           Excelə export
@@ -479,15 +453,11 @@ const Example = () => {
 
   return <MaterialReactTable table={table} />;
 };
-
-//CREATE hook (post new user to api)
 function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
-      //send api update request here
-
       const url = `https://api-volunteers.fhn.gov.az/api/v1/Mestrainings`;
 
       const headers = {
@@ -505,7 +475,6 @@ function useCreateUser() {
           console.error("Error:", error);
         });
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
         ...prevUsers,
@@ -515,7 +484,7 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // refetch users after mutation, disabled for demo
+
   });
 }
 
@@ -526,10 +495,10 @@ function useGetUsers() {
       try {
         const response = await axios.get("https://api-volunteers.fhn.gov.az/api/v1/MesTrainings");
         console.log(response.data);
-        // Assuming your API returns data in response.data
+      
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
+
         console.error("Error fetching users:", error);
         throw error;
       }
@@ -539,32 +508,40 @@ function useGetUsers() {
 } 
 
 function useUpdateUser() {
+
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      try {
-        // Make API call using Axios
-        await axios.put("https://reqres.in/api/users/2", user);
 
-        // Fake delay for demonstration
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      const data = { ...user};
+      console.log(data);
+      //send api update request here
 
-        return Promise.resolve();
-      } catch (error) {
-        // Handle error
-        console.error("Error updating user:", error);
-        throw error;
-      }
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      console.log(user);
+      axios
+        .put(url, data, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
-    // Client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
-      prevUsers?.map((prevUser) =>
+        prevUsers?.map((prevUser) =>
           prevUser.id === newUserInfo.id ? newUserInfo : prevUser
         )
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // refetch users after mutation, disabled for demo
+
   });
 }
 //DELETE hook (delete user in api)
@@ -572,9 +549,24 @@ function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+ 
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {
@@ -582,14 +574,12 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+ 
   });
 }
-
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

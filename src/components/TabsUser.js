@@ -13,7 +13,7 @@ import TableFotComputerSkillsTab from "../tabcomponents/TableFotComputerSkillsTa
 import TableForTrainigsTabs from "../tabcomponents/TableForTrainingsTabs";
 import TableForFHNtrainings from "../tabcomponents/TableForFHNtrainingsTab";
 import TableForOtherSkillsTab from "../tabcomponents/TableForOtherSkillsTab";
-import TableForFHNEvents from "../tabcomponents/TableForFHNEvents";
+import TableForEventTabs from "../tabcomponents/TableForEventTabs";
 import TableForSportsTab from "../tabcomponents/TableForSportsTab";
 import TableForInsuranceTab from "../tabcomponents/TableForInsuranceTab";
 import TableForContractsTab from "../tabcomponents/TableForContractsTab";
@@ -30,7 +30,6 @@ import { useEffect, useState } from "react";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
- 
   return (
     <div
       role="tabpanel"
@@ -159,17 +158,19 @@ export default function TabsUser() {
             <strong>Hərbi mükələfiyyəti:</strong> {userData.militaryReward}
           </p>
           <p>
-            <strong>Boy: </strong>{userData.height}
-          
+            <strong>Boy: </strong>
+            {userData.height}
           </p>
           <p>
-            <strong>Vətəndaşlığı: </strong>{userData.citizenship}
+            <strong>Vətəndaşlığı: </strong>
+            {userData.citizenship}
           </p>
           <p>
             <strong>Ailə vəziyyəti:</strong> {userData.maritalStatus}
           </p>
           <p>
-            <strong>Şəxsiyyət vəsiqəsinin seriya və nömrəsi:</strong>{userData.documentNumber} {userData.fin}
+            <strong>Şəxsiyyət vəsiqəsinin seriya və nömrəsi:</strong>
+            {userData.documentNumber} {userData.fin}
           </p>
           <p>
             <strong>
@@ -182,16 +183,19 @@ export default function TabsUser() {
             {userData.identityCardGivenStructureName}
           </p>
           <p>
-            <strong>Qeydiyyat ünvan: </strong>{userData.registrationAddress}
+            <strong>Qeydiyyat ünvan: </strong>
+            {userData.registrationAddress}
           </p>
           <p>
-            <strong>Faktiki ünvanı: </strong>{userData.currentAddress}
+            <strong>Faktiki ünvanı: </strong>
+            {userData.currentAddress}
           </p>
           <p>
             <strong>Elektron-poçt ünvanı:</strong> {userData.email}
           </p>
           <p>
-            <strong>Əlaqə nömrələri: </strong>{userData.phoneNumber1}, {userData.phoneNumber2}
+            <strong>Əlaqə nömrələri: </strong>
+            {userData.phoneNumber1}, {userData.phoneNumber2}
           </p>
         </div>
       </CustomTabPanel>
@@ -211,7 +215,7 @@ export default function TabsUser() {
         <TableForFHNtrainings />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={6}>
-        <TableForFHNEvents />
+        <TableForEventTabs />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={7}>
         <TableForSportsTab />

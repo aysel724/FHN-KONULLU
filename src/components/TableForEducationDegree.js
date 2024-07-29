@@ -1,5 +1,5 @@
 import { useId, useMemo, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../App.css";
 import {
   MRT_EditActionButtons,
@@ -42,17 +42,16 @@ const Example = () => {
           }
         );
         console.log(response.data.data);
-        const newData = response.data.data.map((e) =>{
+        const newData = response.data.data.map((e) => {
           const user = {
             name: e.name,
-            id: e.name
-          }
-          return user
-        } );
+            id: e.id,
+          };
+
+          return user;
+        });
 
         console.log(newData);
-
-        // Assuming your API returns data in response.data
         setTypes(newData);
       } catch (error) {
         // Handle errors here if needed
@@ -63,8 +62,8 @@ const Example = () => {
     TypesData();
   }, []);
 
-  function getTypesNames (arr) {
-    return arr.map((e)=>e.name)
+  function getTypesNames(arr) {
+    return arr.map((e) => e.name);
   }
 
   const pagBUTTON = document.querySelector(
@@ -127,13 +126,10 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-      {
-        accessorKey: "educationType.id",
-        header: "Təhsilin tipin IDsi",
-      },
+
       {
         accessorKey: "educationType.name",
-        header: "Təhsilin tipin Adi",
+        header: "Təhsilin tip",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
@@ -157,7 +153,7 @@ const Example = () => {
 
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
+    useCreateUser(types);
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -327,13 +323,14 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-function useCreateUser() {
+function useCreateUser(types) {
+  const navigate = useNavigate();
   const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      // console.log(user);
-      //send api update request here
+      console.log(user);
 
       const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
 
@@ -342,25 +339,45 @@ function useCreateUser() {
         "Content-Type": "application/json",
       };
 
-      axios
-        .post(url, user, { headers })
-        .then((response) => {
-          // console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
+      function findArrayElementByTitle(array, title) {
+        console.log(
+          array.find((element) => {
+            return element.name === title;
+          })
+        );
+        return array.find((element) => {
+          return element.name === title;
         });
+      }
+
+      const newUser = {
+        name: user.name,
+        priority: user.priority,
+        educationTypeId: findArrayElementByTitle(
+          types,
+          user["educationType.name"]
+        ).id,
+      };
+      // console.log(newUser);
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
           ...newUserInfo,
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -397,7 +414,16 @@ function useUpdateUser() {
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user, isDeleted: true };
+      console.log(user);
+
+      const newUser = {
+        id: user.id,
+        name: user.name,
+        priority: user.priority,
+        isDeleted: true,
+      };
+      console.log(newUser);
+
       // console.log(data);
       //send api update request here
 
@@ -409,8 +435,9 @@ function useUpdateUser() {
       };
       // console.log(user);
       axios
-        .put(url, data, { headers })
+        .put(url, newUser, { headers })
         .then((response) => {
+          window.location.reload();
           // console.log("Response:", response.data);
         })
         .catch((error) => {

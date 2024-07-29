@@ -5,9 +5,19 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import "../App.css";
-// import data from "../data.json";
+import { useParams } from "react-router-dom";
+import TableForLanguage from "../components/TableForLanguage";
 import { Table } from "antd";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
+import { Select, Space } from "antd";
+import { Button } from "@mui/material";
+import { supports } from "localforage";
+
+const handleChange1 = (value) => {
+  console.log(`selected ${value}`);
+};
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -27,104 +37,6 @@ function CustomTabPanel(props) {
     </div>
   );
 }
-const dataSource = [
-  {
-    key: "1",
-
-    level: "b2yaxshi",
-    address: "-------",
-  },
-  {
-    key: "2",
-
-    level: "a2",
-    address: "10 Downing Street",
-  },
-];
-const dataSource1 = [
-  {
-    key: "1",
-    lang: "e",
-    level: "b",
-    note: "--------",
-  },
-  {
-    note: "2",
-    lang: "az",
-    level: "a2",
-    address: "10 Downing Street",
-  },
-];
-
-const columns = [
-  {
-    title: "N",
-    dataIndex: "1",
-    key: "name",
-  },
-  {
-    title: "Komputer biliyinin adı",
-    dataIndex: "1",
-    key: "name",
-  },
-  {
-    title: "Komputer biliyinin səviyyəsi",
-    dataIndex: "level",
-    key: "CSS",
-  },
-  {
-    title: "Qeyd",
-    dataIndex: "address",
-    key: "html",
-  },
-];
-const columns1 = [
-  {
-    title: "Təhsilin tipi",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Təhsilin dərəcəsi",
-    dataIndex: "level",
-    key: "lang",
-  },
-  {
-    title: "Təhsilin aldığı müəssisə",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Fakültə",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "İxtisas",
-    dataIndex: "level",
-    key: "lang",
-  },
-  {
-    title: "Diplomun seriya və nömrəsi",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Diplomun verilmə tarixi",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Təhsilə başlama tarixi",
-    dataIndex: "level",
-    key: "lang",
-  },
-  {
-    title: "Təhsilin bitmə tarixi",
-    dataIndex: "address",
-    key: "address",
-  },
-];
 
 CustomTabPanel.propTypes = {
   children: PropTypes.node,
@@ -140,11 +52,74 @@ function a11yProps(index) {
 }
 
 export default function TabsUser() {
+  const [options, setOptions] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+
+        const newData = response.data.data.map((e) => ({
+          label: `${e.name} ${e.surname}  ${e.fatherName}`,
+          value: e.id.toString(),
+        }));
+
+        setOptions(newData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle errors here if needed
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  // const [userData, setUserData] = useState({
+  //   pinCode: "",
+  //   name: "",
+  //   surname: "",
+  //   fatherName: "",
+  // });
+
+  const handleSubmit = () => {};
+
+  const [eventData, seteventData] = useState({
+    id: "",
+    name: "",
+    startDate: "",
+    finishDate: "",
+    eventDuration: "",
+    eventPlace: "",
+    personInCharge: "",
+    note: "",
+    volunteers: [],
+  });
+
+  let params = useParams();
+  let id = params.id;
+
+  useEffect(() => {
+    axios
+      .get(`https://api-volunteers.fhn.gov.az/api/v1/Events/${id}`)
+      .then((response) => {
+        console.log(response);
+        seteventData(response.data.data);
+
+        return eventData;
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+  }, []);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -174,36 +149,36 @@ export default function TabsUser() {
             boxShadow: "0 10px 30px 5px rgba(0, 0, 0, 0.9);",
             textAlign: "left",
           }}
-        ></div>
-          {/* <p>
+        >
+          <h2> {eventData.name}</h2>
+          <p>
             <strong>Tədbirin başlama tarixi:</strong>
-            {data.users[0].events[0].start}
+            {eventData.startDate}
           </p>
           <p>
             <strong>Tədbirin bitmə tarixi:</strong>
-            {data.users[0].events[0].finish}
+            {eventData.finishDate}
           </p>
           <p>
             <strong>Tədbirin müddəti: </strong>
-            {data.users[0].events[0].time}
+            {eventData.eventDuration}
           </p>
           <p>
-            <strong>Tədbirin keçirilmə yeri: </strong>{" "}
-            {data.users[0].events[0].address}
+            <strong>Tədbirin keçirilmə yeri: </strong> {eventData.eventPlace}
           </p>
           <p>
             <strong>Tədbir üzrə məsul şəxs:</strong>
-            {data.users[0].events[0].couch}
+            {eventData.personInCharge}
           </p>
           <p>
-            {/* <strong>İştirak edən könüllü sayı: </strong> {data.users.length} */}
-          {/* </p>
+            <strong>İştirak edən könüllü sayı: </strong> {eventData.volunteers}
+          </p>
           <p>
             <strong>Qeyd: </strong>
-            {/* {data.users[0].events[0].note} */}
-          {/* </p>
-       
-      </CustomTabPanel> 
+            {eventData.note}
+          </p>{" "}
+        </div>
+      </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <div
           style={{
@@ -215,13 +190,39 @@ export default function TabsUser() {
           }}
         >
           <div>
-            <ol>
-              {/* <li> {data.users[0].name}</li>
-              <li> {data.users[1].name}</li>
-              <li> {data.users[2].name}</li> */}
-            {/* </ol>
+            <Space
+              style={{
+                width: "100%",
+              }}
+              direction="vertical"
+            >
+              <Select
+                mode="multiple"
+                allowClear
+                style={{
+                  marginBottom: "30px",
+                  width: "100%",
+                }}
+                placeholder="Könüllüləri seçin"
+                defaultValue={[]}
+                onChange={handleChange1}
+                options={options}
+              />
+            </Space>{" "}
+            <div
+              style={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "end",
+                marginBottom: "30px",
+                width: "100%",
+              }}
+            >
+              <Button>Əlavə et</Button>
+            </div>
+            <TableForLanguage />
           </div>
-        </div> */}
+        </div>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}></CustomTabPanel>
     </Box>

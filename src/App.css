@@ -1,27 +1,24 @@
 .App {
- 
   text-align: center;
 }
-#cancel{border: 1px solid rgb(75, 125, 131) ;
+#cancel {
+  border: 1px solid rgb(75, 125, 131);
 
   color: #4b7d83;
- 
 }
 
-.MuiTooltip-tooltip{
-  
-background-color: #011713!important;
+.MuiTooltip-tooltip {
+  background-color: #011713 !important;
   color: #f4f7f7 !important;
-  font-size: 14px!important;
-  padding: 10px 10px!important;
-
- 
+  font-size: 14px !important;
+  padding: 10px 10px !important;
 }
-.MuiTable-root{
+.MuiTable-root {
   overflow-x: scroll;
 }
 
-#submit{  background-color: rgb(75, 125, 131) !important;
+#submit {
+  background-color: rgb(75, 125, 131) !important;
   color: white;
 }
 
@@ -43,13 +40,13 @@ background-color: #011713!important;
   
 } */
 
-
 h1,
 h2 {
-  color: rgb(75, 125, 131);
+  color: rgb(75, 125, 131) !important;
 }
 ul {
   line-height: 50% !important;
+  text-decoration: none !important;
 }
 
 .ant-layout-sider-trigger {
@@ -65,14 +62,14 @@ ul {
   filter: drop-shadow(2px);
 }
 .ant-layout-sider-has-trigger {
-  min-width: 320px!important
+  min-width: 320px !important;
 }
-.ant-layout-sider-collapsed{
-  min-width: 100px!important
+.ant-layout-sider-collapsed {
+  min-width: 100px !important;
 }
 
 .ant-menu-item-selected {
-  background-color: #0a2824!important;
+  background-color: #0a2824 !important;
 }
 .ant-layout-sider-trigger span {
   z-index: 555;
@@ -94,6 +91,7 @@ ul {
   background-color: #4b7d83 !important;
 }
 .ant-menu-sub ul {
+  text-decoration: none !important;
   line-height: normal;
 }
 .ant-menu-item {
@@ -134,16 +132,36 @@ ul {
 .ant-btn-primary {
   background-color: #4b7d83;
 }
- .css-131pszo-MuiTableFooter-root
-  {
-    width: 100%;
-    max-width: 100%;
-    overflow: auto!important;
-    position: relative;
-  } 
-  .ant-popover-content{ 
-    width: 300px!important;
-  }
-.table-1{
+.css-131pszo-MuiTableFooter-root {
+  width: 100%;
+  max-width: 100%;
+  overflow: auto !important;
+  position: relative;
+}
+.ant-popover-content {
+  width: 300px !important;
+}
+.table-1 {
   max-height: 400px;
+}
+.loader {
+  /* Styles for the loader */
+  display: inline-block;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #7983ff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 5px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.error-message {
+  color: red;
+  margin-top: 10px;
 }

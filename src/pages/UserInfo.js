@@ -15,7 +15,7 @@ export default function UserInfo() {
   console.log(userId);
 
   const [userData, setUserData] = useState({
-   
+   pinCode:"",
     name: "",
     surname: "",
     fatherName: "",
@@ -48,7 +48,7 @@ export default function UserInfo() {
       .catch(error => {
         console.error('Error fetching data: ', error);
       });
-  }, []); // Empty dependency array means this effect runs once after initial render
+  }, []); 
 
  
 
@@ -68,7 +68,7 @@ export default function UserInfo() {
           <h1>{userData.name} {userData.surname} {userData.fatherName}</h1> 
            <p>
             <strong>FIN:</strong>
-            {userData.fin}
+            {userData.pinCode}
           </p>
           <p>
             <strong>Cinsi: </strong>
@@ -95,10 +95,10 @@ export default function UserInfo() {
         >
         {userData && userData.photo && (
               <img 
-                src={`data:image/jpeg;base64,${userData.photo}`}
+                src={userData.photo}
                 alt="volunteer"
-                width={"80%"}
-                style={{padding:"2%"}}
+                width={"250px"}
+                style={{padding:"5%", borderRadius:"12px"}}
               />
             )}
         </div>

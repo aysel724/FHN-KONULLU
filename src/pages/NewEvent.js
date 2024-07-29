@@ -79,9 +79,10 @@ export default function NewVolonteer() {
 
   function handleSubmit(statusCode) {
     setLoading(true);
+
     setTimeout(() => {
       navigate(`/Volunteers`);
-    }, 2000);
+    }, 5000);
     console.log(userData);
     function convertDate(date) {
       const dateObject = new Date(date);
@@ -163,8 +164,8 @@ export default function NewVolonteer() {
         setLoading(false);
         openNotificationWithIcon(
           "success",
-          "Əlavə olundu",
-          "Könüllü siyahıya əlavə olundu"
+          "Success Message",
+          "This is a success notification."
         );
         console.log(response);
       })

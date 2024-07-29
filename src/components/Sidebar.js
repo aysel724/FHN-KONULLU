@@ -5,29 +5,28 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import "../App.css";
 import Login from "../pages/Login";
 import Admin from "../pages/Admin";
-import Users from "../pages/Users";
 import { Layout, Menu, theme, Button } from "antd";
 import Reports from "../pages/Reports";
-
+import NewEvent from "../pages/NewEvent";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import "../App.css";
 import UserInfo from "../pages/UserInfo";
 import Volonteer from "../pages/Volonteer";
 import NewVolonteer from "../pages/NewVolonteer";
-import TableForEducationDegree from"../components/TableForEducationDegree"
-import logo from "../components/images/FHNLogo.png";
+import TableForEducationDegree from "../components/TableForEducationDegree";
+import logo from "../components/images/logo123.png";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import TableForEducationType from "../components/TableForEducationType";
 import Notification from "./Notification";
 import Events from "../pages/Events";
 import Trainings from "../pages/Trainings";
-import BloodtypeIcon from "@mui/icons-material/Bloodtype";
-import InsuranceTotal from "../pages/InsuranceTotal";
+
 import TrainingsInfo from "../pages/TrainingsInfo";
 
 import { Divider } from "antd";
 import EventInfo from "../pages/EventInfo";
 import { key } from "localforage";
+import NewTrainings from "../pages/NewTrainings";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -42,7 +41,7 @@ const items = [
   getItem(
     "Könüllülər",
     "1",
-    <Link to="/Volonteers">
+    <Link to="/Volunteers">
       <svg
         width="30"
         height="24"
@@ -162,10 +161,7 @@ const items = [
       </svg>
     </Link>,
 
-
     [
-      
-
       getItem(
         <Link to="/EducationTypes" reloadDocument="true">
           <FiberManualRecordIcon
@@ -293,11 +289,9 @@ const Sidebar = () => {
         <Sider
           width={330}
           trigger={null}
-          style={{    
-          minHeight: '100vh',
+          style={{
+            minHeight: "100vh",
 
-        
-      
             borderRadius: "15px",
             padding: 0,
             background: "#4b7d83",
@@ -307,9 +301,20 @@ const Sidebar = () => {
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
         >
-          <div className="logo-container">
-            <img src={logo} style={{ width: "80px" }}></img>
-            <p style={{ color: "white", fontSize: "10px" }}>
+          <div
+            className="logo-container"
+            // style={{
+            //   backgroundColor: "white",
+            // }}
+          >
+            <img
+              src={logo}
+              style={{
+                width: "120px",
+                textAlign: "center",
+              }}
+            ></img>
+            <p style={{ color: "white", fontSize: "12px", marginTop: "-20px" }}>
               FÖVQƏLADƏ HALLAR KÖNÜLLÜLƏRİ
             </p>
             <Divider style={{ backgroundColor: "white", opacity: "50%" }} />
@@ -329,7 +334,7 @@ const Sidebar = () => {
           />
         </Sider>
 
-        <Layout style=   {{minHeight: '100vh'}}>
+        <Layout style={{ minHeight: "100vh" }}>
           <Header
             style={{
               display: "flex",
@@ -369,29 +374,30 @@ const Sidebar = () => {
               }}
             >
               <Notification></Notification>
-
-              <p >ertyguhi</p>
             </div>
             {/* </div> */}
           </Header>
 
-          <Content   style={{
-                  padding:"20px"
-                }} >
+          <Content
+            style={{
+              padding: "20px",
+            }}
+          >
             <Routes>
               <Route element={<Navigate to="login" />} path="/" />
 
-              <Route path="/Volonteers" element={<Volonteer />} />
-              <Route path="/Volonteers/:id" element={<UserInfo />} />
+              <Route path="/Volunteers" element={<Volonteer />} />
+              <Route path="/Volunteers/:id" element={<UserInfo />} />
               <Route path="/newvolonteer" element={<NewVolonteer />} />
+              <Route path="/newtrainings" element={<NewTrainings />} />
+              <Route path="/newevents" element={<NewEvent />} />
               <Route path="/MesTrainings" element={<Trainings />} />
-              <Route path="/trainings/:id" element={<TrainingsInfo />} />
+              <Route path="/MesTrainings/:id" element={<TrainingsInfo />} />
               <Route path="/events/:id" element={<EventInfo />} />
               <Route path="/events" element={<Events />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
-            
 
               <Route
                 path="/TrainingResults"
@@ -440,7 +446,7 @@ const Sidebar = () => {
             </Routes>
           </Content>
           <Footer
-            style={{ 
+            style={{
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",
@@ -453,8 +459,8 @@ const Sidebar = () => {
             }}
           >
             <p>
-            ©{new Date().getFullYear()} Rəqəmsal Texnologiyalar və İnnovasiyaların İnkişafı Baş
-              İdarəsi
+              ©{new Date().getFullYear()} Rəqəmsal Texnologiyalar və
+              İnnovasiyaların İnkişafı Baş İdarəsi
             </p>
           </Footer>
         </Layout>

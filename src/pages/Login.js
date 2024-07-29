@@ -1,15 +1,44 @@
-import React from "react";
-
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Checkbox, Form, Input } from "antd";
-
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
-const onFinishFailed = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
-
+import { jwtDecode } from "jwt-decode";
 function Login() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+
+  const handleLogin = () => {
+    fetch("https://api-volunteers.fhn.gov.az/api/v1/Auth", {
+      method: "POST",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userName: email,
+        password: password,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const token = data.data.token;
+        const payload = jwtDecode(token);
+        console.log(payload);
+        console.log("Login successful:", data);
+        navigate("/Volunteers");
+        // Handle successful login (e.g., update state, redirect)
+      })
+      .catch((error) => {
+        console.error("Error logging in:", error);
+        setError("Failed to log in. Please check your credentials.");
+      });
+  };
   return (
     <div
       style={{
@@ -48,21 +77,20 @@ function Login() {
         {/* <img src={logo} style={{width:"140px"}}/> */}
         <svg
           width="100"
-          marginBottom="30"
-          height="auto"
+          height="100"
           viewBox="0 0 66 87"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g clip-path="url(#clip0_3_874)">
+          <g clipPath="url(#clip0_3_874)">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M32.9349 26.3112L39.769 38.1681L26.2526 38.1996L32.9349 26.3112ZM31.4362 26.3301C30.3338 26.5852 29.4018 26.9852 28.6214 27.5237C27.4819 28.3079 27.3704 28.5598 26.5963 29.5424C24.6733 31.983 24.5711 35.8251 26.4105 38.6783C28.0641 41.2417 31.4145 42.7628 34.6411 42.1109C38.7781 41.2732 41.627 36.8612 40.7661 32.5404C40.0199 28.8054 36.0501 25.2626 31.4362 26.3301Z"
               fill="#E57817"
             />
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               clip-rule="evenodd"
               d="M26.2526 38.1996L39.769 38.1681L32.9349 26.3112L26.2526 38.1996Z"
               fill="#0091DE"
@@ -326,10 +354,12 @@ function Login() {
           </defs>
         </svg>
 
-        <h2 style={{ paddingBottom: "30px" }}> FÖVQƏLADƏ HALLAR KÖNÜLLÜLƏRİ</h2>
+        <h2 style={{ paddingBottom: "10px", marginTop: "10px" }}>
+          {" "}
+          FÖVQƏLADƏ HALLAR KÖNÜLLÜLƏRİ
+        </h2>
 
-        <Form
-          name="basic"
+        <div
           style={{
             color: "white",
             display: "flex",
@@ -339,49 +369,48 @@ function Login() {
             justifyContent: "center",
             width: 500,
           }}
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
         >
-          <Form.Item
-            placeholder="fghj"
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: "İstifadəçi adını daxil edin!",
-              },
-            ]}
+          <input
+            style={{
+              border: "1px solid grey",
+              borderRadius: "9px",
+              padding: "2%",
+              marginBottom: "2%",
+              display: "block",
+            }}
+            type="email"
+            placeholder="İstifadəçi adınızı daxil edin"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            style={{
+              border: "1px solid grey",
+              borderRadius: "9px",
+              padding: "2%",
+              marginBottom: "1%",
+              display: "block",
+            }}
+            type="password"
+            placeholder="Şifrənizi daxil edin"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            style={{
+              padding: "12px ",
+              border: "1px solid grey",
+              borderRadius: "9px",
+              color: " white",
+              backgroundColor: "#4b7d83",
+              marginTop: "20px",
+              cursor: "pointer",
+            }}
+            onClick={handleLogin}
           >
-            <Input size="large" placeholder="İstifadəçi adınızı daxil edin" />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Şifrəni daxil edin!",
-              },
-            ]}
-          >
-            <Input.Password size="large" placeholder="Şifrənizi daxil edin" />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              style={{ width: "500px", margin: "0" }}
-            >
-              Daxil ol
-            </Button>
-          </Form.Item>
-        </Form>
+            Daxil ol
+          </button>
+        </div>
       </div>
     </div>
   );

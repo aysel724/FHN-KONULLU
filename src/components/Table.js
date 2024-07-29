@@ -1,14 +1,14 @@
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import "../App.css";
 import React from "react";
 import axios from "axios";
 import {
+  createMRTColumnHelper,
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
-  
 } from "material-react-table";
 import {
   Box,
@@ -18,7 +18,7 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
-  GridToolbar
+  GridToolbar,
 } from "@mui/material";
 import {
   QueryClient,
@@ -27,70 +27,100 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { usersData, usStates } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import { useParams } from "react-router-dom";
 import { useExcelJS } from "react-use-exceljs";
+import { mkConfig, generateCsv, download } from "export-to-csv";
+
+// columnHelper.accessor('lastName', {
+//   header: 'Last Name',
+//   size: 120,
+// }),
+// columnHelper.accessor('company', {
+//   header: 'Company',
+//   size: 300,
+// }),
+// columnHelper.accessor('city', {
+//   header: 'City',
+// }),
+// columnHelper.accessor('country', {
+//   header: 'Country',
+//   size: 220,
+// }),
+// ];
 
 const Example = () => {
+  const columnHelper = createMRTColumnHelper();
+
+  // const csvConfig = mkConfig({
+  //   fieldSeparator: ",",
+  //   decimalSeparator: ".",
+  //   useKeysAsHeaders: true,
+  // });
+
+  const handleDownload = async () => {
+    try {
+      const response = await axios.get(
+        "https://api-volunteers.fhn.gov.az/api/v1/Volunteers"
+      );
+      const users = response.data.data;
+      const usersForCsv = users.map((user) => ({
+        id: user.id,
+        name: `${user.name} ${user.surname}`, // Example: Concatenate name and surname
+        email: user.email,
+        // Add more fields as needed, ensuring they are simple data types
+      }));
+
+      const csvConfig = mkConfig({
+        fieldSeparator: ",",
+        decimalSeparator: ".",
+        useKeysAsHeaders: true,
+      });
+      const csv = generateCsv(csvConfig)(usersForCsv);
+
+      // Download the CSV file
+      download(csvConfig)(csv);
+    } catch (error) {
+      console.error("Error downloading data:", error);
+      // Handle error if needed
+    }
+  };
+
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [sorting, setSorting] = useState([]);
-  const virtualizerInstanceRef = useRef(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
- 
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    //scroll to the top of the table when the sorting changes
-    try {
-      virtualizerInstanceRef.current?.scrollToIndex?.(0);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [sorting]);
-
-
-
-
-  const excel = useExcelJS({
-    filename: "Könüllülər.xlsx",
-    worksheets: [
-      {
-        name: "Sheet 1",
-        columns: [
-          {
-            header: "fin",
-            key: "userData.fin",
-            width: 30,
-          },
-          {
-            header: "Ad soyad",
-            key: "userData.name",
-            width: 32,
-          },
-          {
-            header: "Doğum tarixi.",
-            key: "birthDate",
-            width: 30,
-          },
-          {
-            header: "ailə statusu",
-            key: "maritalStatus",
-            width: 30,
-          },
-         
-        ],
-      },
-    ],
-  });
-  const onClick = () => {
-    excel.download(usersData);
-  };
+  // const excel = useExcelJS({
+  //   filename: "Könüllülər.xlsx",
+  //   worksheets: [
+  //     {
+  //       name: "Sheet 1",
+  //       columns: [
+  //         {
+  //           header: "fin",
+  //           key: "pinCode",
+  //           width: 30,
+  //         },
+  //         {
+  //           header: "Ad soyad",
+  //           key: "name",
+  //           width: 32,
+  //         },
+  //         {
+  //           header: "Doğum tarixi.",
+  //           key: "name",
+  //           width: 30,
+  //         },
+  //         {
+  //           header: "ailə statusu",
+  //           key: "maritalStatus",
+  //           width: 30,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // });
+  // const onClick = () => {
+  //   // excel.download();
+  // };
   const navigate = useNavigate();
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -104,61 +134,51 @@ const Example = () => {
 
   const columns = useMemo(
     () => [
+      // columnHelper.accessor("id", {
+      //   header: "City",
+      //   enableEditing: false,
+      //   size: 80,
+      // }),
       {
-        accessorKey: 'userId',
-        header: 'Id',
+        accessorKey: "id",
+        header: "Id",
         enableEditing: false,
         size: 80,
       },
 
       {
-        accessorKey: "name",
+        accessorKey: "fullName",
         header: "Ad soyad",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
+          error: !!validationErrors?.fullName,
+          helperText: validationErrors?.fullName,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              name: undefined,
+              fullName: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
+
       {
         size: 160,
-        accessorKey: "fin",
+        accessorKey: "pinCode",
         header: "FİN KOD",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.fin,
-          helperText: validationErrors?.fin,
-          //remove any previous validation errors when user focuses on the input
+          error: !!validationErrors?.pinCode,
+          helperText: validationErrors?.pinCode,
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              fin: undefined,
+              pinCode: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
-      // form.append('name', userData.name);
-      // form.append('surname', userData.surname);
-      // form.append('fatherName', userData.fatherName);
-      // form.append('gender', userData.gender);
-      // form.append('militaryReward', userData.militaryReward);
-      // form.append('birthDate', userData.birthDate);
-      // form.append('height', userData.height);
-      // form.append('citizenship', userData.citizenship);
-      // form.append('maritalStatus', userData.maritalStatus);
-      // form.append('identityCardGivenStructureName', userData.identityCardGivenStructureName);
-      // form.append('identityCardReceivingDate', userData.identityCardReceivingDate);
-      // form.append('registrationAddress', userData.registrationAddress);
-      // form.append('currentAddress', userData.currentAddress);
-      // form.append('photo', userData.photo); 
-     
+
       {
         size: 90,
         accessorKey: "gender",
@@ -173,25 +193,9 @@ const Example = () => {
               ...validationErrors,
               gender: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
-      {
-        accessorKey: "status",
-        header: "Status",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.status,
-          helperText: validationErrors?.status,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              status: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
+
       {
         accessorKey: "birthDate",
         header: "Doğum tarixi",
@@ -199,25 +203,21 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.birthDate,
           helperText: validationErrors?.birthDate,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               birthDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
       {
-   
         accessorKey: "maritalStatus",
         header: " Ailə statusu",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.maritalStatus,
           helperText: validationErrors?.maritalStatus,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -226,14 +226,13 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "email", 
+        accessorKey: "email",
         header: "E-poçt ünvanı",
         muiEditTextFieldProps: {
           type: "email",
           required: true,
           error: !!validationErrors?.mail,
           helperText: validationErrors?.mail,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -249,7 +248,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.phoneNumber1,
           helperText: validationErrors?.phoneNumber1,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -257,58 +255,22 @@ const Example = () => {
             }),
         },
       },
-      {
-        accessorKey:`startDate`,
-        header: "Fəaliyyətə başlama tarixi",
-        muiEditTextFieldProps: {
-          label: "",
-     
-          required: true,
-          error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              startDate: undefined,
-            }),
-        },
-      },
-      // {
-      //   accessorKey: `mesTrainings.finishDate`,
-      //   header: "Fəaliyyətin bitmə vaxtı",
-      //   muiEditTextFieldProps: {
-    
-      //     label: "",
-      //     required: true,
-      //     error: !!validationErrors?.finishDate,
-      //     helperText: validationErrors?.finishDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         finishDate: undefined,
-      //       }),
-      //   },
-      // },
-
-    
     ],
     [validationErrors]
   );
-
-  //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
     useCreateUser();
-
-  //call READ hook
   const {
     data: fetchedUsers = [],
     isError: isLoadingUsersError,
     isFetching: isFetchingUsers,
     isLoading: isLoadingUsers,
   } = useGetUsers();
-  //call UPDATE hook
+  const customButtonProps = {
+    saveButtonText: "hcvbnm",
+    cancelButtonText: "4567",
+  };
+
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
     useUpdateUser();
   //call DELETE hook
@@ -327,18 +289,17 @@ const Example = () => {
     table.setCreatingRow(null); //exit creating mode
   };
 
-  //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
-    setValidationErrors({});
+    // const newValidationErrors = validateUser(values);
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
+    // setValidationErrors({});
+
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
   };
-
   //DELETE action
   const openDeleteConfirmModal = (row) => {
     if (window.confirm("təsdiq edirsiz?")) {
@@ -346,40 +307,32 @@ const Example = () => {
     }
   };
 
+  let params = useParams();
+  let id = params.id;
   const table = useMaterialReactTable({
-    className:"table-1",
     positionActionsColumn: "last",
 
-    muiTableContainerProps: { sx: { maxHeight: '600px' } },
-    enableColumnVirtualization: false,
-    enableGlobalFilterModes: true,
-    enableRowVirtualization: true,
-    enablePagination:true,
+    muiTableContainerProps: { sx: { maxHeight: "600px" } },
+
     enableRowNumbers: true,
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
     columns,
-    rowCount:5,
-    onSortingChange: setSorting,
-    state: { isLoading, sorting },
-    virtualizerInstanceRef, //optional
-    rowVirtualizerOptions: { overscan: 2 }, //optionally customize the row virtualizer
-    virtualizerProps: { overscan: 2 },
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
-      sx: {   
-        cursor: "pointer", //you might want to change the cursor too when adding an onClick
+      sx: {
+        cursor: "pointer",
       },
     }),
     MRT_EditActionButtons,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
-    initialState: { 
-      columnPinning: { right: ["mrt-row-actions"] ,},
+    initialState: {
+      columnPinning: { right: ["mrt-row-actions"] },
     },
-    displayColumnDefOptions: { 'mrt-row-actions': { size: 150 } },
-    
+    displayColumnDefOptions: { "mrt-row-actions": { size: 150 } },
 
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -403,28 +356,38 @@ const Example = () => {
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
         <DialogTitle variant="h5">Yeni könüllü əlavə edin</DialogTitle>
-        <DialogContent  
+        <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons variant="text"  table={table} row={row} />
+          <MRT_EditActionButtons
+            {...customButtonProps}
+            variant="text"
+            table={table}
+            row={row}
+          />
         </DialogActions>
       </>
     ),
     //optionally customize modal content
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Düzəliş edin</DialogTitle >
+        <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
         <DialogContent
+          {...customButtonProps}
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons  variant="text" table={table} row={row}  
-  />
+          <MRT_EditActionButtons
+            {...customButtonProps}
+            variant="text"
+            table={table}
+            row={row}
+          />
         </DialogActions>
       </>
     ),
@@ -433,10 +396,7 @@ const Example = () => {
         <Tooltip title="Ətraflı">
           <VisibilityIcon
             style={{ marginTop: "8px" }}
-            onClick={(event) => {
-              console.log(row.id);
-              navigate(row.id);
-            }}
+            onClick={() => navigate(`/Volunteers/${row.id}`)}
             variant="contained"
           >
             Ətraflı
@@ -490,7 +450,7 @@ const Example = () => {
           Yeni könüllü əlavə edin
         </Button>
 
-        <Button variant="contained" onClick={onClick}>
+        <Button variant="contained" onClick={handleDownload}>
           Excelə export
         </Button>
       </div>
@@ -504,9 +464,11 @@ const Example = () => {
     },
   });
 
-  return( <div className="table-container">
-    <MaterialReactTable table={table} /></div>
-  ) 
+  return (
+    <div className="table-container">
+      <MaterialReactTable table={table} />
+    </div>
+  );
 };
 
 //CREATE hook (post new user to api)
@@ -538,12 +500,21 @@ function useGetUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const response = await axios.get("https://api-volunteers.fhn.gov.az/api/v1/Volunteers?page=1&pageSize=0");
-        console.log(response.data.data[0].mesTrainings[0].startDate);
+        const response = await axios.get(
+          "https://api-volunteers.fhn.gov.az/api/v1/Volunteers"
+        );
+        // console.log(response.data.data);
+        // const names = response.data.data.map(
+        //   (e) => e.name + "  " + e.surname + " " + e.fatherName
+        // );
+        // console.log(names);
+        // return response.data.data;
 
-       
-        // Assuming your API returns data in response.data
-        return response.data.data;
+        const users = response.data.data.map((user) => ({
+          ...user,
+          fullName: `${user.name} ${user.surname} ${user.fatherName}`.trim(),
+        }));
+        return users;
       } catch (error) {
         // Handle errors here if needed
         console.error("Error fetching users:", error);
@@ -552,21 +523,34 @@ function useGetUsers() {
     },
     refetchOnWindowFocus: false,
   });
-} 
-      
+}
 
-
-
-
-//UPDATE hook (put user in api)
 function useUpdateUser() {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
+      const data = { ...user };
+      console.log(data);
       //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      console.log(user);
+      axios
+        .put(url, data, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
+    //client side optimistic update
     //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
@@ -579,14 +563,28 @@ function useUpdateUser() {
   });
 }
 
-//DELETE hook (delete user in api)
 function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {
@@ -623,7 +621,7 @@ function validateUser(user) {
     firstName: !validateRequired(user.firstName)
       ? "First Name is Required"
       : "",
-    lastName: !validateRequired(user.fin) ? "Last Name is Required" : "",
-    email: !validateEmail(user.mail) ? "Incorrect Email Format" : "",
+    surname: !validateRequired(user.surname) ? "Last Name is Required" : "",
+    email: !validateEmail(user.email) ? "Incorrect Email Format" : "",
   };
 }

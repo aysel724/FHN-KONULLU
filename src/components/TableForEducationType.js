@@ -1,6 +1,7 @@
 import { useId, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../App.css";
+import TableForEducationDegree from"../components/TableForEducationDegree"
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -23,9 +24,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import axios from "axios";
-import { columnNames, apiData, headerNames } from "../makeData";
+import { columnNames, headerNames } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Export } from "./Export";
+
 
 const Example = () => {
   const location = useLocation().pathname.substring(1);
@@ -39,11 +40,12 @@ const Example = () => {
   }
   const columns = useMemo(
     () => [
-      {
+      { 
         accessorKey: 'id',
         header: 'Id',
         enableEditing: false,
-        size: 80,
+        size: 50,
+      
       },
 
       {
@@ -62,18 +64,6 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-
-      // {
-      //   accessorKey: "status",
-      //   header: "Status",
-      //   editVariant: "select",
-      //   editSelectOptions: usStates,
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.status,
-      //     helperText: validationErrors?.status,
-      //   },
-      // },
       {
         accessorKey: "priority",
         header: "Prioritet",
@@ -91,23 +81,6 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "EducationTypes",
-      //   header: "Təhsilin tipi",
-      //   muiEditTextFieldProps: {
-      //   type:"number",
-      //     required: true,
-      //     error: !!validationErrors?.EducationTypes,
-      //     helperText: validationErrors?.EducationTypes,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         EducationTypes: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
     ],
 
     columnNames[location].map((column) => {
@@ -176,11 +149,11 @@ const Example = () => {
 
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
-    columns,
+   columns,
     enableRowNumbers: true,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal", 
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -205,7 +178,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -219,7 +192,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -269,13 +242,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true); 
         }}
       >
         Əlavə edin
@@ -290,7 +257,7 @@ const Example = () => {
     },
   });
 
-  return <MaterialReactTable table={table} />;
+  return <MaterialReactTable table={table}  />;
 };
 
 function useCreateUser() {
@@ -299,15 +266,11 @@ function useCreateUser() {
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
-      //send api update request here
-
       const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
-
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-
       axios
         .post(url, user, { headers })
         .then((response) => {
@@ -317,7 +280,6 @@ function useCreateUser() {
           console.error("Error:", error);
         });
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
         ...prevUsers,
@@ -327,7 +289,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -344,11 +305,8 @@ function useGetUsers() {
           }
         );
         console.log(response.data);
-
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
@@ -365,7 +323,7 @@ function useUpdateUser() {
   return useMutation({
     mutationFn: async (user) => {
 
-      const data = { ...user, isDeleted: true };
+      const data = { ...user};
       console.log(data);
       //send api update request here
 
@@ -444,8 +402,10 @@ const Uxtable = () => {
       </div>
 
       <QueryClientProvider client={queryClient}>
-        <Example />
+        <Example /> 
+      
       </QueryClientProvider>
+   
     </>
   );
 };

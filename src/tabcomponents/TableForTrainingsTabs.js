@@ -4,7 +4,8 @@ import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
-} from 'material-react-table';
+} from 'material-react-table'; import { useParams } from 'react';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -39,17 +40,17 @@ const Example = () => {
       //   size: 80,
       // },
       {
-        accessorKey: 'trainingsName',
+        accessorKey: 'trainings',
         header: 'Kurs/Təlim adı',
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.trainingsName,
-          helperText: validationErrors?.trainingsName,
+          error: !!validationErrors?.trainings,
+          helperText: validationErrors?.trainings,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              trainingsName: undefined,
+              trainings: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
@@ -57,28 +58,28 @@ const Example = () => {
      
       
       {
-        accessorKey: 'statusss',
+        accessorKey: 'skillLevels',
         header: 'Bilik səviyyəsi',
         editVariant: 'select',
         editSelectOptions: usStates,
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.status,
-          helperText: validationErrors?.status,
+          error: !!validationErrors?.skillLevels,
+          helperText: validationErrors?.skillLevels,
         },
       },
       {
-        accessorKey: 'start',
+        accessorKey: 'startDate',
         header: 'Başlama tarixi',
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.start,
-          helperText: validationErrors?.start,
+          error: !!validationErrors?.startDate,
+          helperText: validationErrors?.startDate,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-             start: undefined,
+             startDate: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
@@ -264,16 +265,28 @@ function useCreateUser() {
 
 //READ hook (get users from api)
 function useGetUsers() {
+  let params = useParams();
+  let userId = params.id;
+  console.log(userId);
   return useQuery({
-    queryKey: ['users'],
+    queryKey: ["users"],
     queryFn: async () => {
-      //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(fakeData6);
+      try {
+        const response = await axios.get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`);
+
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Xəta:", error);
+        throw error;
+      }
     },
     refetchOnWindowFocus: false,
   });
-}
+}   
+
+
+
 
 //UPDATE hook (put user in api)
 function useUpdateUser() {

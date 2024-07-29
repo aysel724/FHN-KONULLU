@@ -13,7 +13,7 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
-} from '@mui/material';
+} from '@mui/material'; import { Routes, Route, useParams } from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
@@ -21,6 +21,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import axios from "axios"
 import { fakeData6, results } from '../makeData';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -42,49 +43,49 @@ const Example = () => {
     
 
       {
-        accessorKey: 'start',
+        accessorKey: 'startDate',
         header: 'Başlama tarixi',
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.start,
-          helperText: validationErrors?.start,
+          error: !!validationErrors?.startDate,
+          helperText: validationErrors?.startDate,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              start: undefined,
+              startDate: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
-        accessorKey: 'finish',
+        accessorKey: 'finishDate',
         header: 'Bitmə tarixi',
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.finish,
-          helperText: validationErrors?.finish,
+          error: !!validationErrors?.finishDate,
+          helperText: validationErrors?.finishDate,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              finish: undefined,
+              finishDate: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
-        accessorKey: 'reason',
+        accessorKey: 'mesVoluntaryActivityEndReasons',
         header: 'Fəaliyyətin bitmə səbəbi',
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.reason,
-          helperText: validationErrors?.reason,
+          error: !!validationErrors?.mesVoluntaryActivityEndReasons,
+          helperText: validationErrors?.mesVoluntaryActivityEndReasons,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              reason: undefined,
+              mesVoluntaryActivityEndReasons: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
@@ -160,7 +161,6 @@ const Example = () => {
       deleteUser(row.original.id);
     }
   };
-
   
 
   const table = useMaterialReactTable({ 
@@ -285,18 +285,31 @@ function useCreateUser() {
   });
 }
 
-//READ hook (get users from api)
 function useGetUsers() {
+  let params = useParams();
+  let userId = params.id;
+  console.log(userId);
   return useQuery({
-    queryKey: ['users'],
+    queryKey: ["users"],
     queryFn: async () => {
-      //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve(fakeData6);
+      try {
+        const response = await axios.get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`);
+
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Xəta:", error);
+        throw error;
+      }
     },
     refetchOnWindowFocus: false,
   });
-}
+}   
+
+
+
+
+   
 
 //UPDATE hook (put user in api)
 function useUpdateUser() {
@@ -354,7 +367,7 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
- start: !validateRequired(user.start)
+ startDate: !validateRequired(user.startDate)
       ? 'First Name is Required'
       : '',
 
