@@ -310,7 +310,7 @@ const Sidebar = () => {
             <img
               src={logo}
               style={{
-                width: "120px",
+                width: "150px",
                 textAlign: "center",
               }}
             ></img>
@@ -374,6 +374,7 @@ const Sidebar = () => {
               }}
             >
               <Notification></Notification>
+              <p></p>
             </div>
             {/* </div> */}
           </Header>

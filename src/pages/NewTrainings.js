@@ -44,6 +44,7 @@ export default function NewTrainings() {
   };
   const [volonteerNames, setvolonteerNames] = useState([]);
   const [trainingNames, setTrainingNames] = useState([]);
+  const [trainingResult, setTrainingResult] = useState([]);
   useEffect(() => {
     const TrainingNamesData = async () => {
       try {
@@ -90,6 +91,8 @@ export default function NewTrainings() {
         console.log(response.data.data);
         const newData = response.data.data.map((e) => {
           const user = {
+            fatherName: e.fatherName,
+            surname: e.surname,
             name: e.name,
             id: e.id,
           };
@@ -109,7 +112,7 @@ export default function NewTrainings() {
   }, []);
 
   function getTrainingNames(arr) {
-    return arr.map((e) => e.name);
+    return arr.map((e) => e.name + " " + e.surname + " " + e.fatherName);
   }
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -120,6 +123,7 @@ export default function NewTrainings() {
   const handleClose = () => setModalIsOpen(false);
   const [userData, setUserData] = useState({
     mesTrainingNameId: "",
+    department: "",
     description: "",
     startDate: "",
     finishDate: "",
@@ -128,15 +132,14 @@ export default function NewTrainings() {
     trainingMaster: "",
     trainingResultId: "",
     priority: "",
-    volunteerIds: [85],
   });
 
   function handleSubmit(statusCode) {
     setLoading(true);
 
-    // setTimeout(() => {
-    //   navigate(`/Volunteers`);
-    // }, 5000);
+    setTimeout(() => {
+      navigate(`/MesTrainings`);
+    }, 5000);
     console.log(userData);
     function convertDate(date) {
       const dateObject = new Date(date);
@@ -169,17 +172,6 @@ export default function NewTrainings() {
     formData.append("TrainingMaster", userData.trainingMaster);
     formData.append("TrainingResultId", userData.trainingResultId);
     formData.append("FinishDate", convertDate(userData.finishDate));
-    formData.append(
-      "IdentityCardGivenStructureName",
-      userData.identityCardGivenStructureName
-    );
-    formData.append("Priority", userData.priority);
-    formData.append("VolunteerIds", userData.volunteerIds);
-    formData.append("Surname", userData.surname);
-    formData.append("RegistrationAddress", userData.registrationAddress);
-    formData.append("PhoneNumber2", userData.phoneNumber2);
-    formData.append("MilitaryReward", userData.militaryReward);
-    formData.append("Email", userData.email);
 
     // function base64ToBlob(base64String, contentType) {
     //   const byteCharacters = atob(base64String); // Decode base64
@@ -348,31 +340,6 @@ export default function NewTrainings() {
           </Fade>
         </Modal>
       )}{" "}
-      {/* <FormControl
-        sx={{
-          boxShadow: "10px 10px 21px -6px rgba(11,77,77,0.47)",
-          width: "120px",
-        }}
-      >
-        <InputLabel id="demo-simple-select-label">Seriya</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label="Seriya"
-          onChange={(e) => {
-            console.log(passportData);
-            setPassportData((prev) => {
-              const data = prev;
-              data.seriaNumber = e.target.value;
-              return data;
-            });
-          }}
-          variant="outlined"
-        >
-          <MenuItem value={"AA"}>AA</MenuItem>
-          <MenuItem value={""}>AZE</MenuItem>
-        </Select>
-      </FormControl> */}{" "}
       <h2>Yeni təlim əlave edin</h2>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <FormControl
@@ -414,21 +381,21 @@ export default function NewTrainings() {
                 return <MenuItem value={training.id}>{training.name}</MenuItem>;
               })}
             </Select>
-            {/* <TextField
-              label="Təlimin adı*"
+            <TextField
+              label="Təlimin adı keçirən qurum*"
               id="Name"
               name="name"
               variant="outlined"
-              value={userData.mesTrainingName}
+              value={userData.quurm}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
-                  const data = { ...prev, mesTrainingName: e.target.value };
+                  const data = { ...prev, qurum: e.target.value };
 
                   return data;
                 });
               }}
-            /> */}
+            />
             <TextField
               label="Təlimin məzmunu"
               name="surname"
@@ -466,7 +433,7 @@ export default function NewTrainings() {
               name="gender"
               id="Gender"
               variant="outlined"
-              value={userData?.finishDate}
+              value={userData.finishDate}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
@@ -479,12 +446,24 @@ export default function NewTrainings() {
             <TextField
               multiple="true"
               type="file"
-              helperText="Təlimin bitmə tarixi "
+              helperText="Təlimin sənədləri "
               name="gender"
               id="Gender"
               variant="outlined"
               value={userData?.finishDate}
             />{" "}
+          </Box>
+          <Box
+            component="form"
+            sx={{
+              "& > :not(style)": {
+                m: 2,
+                width: "50ch",
+                display: "flex",
+                flexDirection: "column",
+              },
+            }}
+          >
             <TextField
               id="filled-basic"
               name="militaryReward"
@@ -500,18 +479,6 @@ export default function NewTrainings() {
                 });
               }}
             />
-          </Box>
-          <Box
-            component="form"
-            sx={{
-              "& > :not(style)": {
-                m: 2,
-                width: "50ch",
-                display: "flex",
-                flexDirection: "column",
-              },
-            }}
-          >
             <TextField
               id="Height"
               label="Təlimin keçirilmə yeri "
@@ -542,7 +509,7 @@ export default function NewTrainings() {
                 });
               }}
             />
-            <TextField
+            {/* <TextField
               id="vj"
               name="TrainingResultId"
               label="TrainingResultId "
@@ -556,7 +523,26 @@ export default function NewTrainings() {
                   return data;
                 });
               }}
-            />
+              
+            /> */}
+            {/* <InputLabel id="gd">Təlimin nəticəsi</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="dect"
+              onChange={(e) => {
+                console.log(userData);
+                setUserData((prev) => {
+                  const data = { ...prev, trainingResultId: e.target.value };
+
+                  return data;
+                });
+              }}
+              variant="outlined"
+            >
+              {trainingResult.map((result) => {
+                return <MenuItem value={result.id}>{result.name}</MenuItem>;
+              })}
+            </Select> */}
             <TextField
               id="vj"
               name="priority"

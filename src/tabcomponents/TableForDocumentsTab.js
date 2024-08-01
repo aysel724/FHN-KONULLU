@@ -74,7 +74,7 @@ const Example = () => {
       },
       {
         accessorKey: "name",
-        header: "Qeyd",
+        header: "Sənədin adı",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.name,
@@ -91,7 +91,7 @@ const Example = () => {
 
       {
         accessorKey: "electronicDocumentType",
-        header: "Sığorta şirkətinin adı",
+        header: "Sənədin növü",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
@@ -100,25 +100,25 @@ const Example = () => {
           helperText: validationErrors?.electronicDocumentType,
         },
       },
-      {
-        accessorKey: "documentUrl",
-        header: "Başlama tarixi",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.documentUrl,
-          helperText: validationErrors?.documentUrl,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              documentUrl: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
+      // {
+      //   accessorKey: "documentUrl",
+      //   header: "Fayl",
+      //   muiEditTextFieldProps: {
+      //     required: true,
+      //     error: !!validationErrors?.documentUrl,
+      //     helperText: validationErrors?.documentUrl,
+      //     //remove any previous validation errors when user focuses on the input
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         documentUrl: undefined,
+      //       }),
+      //     //optionally add validation checking for onBlur or onChange
+      //   },
+      // },
       {
         accessorKey: "fileName",
-        header: "Bitmə tarixi",
+        header: "Fayl",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.fileName,
@@ -127,7 +127,7 @@ const Example = () => {
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              fileNamee: undefined,
+              fileName: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import "../App.css";
 import {
   MRT_EditActionButtons,
@@ -29,6 +29,41 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
+  const [types, setTypes] = useState([]);
+
+  useEffect(() => {
+    const TypesData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/TrainingResults`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data.data);
+        const newData = response.data.data.map((e) => {
+          const user = {
+            name: e.name,
+            id: e.id,
+          };
+
+          return user;
+        });
+
+        console.log(newData);
+        setTypes(newData);
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    };
+    TypesData();
+  }, []);
+
+  function getTypesNames(arr) {
+    return arr.map((e) => e.name);
+  }
 
   const pagBUTTON = document.querySelector(
     ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
@@ -46,16 +81,17 @@ const Example = () => {
         size: 80,
       },
       {
-        accessorKey: "name",
+        accessorKey: "fullName",
         header: "Ad soyad",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
+          error: !!validationErrors?.fullName,
+          helperText: validationErrors?.fullName,
+          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              name: undefined,
+              fullName: undefined,
             }),
         },
       },
@@ -72,6 +108,31 @@ const Example = () => {
               ...validationErrors,
               fin: undefined,
             }),
+        },
+      },
+      // {
+      //   accessorKey: "trainingResult",
+      //   header: "Nəticə",
+      //   muiEditTextFieldProps: {
+      //     required: true,
+      //     error: !!validationErrors?.trainingResult,
+      //     helperText: validationErrors?.trainingResult,
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         fin: undefined,
+      //       }),
+      //   },
+      // },
+      {
+        accessorKey: "trainingResult.name",
+        header: "Nəticə",
+        editVariant: "select",
+        editSelectOptions: getTypesNames(types),
+        muiEditTextFieldProps: {
+          select: true,
+          error: !!validationErrors?.state,
+          helperText: validationErrors?.state,
         },
       },
     ],
@@ -109,12 +170,12 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
-    setValidationErrors({});
+    // const newValidationErrors = validateUser(values);
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
+    // setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
   };
@@ -128,6 +189,8 @@ const Example = () => {
 
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
+    rowNumberDisplayMode: "original",
+    enableRowNumbers: true,
     columns,
     data: fetchedUsers,
     createDisplayMode: "modal", //default ('row', and 'custom' are also available)
@@ -144,6 +207,10 @@ const Example = () => {
       sx: {
         minHeight: "500px",
       },
+      initialState: {
+        columnPinning: { right: ["mrt-row-actions"] },
+      },
+      displayColumnDefOptions: { "mrt-row-actions": { size: 150 } },
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
@@ -179,6 +246,15 @@ const Example = () => {
           <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
             <DeleteIcon />
           </IconButton>
+        </Tooltip>
+        <Tooltip title="qiym'l'nidr">
+          <Button
+            style={{ marginTop: "8px" }}
+            onClick={() => table.setEditingRow(row)}
+            variant="contained"
+          >
+            Qiymətləndir
+          </Button>
         </Tooltip>
       </Box>
     ),

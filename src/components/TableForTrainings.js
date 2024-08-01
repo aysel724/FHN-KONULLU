@@ -30,7 +30,6 @@ import { useExcelJS } from "react-use-exceljs";
 import axios from "axios";
 import { useEffect } from "react";
 const Example = () => {
-
   const excel = useExcelJS({
     filename: "Tədbirlər siyahısı.xlsx",
     worksheets: [
@@ -84,17 +83,15 @@ const Example = () => {
   const navigate = useNavigate();
   const [validationErrors, setValidationErrors] = useState({});
 
-
-
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'id',
-        header: 'Id',
+        accessorKey: "id",
+        header: "Id",
         enableEditing: false,
         size: 80,
       },
-     
+
       {
         accessorKey: `mesTrainingName.name`,
         header: "Təlimin adı",
@@ -106,7 +103,23 @@ const Example = () => {
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-             name: undefined,
+              name: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+      {
+        accessorKey: "qurum",
+        header: "Təlimi keçirən qurum",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.qurum,
+          helperText: validationErrors?.qurum,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              qurum: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
@@ -143,7 +156,8 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-      { size:200,
+      {
+        size: 200,
         accessorKey: "trainingDuration",
         header: "Təlimin müddəti",
         muiEditTextFieldProps: {
@@ -197,7 +211,7 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.volunteer,
           helperText: validationErrors?.volunteer,
-   
+
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -205,7 +219,8 @@ const Example = () => {
             }),
         },
       },
-      { size:200,
+      {
+        size: 200,
         accessorKey: `trainingResult.name`,
         header: "Təlimin nəticəsi",
         muiEditTextFieldProps: {
@@ -215,7 +230,7 @@ const Example = () => {
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-             name: undefined,
+              name: undefined,
             }),
         },
       },
@@ -249,7 +264,6 @@ const Example = () => {
             }),
         },
       },
-  
     ],
     [validationErrors]
   );
@@ -305,35 +319,32 @@ const Example = () => {
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
 
-    muiTableContainerProps: { sx: { maxHeight: '600px' } },
+    muiTableContainerProps: { sx: { maxHeight: "600px" } },
     enableColumnVirtualization: false,
     enableGlobalFilterModes: true,
     enableRowVirtualization: true,
-    enablePagination:true,
+    enablePagination: true,
     enableRowNumbers: true,
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
     columns,
 
-  
- 
     rowVirtualizerOptions: { overscan: 2 }, //optionally customize the row virtualizer
     virtualizerProps: { overscan: 2 },
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
-      sx: {   
+      sx: {
         cursor: "pointer",
       },
     }),
     MRT_EditActionButtons,
-    createDisplayMode: "modal", 
+    createDisplayMode: "modal",
     editDisplayMode: "modal",
     enableEditing: true,
-    initialState: { 
-      columnPinning: { right: ["mrt-row-actions"] ,},
+    initialState: {
+      columnPinning: { right: ["mrt-row-actions"] },
     },
-    displayColumnDefOptions: { 'mrt-row-actions': { size: 150 } },
-    
+    displayColumnDefOptions: { "mrt-row-actions": { size: 150 } },
 
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -381,14 +392,15 @@ const Example = () => {
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
-            <Tooltip title="Ətraflı"> 
+        <Tooltip title="Ətraflı">
           <VisibilityIcon
             style={{ marginTop: "8px" }}
             onClick={() => navigate(`/MesTrainings/${row.id}`)}
             variant="contained"
           >
-            Ətraflı 
-          </VisibilityIcon> </Tooltip>
+            Ətraflı
+          </VisibilityIcon>{" "}
+        </Tooltip>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
             <svg
@@ -431,8 +443,7 @@ const Example = () => {
         <Button
           variant="contained"
           onClick={() => {
-  
-              navigate("/newtrainings");
+            navigate("/newtrainings");
           }}
         >
           Yeni təlim əlavə et
@@ -484,7 +495,6 @@ function useCreateUser() {
         },
       ]);
     },
-
   });
 }
 
@@ -493,28 +503,27 @@ function useGetUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const response = await axios.get("https://api-volunteers.fhn.gov.az/api/v1/MesTrainings");
+        const response = await axios.get(
+          "https://api-volunteers.fhn.gov.az/api/v1/MesTrainings"
+        );
         console.log(response.data);
-      
+
         return response.data.data;
       } catch (error) {
-
         console.error("Error fetching users:", error);
         throw error;
       }
     },
     refetchOnWindowFocus: false,
   });
-} 
+}
 
 function useUpdateUser() {
-
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-
-      const data = { ...user};
+      const data = { ...user };
       console.log(data);
       //send api update request here
 
@@ -541,7 +550,6 @@ function useUpdateUser() {
         )
       );
     },
-
   });
 }
 //DELETE hook (delete user in api)
@@ -550,7 +558,7 @@ function useDeleteUser() {
   return useMutation({
     mutationFn: async (userId) => {
       console.log(userId);
- 
+
       try {
         const response = await axios.delete(
           `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/${userId}`,
@@ -574,7 +582,6 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
- 
   });
 }
 const queryClient = new QueryClient();
@@ -593,8 +600,6 @@ const validateRequired = (value) => {
 
 function validateUser(user) {
   return {
-    name: !validateRequired(user.name)
-      ? "First Name is Required"
-      : "",
+    name: !validateRequired(user.name) ? "First Name is Required" : "",
   };
 }

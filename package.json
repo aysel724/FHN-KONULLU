@@ -47,6 +47,7 @@
     "react-virtuoso": "^4.7.11",
     "sort-by": "^1.2.0",
     "styled-components": "^6.1.8",
+    "typescript": "^5.5.4",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },

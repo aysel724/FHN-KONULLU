@@ -147,6 +147,22 @@ const Example = () => {
         },
       },
       {
+        accessorKey: "department",
+        header: "Tədbiri keçirən qurum",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.department,
+          helperText: validationErrors?.department,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              department: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+      {
         accessorKey: "startDate",
         header: "Tədbirin başlama tarixi",
         muiEditTextFieldProps: {

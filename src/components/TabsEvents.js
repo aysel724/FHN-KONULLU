@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import "../App.css";
 import { useParams } from "react-router-dom";
 import TableForLanguage from "../components/TableForLanguage";
-import { Table } from "antd";
+import Upload from "../components/Upload";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -101,7 +101,6 @@ export default function TabsUser() {
     eventPlace: "",
     personInCharge: "",
     note: "",
-    volunteers: [],
   });
 
   let params = useParams();
@@ -137,7 +136,8 @@ export default function TabsUser() {
             className="tabs"
             label="İştirak edən könüllülər"
             {...a11yProps(1)}
-          />
+          />{" "}
+          <Tab className="tabs" label="Tədbirin sənədləri" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -218,13 +218,20 @@ export default function TabsUser() {
                 width: "100%",
               }}
             >
-              <Button>Əlavə et</Button>
+              <Button
+                style={{ border: "1px solid #4b7d83", color: " #4b7d83 " }}
+              >
+                Əlavə et
+              </Button>
             </div>
             <TableForLanguage />
           </div>
         </div>
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={3}></CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        {" "}
+        <Upload />
+      </CustomTabPanel>
     </Box>
   );
 }

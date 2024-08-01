@@ -14,7 +14,7 @@ import TableForTrainigsTabs from "../tabcomponents/TableForTrainingsTabs";
 import TableForFHNtrainings from "../tabcomponents/TableForFHNtrainingsTab";
 import TableForOtherSkillsTab from "../tabcomponents/TableForOtherSkillsTab";
 import TableForEventTabs from "../tabcomponents/TableForEventTabs";
-import TableForSportsTab from "../tabcomponents/TableForSportsTab";
+import TableForSportTabs from "../tabcomponents/TableForSportTabs";
 import TableForInsuranceTab from "../tabcomponents/TableForInsuranceTab";
 import TableForContractsTab from "../tabcomponents/TableForContractsTab";
 import TableForActivitiTab from "../tabcomponents/TableForActivitiTab";
@@ -75,7 +75,7 @@ export default function TabsUser() {
     identityCardReceivingDate: "",
     registrationAddress: "",
     currentAddress: "",
-
+    pinCode: "",
     phoneNumber1: "",
     phoneNumber2: "",
     email: "",
@@ -170,7 +170,7 @@ export default function TabsUser() {
           </p>
           <p>
             <strong>Şəxsiyyət vəsiqəsinin seriya və nömrəsi:</strong>
-            {userData.documentNumber} {userData.fin}
+            {userData.pinCode}
           </p>
           <p>
             <strong>
@@ -218,7 +218,7 @@ export default function TabsUser() {
         <TableForEventTabs />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={7}>
-        <TableForSportsTab />
+        <TableForSportTabs />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={8}>
         <TableForOtherSkillsTab />

@@ -65,7 +65,7 @@ ul {
   min-width: 320px !important;
 }
 .ant-layout-sider-collapsed {
-  min-width: 100px !important;
+  min-width: 150px !important;
 }
 
 .ant-menu-item-selected {

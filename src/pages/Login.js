@@ -36,7 +36,9 @@ function Login() {
       })
       .catch((error) => {
         console.error("Error logging in:", error);
-        setError("Failed to log in. Please check your credentials.");
+        setError(
+          "Daxil olmaq alınmadı. Zəhmət olmasa, məlumatları bir daha yoxlayın yoxlayın."
+        );
       });
   };
   return (
@@ -411,6 +413,25 @@ function Login() {
             Daxil ol
           </button>
         </div>
+        {error && (
+          <div
+            className="modal"
+            style={{
+              backgroundColor: "white",
+              color: "red",
+              marginTop: "20px",
+              padding: "3%",
+              borderRadius: "9px",
+            }}
+          >
+            <div className="modal-content">
+              <p>{error}</p>
+            </div>
+            <span className="close" onClick={() => setError(null)}>
+              &times;
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
