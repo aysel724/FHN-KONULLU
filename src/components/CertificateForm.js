@@ -4,15 +4,19 @@ import React, { useState } from "react";
 import Certificate from "./Certificate";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { duration } from "@mui/material";
 
 const CertificateForm = () => {
   const [name, setName] = useState("");
+  const [duration, setDuartion] = useState("");
   const [showCertificate, setShowCertificate] = useState(false);
 
   const handleChange = (e) => {
     setName(e.target.value);
   };
-
+  const handleChange1 = (e) => {
+    setDuartion(e.target.value);
+  };
   const handleGenerate = () => {
     setShowCertificate(true);
   };
@@ -37,12 +41,18 @@ const CertificateForm = () => {
 
   return (
     <div style={{ textAlign: "center", margin: "20px" }}>
-      <h1>Certificate Generator</h1>
       <input
         type="text"
         value={name}
         onChange={handleChange}
-        placeholder="Enter Full Name"
+        placeholder="Ad, soyad, ata adı"
+        style={{ padding: "10px", fontSize: "16px" }}
+      />
+      <input
+        type="text"
+        value={duration}
+        onChange={handleChange1}
+        placeholder="Təlim müddəti"
         style={{ padding: "10px", fontSize: "16px" }}
       />
       <br />
@@ -50,12 +60,12 @@ const CertificateForm = () => {
         onClick={handleGenerate}
         style={{ padding: "10px 20px", fontSize: "16px", marginTop: "10px" }}
       >
-        Generate Certificate
+        Sertifikatı generasiya et
       </button>
       {showCertificate && (
         <div>
           <div id="certificate" style={{ margin: "20px", textAlign: "center" }}>
-            <Certificate name={name} />
+            <Certificate name={name} duration={duration} />
           </div>
           <button
             onClick={handleDownload}
@@ -65,7 +75,7 @@ const CertificateForm = () => {
               marginTop: "10px",
             }}
           >
-            Download PDF
+            Yüklə
           </button>
         </div>
       )}

@@ -342,9 +342,12 @@ const Example = () => {
     editDisplayMode: "modal",
     enableEditing: true,
     initialState: {
+      columnVisibility: { id: false },
       columnPinning: { right: ["mrt-row-actions"] },
     },
-    displayColumnDefOptions: { "mrt-row-actions": { size: 150 } },
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
 
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError

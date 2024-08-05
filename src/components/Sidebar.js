@@ -20,13 +20,15 @@ import TableForEducationType from "../components/TableForEducationType";
 import Notification from "./Notification";
 import Events from "../pages/Events";
 import Trainings from "../pages/Trainings";
-
+import icon1 from "../components/images/3.png";
 import TrainingsInfo from "../pages/TrainingsInfo";
 
 import { Divider } from "antd";
 import EventInfo from "../pages/EventInfo";
 import { key } from "localforage";
 import NewTrainings from "../pages/NewTrainings";
+import Certificate from "./Certificate";
+import CertificatePages from "../pages/CertificatePages";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -92,6 +94,21 @@ const items = [
           fill="white"
         />
       </svg>
+    </Link>
+  ),
+  getItem(
+    "Sertifikat",
+    "20",
+    <Link to="/certificate">
+      <img
+        style={{
+          width: "50px",
+          height: "auto",
+          marginLeft: "-15px",
+          marginRight: "0",
+        }}
+        src={icon1}
+      />
     </Link>
   ),
 
@@ -397,6 +414,7 @@ const Sidebar = () => {
               <Route path="/events/:id" element={<EventInfo />} />
               <Route path="/events" element={<Events />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/certificate" element={<CertificatePages />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
 

@@ -1,7 +1,7 @@
 import { useId, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../App.css";
-import TableForEducationDegree from"../components/TableForEducationDegree"
+import TableForEducationDegree from "../components/TableForEducationDegree";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -27,7 +27,6 @@ import axios from "axios";
 import { columnNames, headerNames } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-
 const Example = () => {
   const location = useLocation().pathname.substring(1);
   const [validationErrors, setValidationErrors] = useState({});
@@ -40,12 +39,11 @@ const Example = () => {
   }
   const columns = useMemo(
     () => [
-      { 
-        accessorKey: 'id',
-        header: 'Id',
+      {
+        accessorKey: "id",
+        header: "Id",
         enableEditing: false,
         size: 50,
-      
       },
 
       {
@@ -68,7 +66,7 @@ const Example = () => {
         accessorKey: "priority",
         header: "Prioritet",
         muiEditTextFieldProps: {
-        type:"number",
+          type: "number",
           required: true,
           error: !!validationErrors?.priority,
           helperText: validationErrors?.priority,
@@ -149,17 +147,24 @@ const Example = () => {
 
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
-   columns,
+    columns,
     enableRowNumbers: true,
     data: fetchedUsers,
-    createDisplayMode: "modal", 
-    editDisplayMode: "modal", 
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
     getRowId: (row) => row.id,
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-   children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -178,7 +183,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -242,7 +247,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); 
+          table.setCreatingRow(true);
         }}
       >
         Əlavə edin
@@ -257,7 +262,7 @@ const Example = () => {
     },
   });
 
-  return <MaterialReactTable table={table}  />;
+  return <MaterialReactTable table={table} />;
 };
 
 function useCreateUser() {
@@ -285,7 +290,6 @@ function useCreateUser() {
         ...prevUsers,
         {
           ...newUserInfo,
-       
         },
       ]);
     },
@@ -322,8 +326,7 @@ function useUpdateUser() {
 
   return useMutation({
     mutationFn: async (user) => {
-
-      const data = { ...user};
+      const data = { ...user };
       console.log(data);
       //send api update request here
 
@@ -402,10 +405,8 @@ const Uxtable = () => {
       </div>
 
       <QueryClientProvider client={queryClient}>
-        <Example /> 
-      
+        <Example />
       </QueryClientProvider>
-   
     </>
   );
 };
@@ -416,10 +417,9 @@ const validateRequired = (value) => {
 };
 
 function validateUser(user) {
-
   return {
     name: !validateRequired(user.name) ? "Xana boş qala bilməz" : "",
-    priority:!validateRequired(user.priority) ? "Xana boş qala bilməz" : "",
+    priority: !validateRequired(user.priority) ? "Xana boş qala bilməz" : "",
   };
 }
 // return {

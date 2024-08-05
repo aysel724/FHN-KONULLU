@@ -12,7 +12,7 @@ import NewTrainings from "./pages/NewTrainings";
 import UserInfo from "./pages/UserInfo";
 import Volonteer from "./pages/Volonteer";
 import NewVolonteer from "./pages/NewVolonteer";
-
+import Certificate from "./components/Certificate";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import TableForEducationType from "./components/TableForEducationType";
 import { AuthProvider } from "./context/AuthContext";
@@ -21,6 +21,7 @@ import Trainings from "./pages/Trainings";
 import InsuranceTotal from "./pages/InsuranceTotal";
 import TrainingsInfo from "./pages/TrainingsInfo";
 import EventInfo from "./pages/EventInfo";
+import CertificatePages from "./pages/CertificatePages";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
               <Route path="/events/:id" element={<EventInfo />} />
               <Route path="/events" element={<Events />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/certificate" element={<CertificatePages />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/newtrainings" element={<NewTrainings />} />

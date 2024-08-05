@@ -1,27 +1,40 @@
 // src/Certificate.js
 import React from "react";
-import image1 from "../components/images/certificate.png";
-const Certificate = ({ name }) => {
+import image1 from "../components/images/A4.png";
+
+const Certificate = ({ name, duration }) => {
   return (
     <div
       style={{
         ...styles.certificateContainer,
         backgroundImage: `url(${image1})`,
+        maxWidth: "595px",
+        height: "842px",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
       }}
     >
       <div style={styles.header}>
-        <h1 style={styles.title}>Certificate of Achievement</h1>
-        <p style={styles.subtitle}>This is to certify that</p>
+        <h3>AZƏRBAYCAN RESPUBLİKASININ FÖVQƏLADƏ HALLAR NAZİRLİYİ</h3>
+        <h1 style={styles.title}>SERTİFİKAT</h1>
       </div>
       <div style={styles.nameContainer}>
         <h2 style={styles.name}>{name}</h2>
       </div>
-      <p style={styles.subtitle}>has successfully completed the course</p>
+      <p>{duration}</p>
+      <p style={styles.subtitle}>
+        tarixlərində "Fövqəladə Hallar Könüllüləri" Proqramı çərçivəsində
+        könüllü fəaliyyətini başa vurduğu üçün verilir.
+      </p>
+
       <p style={styles.date}>{new Date().toLocaleDateString()}</p>
       <div style={styles.footer}>
         <div style={styles.signature}>
-          <p>____________________</p>
-          <p>Signature</p>
+          <p>
+            <i>____________________</i>
+          </p>
+          <p>KƏMALƏDDİN HEYDƏROV</p>
+          <p>AZƏRBAYCAN RESPUBLİKASININ FÖVQƏLADƏ HALLAR NAZİRİ</p>
         </div>
       </div>
     </div>
@@ -30,16 +43,11 @@ const Certificate = ({ name }) => {
 
 const styles = {
   certificateContainer: {
-    maxWidth: "100vw",
-    height: "100vh",
-
     padding: "30px",
     textAlign: "center",
     margin: "0 auto",
     backgroundColor: "#fff",
-    // backgroundImage: "url('/components/images/cerificate.png')",
     backgroundSize: "cover",
-
     backgroundRepeat: "no-repeat",
     borderRadius: "15px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -60,14 +68,15 @@ const styles = {
     margin: "10px 0",
   },
   nameContainer: {
-    width: "90%",
+    textAlign: "center",
+    maxWidth: "100%",
     margin: "20px 0",
-    borderBottom: "1px solid #4A90E2",
+    borderBottom: "1px solid grey",
     paddingBottom: "10px",
   },
   name: {
-    fontSize: "40px",
-    fontWeight: "bold",
+    fontSize: "30px",
+    fontWeight: "20",
     margin: "0",
     color: "#333",
   },

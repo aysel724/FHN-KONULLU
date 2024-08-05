@@ -24,7 +24,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
@@ -35,7 +34,7 @@ const Example = () => {
     const TypesData = async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/InsuranceCompanies`,
+          `https://api-volunteers.fhn.gov.az/api/v1/ComputerSkillNames`,
           {
             headers: { accept: "*/*" },
           }
@@ -74,8 +73,20 @@ const Example = () => {
       },
 
       {
-        accessorKey: "insuranceCompanyId",
-        header: "Sığorta şirkətinin adı",
+        accessorKey: "computerSkillNameId",
+        header: "Biliyin adı",
+        editVariant: "select",
+        editSelectOptions: getTypesNames(types),
+        muiEditTextFieldProps: {
+          select: true,
+          error: !!validationErrors?.degree,
+          helperText: validationErrors?.degree,
+        },
+      },
+
+      {
+        accessorKey: "skillLevelId",
+        header: "Biliyin dərəcəsi",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
@@ -85,68 +96,8 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "startDate",
-        header: "Başlama tarixi",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              name: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
-      {
-        accessorKey: "endDate",
-        header: "Bitmə tarixi",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.endDate,
-          helperText: validationErrors?.endDate,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              endDate: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
-      // {
-      //   accessorKey: "educationDegree",
-      //   header: "Təhsil dərəcəsi",
-      //   editVariant: "select",
-      //   editSelectOptions: edudegree,
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.educationDegree,
-      //     helperText: validationErrors?.educationDegree,
-      //   },
-      // },
-
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Təhsil aldığı müəssəsinin adı",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      {
         accessorKey: "note",
-        header: "Qeyd",
+        header: "Bitmə tarixi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.note,
@@ -160,87 +111,22 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "qualification",
-      //   header: "İxtisas",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.qualification,
-      //     helperText: validationErrors?.qualification,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         qualification: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Diplomun seriya və nömrəsi ",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
 
-      // {
-      //   accessorKey: "diplomaGivenDate",
-      //   header: "Diplomun verilmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.diplomaGivenDate,
-      //     helperText: validationErrors?.diplomaGivenDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         diplomaGivenDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "startDate",
-      //   header: "Təhsilə başlama tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.startDate,
-      //     helperText: validationErrors?.startDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         startDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "endDate",
-      //   header: "Təhsilin bitmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.endDate,
-      //     helperText: validationErrors?.endDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         endDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
+      {
+        accessorKey: "priority",
+        header: "Qeyd",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.priority,
+          helperText: validationErrors?.priority,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              priority: undefined,
+            }),
+        },
+      },
     ],
     [validationErrors]
   );
@@ -445,7 +331,7 @@ function useGetUsers() {
         );
 
         console.log(response.data.data);
-        return response.data.data.insurances;
+        return response.data.data.computerSkills;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);
