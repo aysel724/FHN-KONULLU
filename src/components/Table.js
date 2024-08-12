@@ -150,6 +150,7 @@ const Example = () => {
         accessorKey: "fullName",
         header: "Ad soyad",
         muiEditTextFieldProps: {
+          enableClickToCopy: true,
           required: true,
           error: !!validationErrors?.fullName,
           helperText: validationErrors?.fullName,
@@ -311,7 +312,7 @@ const Example = () => {
   let id = params.id;
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
-
+    enableClickToCopy: true,
     muiTableContainerProps: { sx: { maxHeight: "600px" } },
 
     enableRowNumbers: true,

@@ -1,40 +1,50 @@
 // src/Certificate.js
 import React from "react";
-import image1 from "../components/images/A4.png";
+import image1 from "../components/images/certificationApproved.png";
 
-const Certificate = ({ name, duration }) => {
+const Certificate = ({ name, duration, duration1 }) => {
   return (
     <div
       style={{
         ...styles.certificateContainer,
         backgroundImage: `url(${image1})`,
-        maxWidth: "595px",
-        height: "842px",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
+        width: "842px" /* A4 width in pixels (8.27 inches * 96 dpi) */,
+        height: "595px",
+        // backgroundSize: "cover",
+        // backgroundRepeat: "no-repeat",
       }}
     >
       <div style={styles.header}>
-        <h3>AZƏRBAYCAN RESPUBLİKASININ FÖVQƏLADƏ HALLAR NAZİRLİYİ</h3>
-        <h1 style={styles.title}>SERTİFİKAT</h1>
+        <p>AZƏRBAYCAN RESPUBLİKASININ FÖVQƏLADƏ HALLAR NAZİRLİYİ</p>
       </div>
       <div style={styles.nameContainer}>
-        <h2 style={styles.name}>{name}</h2>
+        <p style={styles.name}>{name}</p>
       </div>
-      <p>{duration}</p>
-      <p style={styles.subtitle}>
-        tarixlərində "Fövqəladə Hallar Könüllüləri" Proqramı çərçivəsində
-        könüllü fəaliyyətini başa vurduğu üçün verilir.
+      <p style={styles.duration}>
+        {duration} - {duration1}
       </p>
-
-      <p style={styles.date}>{new Date().toLocaleDateString()}</p>
+      <p style={styles.subtitle}>
+        tarixlərində "Fövqəladə Hallar Könüllüləri" Proqramı
+      </p>
+      <p style={styles.subtitle}>
+        çərçivəsində könüllü fəaliyyətini başa vurduğu üçün verilir.
+      </p>
       <div style={styles.footer}>
+        {" "}
+        <div style={styles.signature}>
+          <p style={styles.date1}>{new Date().toLocaleDateString()}</p>
+
+          <p style={styles.date}>Sertifikatın verilmə tarixi</p>
+        </div>
         <div style={styles.signature}>
           <p>
-            <i>____________________</i>
+            <i>_____________________</i>
           </p>
-          <p>KƏMALƏDDİN HEYDƏROV</p>
-          <p>AZƏRBAYCAN RESPUBLİKASININ FÖVQƏLADƏ HALLAR NAZİRİ</p>
+          <p style={styles.subsignature}>
+            <strong>KƏMALƏDDİN HEYDƏROV</strong>
+          </p>
+          <p style={styles.subsignature}> AZƏRBAYCAN RESPUBLİKASININ</p>
+          <p style={styles.subsignature}> FÖVQƏLADƏ HALLAR NAZİRİ</p>
         </div>
       </div>
     </div>
@@ -43,8 +53,10 @@ const Certificate = ({ name, duration }) => {
 
 const styles = {
   certificateContainer: {
+    maxWidth: "100%",
+
     padding: "30px",
-    textAlign: "center",
+    textAlign: "left",
     margin: "0 auto",
     backgroundColor: "#fff",
     backgroundSize: "cover",
@@ -54,46 +66,79 @@ const styles = {
     position: "relative",
   },
   header: {
-    marginTop: "220px",
+    fontFamily: "Crimson Pro",
+    fontSize: "16px",
+    marginTop: "180px",
+    marginRight: "250px",
+    marginLeft: " 80px",
   },
+
   title: {
-    fontSize: "36px",
+    textTransform: "uppercase",
+    fontFamily: "Crimson Pro",
+    fontSize: "56px",
     fontWeight: "bold",
-    color: "#4A90E2",
-    margin: "0",
+    color: "grey",
+    marginTop: "40px",
+    marginLeft: " 80px",
   },
   subtitle: {
-    fontSize: "20px",
+    fontFamily: "Crimson Pro",
+    fontSize: "16px",
     color: "#555",
     margin: "10px 0",
+    marginLeft: " 80px",
   },
   nameContainer: {
-    textAlign: "center",
+    fontFamily: "Crimson Pro",
+    marginLeft: " 80px",
     maxWidth: "100%",
-    margin: "20px 0",
-    borderBottom: "1px solid grey",
-    paddingBottom: "10px",
+    textAlign: "left",
   },
   name: {
+    fontFamily: "Crimson Pro",
     fontSize: "30px",
     fontWeight: "20",
-    margin: "0",
+    marginTop: "100px",
     color: "#333",
   },
   date: {
-    marginTop: "20px",
-    fontSize: "16px",
-    color: "#888",
+    marginLeft: "80px",
+    fontFamily: "Crimson Pro",
+    textAlign: "center",
+    fontSize: "12px",
+    color: "#333",
+  },
+  duration: {
+    marginLeft: " 80px",
+  },
+  date1: {
+    marginLeft: " 80px",
+    textDecoration: "underline",
+    fontFamily: "Crimson Pro",
+    textAlign: "left",
+    fontSize: "12px",
+    color: "#333",
   },
   footer: {
+    padding: "1%",
+    fontFamily: "Crimson Pro",
     marginTop: "40px",
     display: "flex",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   signature: {
+    fontFamily: "Crimson Pro",
     textAlign: "center",
-    fontSize: "16px",
+    fontSize: "12px",
+    color: "#333",
+  },
+  subsignature: {
+    lineHeight: "40%",
+    fontFamily: "Crimson Pro",
+    textAlign: "center",
+    fontSize: "12px",
     color: "#333",
   },
 };

@@ -105,6 +105,7 @@ const items = [
           width: "50px",
           height: "auto",
           marginLeft: "-15px",
+          marginTop: "-10px",
           marginRight: "0",
         }}
         src={icon1}

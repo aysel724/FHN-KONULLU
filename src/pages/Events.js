@@ -8,7 +8,6 @@ export default function Events() {
     <>
       <h1>Tədbirlər</h1>
       <TableForEvents />
-      <CertificateForm />
     </>
   );
 }

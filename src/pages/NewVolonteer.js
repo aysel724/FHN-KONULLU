@@ -55,6 +55,7 @@ export default function NewVolonteer() {
   const handleClose = () => setModalIsOpen(false);
   const [userData, setUserData] = useState({
     idCardNumber: "",
+    bloodType: "",
     pinCode: "",
     name: "",
     surname: "",
@@ -118,6 +119,7 @@ export default function NewVolonteer() {
       "IDCardNumber",
       `${passportData.seriaNumber}${passportData.docNumber}`
     );
+    formData.append("BloodType", userData.bloodType);
     formData.append("MaritalStatus", userData.maritalStatus);
     formData.append("Height", userData.height);
     formData.append("FatherName", userData.fatherName);
@@ -254,7 +256,7 @@ export default function NewVolonteer() {
         identityCardGivenStructureName:
           response.data.data.identityCardGivenStructureName,
         identityCardReceivingDate: response.data.data.identityCardReceivingDate,
-
+        bloodType: response.data.data.bloodType,
         registrationAddress: response.data.data.registrationAddress,
         currentAddress: response.data.data.currentAddress,
         photo: response.data.data.photo,
@@ -447,6 +449,22 @@ export default function NewVolonteer() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, fatherName: e.target.value };
+
+                  return data;
+                });
+              }}
+            />{" "}
+            <TextField
+              disabled={userData.isIAMASInfo}
+              label="Qan qrupu"
+              name="bloodType"
+              id="BloodType"
+              variant="outlined"
+              value={userData.bloodType}
+              onChange={(e) => {
+                console.log(userData);
+                setUserData((prev) => {
+                  const data = { ...prev, bloodType: e.target.value };
 
                   return data;
                 });

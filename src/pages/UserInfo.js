@@ -1,21 +1,20 @@
 import React from "react";
 import TabsUser from "../components/TabsUser";
 import image from "../components/images/volonteer.png";
-import { Routes, Route, useParams } from 'react-router-dom';
+import { Routes, Route, useParams } from "react-router-dom";
 
 import axios from "axios";
 
 import { useEffect, useState } from "react";
 
 export default function UserInfo() {
-
-
   let params = useParams();
-  let userId = params.id
+  let userId = params.id;
   console.log(userId);
 
   const [userData, setUserData] = useState({
-   pinCode:"",
+    bloodType: "",
+    pinCode: "",
     name: "",
     surname: "",
     fatherName: "",
@@ -29,34 +28,29 @@ export default function UserInfo() {
     identityCardReceivingDate: "",
     registrationAddress: "",
     currentAddress: "",
-    photo:"",
+    photo: "",
     phoneNumber1: "",
     phoneNumber2: "",
     email: "",
-    isIAMASInfo:""
+    isIAMASInfo: "",
   });
 
-
   useEffect(() => {
-    axios.get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`)
-      .then(response => { 
+    axios
+      .get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`)
+      .then((response) => {
         console.log(response);
-        setUserData(response.data.data);  
-        
-        return userData ; 
+        setUserData(response.data.data);
+
+        return userData;
       })
-      .catch(error => {
-        console.error('Error fetching data: ', error);
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
       });
-  }, []); 
+  }, []);
 
- 
-
-
-  return ( 
-
+  return (
     <div>
-
       <div
         style={{
           display: "flex",
@@ -65,25 +59,31 @@ export default function UserInfo() {
         }}
       >
         <div style={{ textAlign: "left", margin: "2%" }}>
-          <h1>{userData.name} {userData.surname} {userData.fatherName}</h1> 
-           <p>
+          <h1>
+            {userData.name} {userData.surname} {userData.fatherName}
+          </h1>
+          <p>
             <strong>FIN:</strong>
             {userData.pinCode}
           </p>
           <p>
+            <strong>Qan qrupu:</strong>
+            {userData.bloodType}
+          </p>
+          <p>
             <strong>Cinsi: </strong>
             {userData.gender}
-          </p> 
-           <p>
+          </p>
+          <p>
             <strong>Doğulduğu tarix (gün, ay, il): </strong>
             {userData.birthDate}
           </p>
-       
-          <p> 
+
+          <p>
             <strong>Status:</strong> {userData.status}
           </p>
           <p>
-            <strong>Fəaliyyətə başlama tarixi:</strong>  {userData.fin}
+            <strong>Fəaliyyətə başlama tarixi:</strong> {userData.fin}
           </p>
         </div>
         <div
@@ -93,19 +93,17 @@ export default function UserInfo() {
             justifyContent: "space-around",
           }}
         >
-        {userData && userData.photo && (
-              <img 
-                src={userData.photo}
-                alt="volunteer"
-                width={"250px"}
-                style={{padding:"5%", borderRadius:"12px"}}
-              />
-            )}
+          {userData && userData.photo && (
+            <img
+              src={userData.photo}
+              alt="volunteer"
+              width={"250px"}
+              style={{ padding: "5%", borderRadius: "12px" }}
+            />
+          )}
         </div>
       </div>
       <TabsUser />
-
-        
     </div>
   );
 }

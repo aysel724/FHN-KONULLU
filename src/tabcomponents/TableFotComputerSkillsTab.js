@@ -29,7 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
-
+  const [degrees, setDegrees] = useState([]);
   useEffect(() => {
     const TypesData = async () => {
       try {
@@ -63,6 +63,40 @@ const Example = () => {
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
   }
+
+  useEffect(() => {
+    const TypesData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/SkillLevels`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data.data);
+        const newData = response.data.data.map((e) => {
+          const user = {
+            name: e.name,
+            id: e.id,
+          };
+
+          return user;
+        });
+
+        console.log(newData);
+        setDegrees(newData);
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    };
+    TypesData();
+  }, []);
+
+  function getDegreesNames(arr) {
+    return arr.map((e) => e.name);
+  }
   const columns = useMemo(
     () => [
       {
@@ -88,7 +122,7 @@ const Example = () => {
         accessorKey: "skillLevelId",
         header: "Biliyin dərəcəsi",
         editVariant: "select",
-        editSelectOptions: getTypesNames(types),
+        editSelectOptions: getDegreesNames(degrees),
         muiEditTextFieldProps: {
           select: true,
           error: !!validationErrors?.degree,
@@ -97,7 +131,7 @@ const Example = () => {
       },
       {
         accessorKey: "note",
-        header: "Bitmə tarixi",
+        header: "Qeyd",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.note,
@@ -114,7 +148,7 @@ const Example = () => {
 
       {
         accessorKey: "priority",
-        header: "Qeyd",
+        header: "Prioritet",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.priority,
@@ -181,10 +215,21 @@ const Example = () => {
 
   const table = useMaterialReactTable({
     columns,
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
     data: fetchedUsers,
     createDisplayMode: "modal", //default ('row', and 'custom' are also available)
     editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
