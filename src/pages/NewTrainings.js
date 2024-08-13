@@ -123,7 +123,7 @@ export default function NewTrainings() {
   const handleClose = () => setModalIsOpen(false);
   const [userData, setUserData] = useState({
     mesTrainingNameId: "",
-    department: "",
+    departmentInCharge: "",
     description: "",
     startDate: "",
     finishDate: "",
@@ -166,6 +166,7 @@ export default function NewTrainings() {
     const formData = new FormData();
     formData.append("StartDate", convertDate(userData.startDate));
     formData.append("MesTrainingNameId", userData.mesTrainingNameId);
+    formData.append("DepartmentInCharge", userData.departmentInCharge);
     formData.append("Description", userData.description);
     formData.append("TrainingDuration", userData.trainingDuration);
     formData.append("TrainingPlace", userData.trainingPlace);
@@ -366,7 +367,6 @@ export default function NewTrainings() {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              helperText="Seriya"
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
@@ -386,11 +386,11 @@ export default function NewTrainings() {
               id="Name"
               name="name"
               variant="outlined"
-              value={userData.quurm}
+              value={userData.departmentInCharge}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
-                  const data = { ...prev, qurum: e.target.value };
+                  const data = { ...prev, departmentInCharge: e.target.value };
 
                   return data;
                 });

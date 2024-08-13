@@ -96,22 +96,6 @@ const items = [
       </svg>
     </Link>
   ),
-  getItem(
-    "Sertifikat",
-    "20",
-    <Link to="/certificate">
-      <img
-        style={{
-          width: "50px",
-          height: "auto",
-          marginLeft: "-15px",
-          marginTop: "-10px",
-          marginRight: "0",
-        }}
-        src={icon1}
-      />
-    </Link>
-  ),
 
   getItem(
     "Hesabatlar",
@@ -289,6 +273,22 @@ const items = [
         "19"
       ),
     ]
+  ),
+  getItem(
+    "Sertifikat",
+    "20",
+    <Link to="/certificate">
+      <img
+        style={{
+          width: "50px",
+          height: "auto",
+          marginLeft: "-15px",
+          marginTop: "-10px",
+          marginRight: "0",
+        }}
+        src={icon1}
+      />
+    </Link>
   ),
 ];
 const Sidebar = () => {

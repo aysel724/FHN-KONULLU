@@ -5,7 +5,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
-import { Routes, Route, useParams } from 'react-router-dom';
+import { Routes, Route, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -31,10 +31,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { H1 } from "@blueprintjs/core";
 const Example = () => {
-
-let params = useParams();
-let userId = params.id
-console.log(userId);
+  let params = useParams();
+  let userId = params.id;
+  console.log(userId);
 
   const navigate = useNavigate();
   const excel = useExcelJS({
@@ -92,8 +91,8 @@ console.log(userId);
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'id',
-        header: 'Id',
+        accessorKey: "id",
+        header: "Id",
         enableEditing: true,
         size: 80,
       },
@@ -192,7 +191,6 @@ console.log(userId);
             }),
         },
       },
-     
 
       {
         accessorKey: "note",
@@ -245,20 +243,20 @@ console.log(userId);
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
 
-    const handleCreateUser = async ({ values, table }) => {
-      const newValidationErrors = validateUser(values);
-  
-      if (Object.values(newValidationErrors).some((error) => error)) {
-        setValidationErrors(newValidationErrors);
-        return;
-      }
-  
-      setValidationErrors({});
-  
-      await createUser(values);
-  
-      table.setCreatingRow(null); //exit creating mode
-    };
+  const handleCreateUser = async ({ values, table }) => {
+    const newValidationErrors = validateUser(values);
+
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
+
+    setValidationErrors({});
+
+    await createUser(values);
+
+    table.setCreatingRow(null); //exit creating mode
+  };
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values);
@@ -280,20 +278,70 @@ console.log(userId);
 
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
+    localization: {
+      cancel: "İmtina",
 
-    muiTableContainerProps: { sx: { maxHeight: '600px' } },
+      clearFilter: "Filteri təmizlə",
+      clearSearch: "Axtarışı təmizlə",
+
+      clearSort: "Sıralamani təmizlə",
+      clickToCopy: "Kopyalamaq üçün klik edin",
+      copy: "Kopyala",
+      collapse: "Collapse",
+
+      columnActions: "Əməliyyatlar",
+      copiedToClipboard: "Buferə kopyalandı",
+
+      edit: "Düzəliş et",
+      expand: "Genişləndirin",
+      expandAll: "Expand all",
+      rowNumber: "No",
+      rowNumbers: "Sıra nömrələri",
+      rowsPerPage: "Hər səhifədə sətir sayı",
+      save: "Yadda saxla",
+      search: "Axtar",
+      selectedCountOfRowCountRowsSelected:
+        "{selectedCount} of {rowCount} row(s) selected",
+      select: "Seç",
+      showAll: "Hamısını göstər",
+      showAllColumns: "Bütün sütunları göstərin",
+      showHideColumns: "Sütunları göstər/gizlə",
+      showHideFilters: "Filterləri göstər/gizlə",
+      showHideSearch: "Axtarışı göstər/gizlə",
+      sortByColumnAsc: "Artma üzrə çeşidləyin",
+      sortByColumnDesc: "Azalma üzrə çeşidləyin",
+      sortedByColumnAsc: "Artma üzrə çeşidləyin",
+      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
+      thenBy: ", then by ",
+      groupByColumn: "{column} üzrə qruplaşdırın",
+      groupedBy: "Qruplaşdırın ",
+      hideAll: "Hamısını gizlədin",
+      hideColumn: "{column} sütununu gizlədin",
+      toggleDensity: "Sıxlığı dəyiş",
+      filterByColumn: "{column} üzrə filtrləmə",
+      filteringByColumn:
+        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
+      toggleFullScreen: "Tam ekrana keçid",
+      toggleSelectAll: "Toggle select all",
+      toggleSelectRow: "Toggle select row",
+      toggleVisibility: "Görünüşü dəyişdirin",
+      ungroupByColumn: "Ungroup by {column}",
+      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
+      noResultsFound: "Heç bir nəticə tapılmadı",
+      // ... and many more - see link below for full list of translation keys
+    },
+    muiTableContainerProps: { sx: { maxHeight: "600px" } },
 
     enableRowNumbers: true,
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
     columns,
 
-
- //optionally customize the row virtualizer
+    //optionally customize the row virtualizer
 
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
-      sx: {   
+      sx: {
         cursor: "pointer", //you might want to change the cursor too when adding an onClick
       },
     }),
@@ -301,11 +349,10 @@ console.log(userId);
     createDisplayMode: "modal", //default ('row', and 'custom' are also available)
     editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
     enableEditing: true,
-    initialState: { 
-      columnPinning: { right: ["mrt-row-actions"] ,},
+    initialState: {
+      columnPinning: { right: ["mrt-row-actions"] },
     },
-    displayColumnDefOptions: { 'mrt-row-actions': { size: 150 } },
-    
+    displayColumnDefOptions: { "mrt-row-actions": { size: 150 } },
 
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -353,7 +400,7 @@ console.log(userId);
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
-           <Tooltip title="Ətraflı">
+        <Tooltip title="Ətraflı">
           <VisibilityIcon
             style={{ marginTop: "8px" }}
             onClick={() => navigate(`/events/${row.id}`)}
@@ -404,7 +451,8 @@ console.log(userId);
         <Button
           variant="contained"
           onClick={() => {
-            table.setCreatingRow(true);}}
+            table.setCreatingRow(true);
+          }}
         >
           Yeni tədbir əlavə et
         </Button>
@@ -425,9 +473,7 @@ console.log(userId);
   return <MaterialReactTable table={table} />;
 };
 
-
 function useCreateUser() {
-
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
@@ -451,39 +497,34 @@ function useCreateUser() {
         ...prevUsers,
         {
           ...newUserInfo,
-       
         },
       ]);
     },
   });
 }
 
-
-
 function useGetUsers() {
-
   useEffect(() => {
-    axios.get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/85`)
-      .then(response => { 
+    axios
+      .get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/85`)
+      .then((response) => {
         console.log(response);
-       
-        
-        return response.data.data ; 
+
+        return response.data.data;
       })
-      .catch(error => {
-        console.error('Error fetching data: ', error);
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
       });
-  }, []) }
+  }, []);
+}
 
 //UPDATE hook (put user in api)
 function useUpdateUser() {
-
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-
-      const data = { ...user};
+      const data = { ...user };
       console.log(data);
       //send api update request here
 
@@ -516,16 +557,13 @@ function useUpdateUser() {
   });
 }
 
-
-
 function useDeleteUser() {
-
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
       console.log(userId);
-   
-      try { 
+
+      try {
         const response = await axios.delete(
           `https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}`,
           {
@@ -568,7 +606,12 @@ const validateRequired = (value) => !!value.length;
 function validateUser(user) {
   return {
     name: !validateRequired(user.name) ? "Xana boş qala bilməz" : "",
-  startDate:!validateRequired(user.startDate)? "Xana boş qala bilməz" : "",
-  personInCharge: !validateRequired(user.personInCharge) ? "Xana boş qala bilməz" : "",
-  finishDate:!validateRequired(user.finishDate)? "Xana boş qala bilməz" : "",
-  };}
+    startDate: !validateRequired(user.startDate) ? "Xana boş qala bilməz" : "",
+    personInCharge: !validateRequired(user.personInCharge)
+      ? "Xana boş qala bilməz"
+      : "",
+    finishDate: !validateRequired(user.finishDate)
+      ? "Xana boş qala bilməz"
+      : "",
+  };
+}

@@ -74,6 +74,7 @@ const styles = {
   },
 
   title: {
+    fontWeight: "bold",
     textTransform: "uppercase",
     fontFamily: "Crimson Pro",
     fontSize: "56px",
@@ -83,6 +84,7 @@ const styles = {
     marginLeft: " 80px",
   },
   subtitle: {
+    fontWeight: "bold",
     fontFamily: "Crimson Pro",
     fontSize: "16px",
     color: "#555",
@@ -90,16 +92,18 @@ const styles = {
     marginLeft: " 80px",
   },
   nameContainer: {
+    fontWeight: "bold",
     fontFamily: "Crimson Pro",
     marginLeft: " 80px",
     maxWidth: "100%",
     textAlign: "left",
   },
   name: {
+    fontWeight: "bold",
     fontFamily: "Crimson Pro",
     fontSize: "30px",
-    fontWeight: "20",
-    marginTop: "100px",
+
+    marginTop: "80px",
     color: "#333",
   },
   date: {

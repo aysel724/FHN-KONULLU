@@ -61,26 +61,59 @@ const CertificateForm = () => {
         value={name}
         onChange={handleChange}
         placeholder="Ad, soyad, ata adı"
-        style={{ padding: "10px", fontSize: "16px", margin: "20px" }}
-      />
+        style={{
+          width: "30%",
+          padding: " 12px 20px",
+          margin: "8px 20px",
+          display: "inline-block",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          boxsizing: " border-box",
+        }}
+      />{" "}
+      <label for="lname">Könüllülk fəaliyyətiinnin başlama tarixi</label>
       <input
         type="date"
         value={duration}
         onChange={handleChange1}
         placeholder="Könüllülk fəaliyyətiinnin başlama tarixi "
-        style={{ padding: "10px", fontSize: "16px", margin: "20px" }}
+        style={{
+          padding: " 12px 20px",
+          margin: "8px 20px",
+          marginRight: "100px",
+          display: "inline-block",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          boxsizing: " border-box",
+        }}
       />
+      <label for="lname">Könüllülk fəaliyyətiinnin bitmə tarixi</label>
       <input
         type="date"
         value={duration1}
         onChange={handleChange2}
         placeholder="Könüllülk fəaliyyətiinnin bitmə tarixi"
-        style={{ padding: "10px", fontSize: "16px", margin: "20px" }}
+        style={{
+          padding: " 12px 20px",
+          margin: "8px 20px",
+          display: "inline-block",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          boxsizing: " border-box",
+        }}
       />
       <br />
       <button
         onClick={handleGenerate}
-        style={{ padding: "10px 20px", fontSize: "16px", marginTop: "10px" }}
+        style={{
+          backgroundColor: "rgb(75, 125, 131)",
+          color: "white",
+          padding: "14px 20px",
+          margin: "48px 20px",
+          border: " none",
+          borderRadius: "4px",
+          cursor: " pointer ",
+        }}
       >
         Sertifikatı generasiya et
       </button>

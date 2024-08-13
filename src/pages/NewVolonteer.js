@@ -709,6 +709,33 @@ export default function NewVolonteer() {
                 });
               }}
             />{" "}
+            <FormControl
+              sx={{
+                width: "120px",
+              }}
+            >
+              <InputLabel id="demo-simple-select-label">
+                Daxilii təhlükəzlik rəyi
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Daxilii təhlükəzlik nəticəsi"
+                onChange={(e) => {
+                  console.log(userData);
+                  setUserData((prev) => {
+                    const data = prev;
+                    data.security = e.target.value;
+                    return data;
+                  });
+                }}
+                variant="outlined"
+              >
+                <MenuItem value={"+"}>Müsbət</MenuItem>
+                <MenuItem value={"-"}>Mənfi</MenuItem>
+                <MenuItem value={"0"}>Yoxlanma davam edir</MenuItem>
+              </Select>
+            </FormControl>
             {/* {/* <TextField 
             type="file"
         
