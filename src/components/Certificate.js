@@ -7,11 +7,7 @@ const Certificate = ({ name, duration, duration1 }) => {
     <div
       style={{
         ...styles.certificateContainer,
-        backgroundImage: `url(${image1})`,
-        width: "842px" /* A4 width in pixels (8.27 inches * 96 dpi) */,
-        height: "595px",
-        // backgroundSize: "cover",
-        // backgroundRepeat: "no-repeat",
+        width: "100%",
       }}
     >
       <div style={styles.header}>
@@ -46,6 +42,56 @@ const Certificate = ({ name, duration, duration1 }) => {
           <p style={styles.subsignature}> AZƏRBAYCAN RESPUBLİKASININ</p>
           <p style={styles.subsignature}> FÖVQƏLADƏ HALLAR NAZİRİ</p>
         </div>
+        <div style={styles.signature}>
+          <p>
+            <i>_____________________</i>
+          </p>
+          <p style={styles.subsignature}>
+            <strong>KƏMALƏDDİN HEYDƏROV</strong>
+          </p>
+          <p style={styles.subsignature}> AZƏRBAYCAN RESPUBLİKASININ</p>
+          <p style={styles.subsignature}> FÖVQƏLADƏ HALLAR NAZİRİ</p>
+        </div>
+        <div style={styles.signature}>
+          <p>
+            <i>_____________________</i>
+          </p>
+          <p style={styles.subsignature}>
+            <strong>KƏMALƏDDİN HEYDƏROV</strong>
+          </p>
+          <p style={styles.subsignature}> AZƏRBAYCAN RESPUBLİKASININ</p>
+          <p style={styles.subsignature}> FÖVQƏLADƏ HALLAR NAZİRİ</p>
+        </div>
+      </div>{" "}
+      <div style={styles.signature}>
+        <p>
+          <i>_____________________</i>
+        </p>
+        <p style={styles.subsignature}>
+          <strong>KƏMALƏDDİN HEYDƏROV</strong>
+        </p>
+        <p style={styles.subsignature}> AZƏRBAYCAN RESPUBLİKASININ</p>
+        <p style={styles.subsignature}> FÖVQƏLADƏ HALLAR NAZİRİ</p>
+      </div>{" "}
+      <div style={styles.signature}>
+        <p>
+          <i>_____________________</i>
+        </p>
+        <p style={styles.subsignature}>
+          <strong>KƏMALƏDDİN HEYDƏROV</strong>
+        </p>
+        <p style={styles.subsignature}> AZƏRBAYCAN RESPUBLİKASININ</p>
+        <p style={styles.subsignature}> FÖVQƏLADƏ HALLAR NAZİRİ</p>
+      </div>{" "}
+      <div style={styles.signature}>
+        <p>
+          <i>_____________________</i>
+        </p>
+        <p style={styles.subsignature}>
+          <strong>KƏMALƏDDİN HEYDƏROV</strong>
+        </p>
+        <p style={styles.subsignature}> AZƏRBAYCAN RESPUBLİKASININ</p>
+        <p style={styles.subsignature}> FÖVQƏLADƏ HALLAR NAZİRİ</p>
       </div>
     </div>
   );
@@ -53,14 +99,10 @@ const Certificate = ({ name, duration, duration1 }) => {
 
 const styles = {
   certificateContainer: {
-    maxWidth: "100%",
-
+    width: "100%",
     padding: "30px",
     textAlign: "left",
-    margin: "0 auto",
     backgroundColor: "#fff",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
     borderRadius: "15px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     position: "relative",

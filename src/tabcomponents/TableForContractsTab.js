@@ -74,7 +74,7 @@ const Example = () => {
       },
       {
         accessorKey: "number",
-        header: "Bitmə tarixi",
+        header: "Müqavilə nömrəsi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.number,
@@ -105,50 +105,24 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
+
       {
-        accessorKey: "endDate",
+        accessorKey: "finishDate",
         header: "Bitmə tarixi",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.endDate,
-          helperText: validationErrors?.endDate,
+          error: !!validationErrors?.finishDate,
+          helperText: validationErrors?.finishDate,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              endDate: undefined,
+              finishDate: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "educationDegree",
-      //   header: "Təhsil dərəcəsi",
-      //   editVariant: "select",
-      //   editSelectOptions: edudegree,
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.educationDegree,
-      //     helperText: validationErrors?.educationDegree,
-      //   },
-      // },
 
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Təhsil aldığı müəssəsinin adı",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
       {
         accessorKey: "note",
         header: "Qeyd",
@@ -188,11 +162,6 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
@@ -220,7 +189,7 @@ const Example = () => {
   const table = useMaterialReactTable({
     localization: {
       cancel: "İmtina",
-
+      actions: "Əməlliyatlar",
       clearFilter: "Filteri təmizlə",
       clearSearch: "Axtarışı təmizlə",
 
@@ -385,30 +354,38 @@ const Example = () => {
 
   return <MaterialReactTable table={table} />;
 };
-
-//CREATE hook (post new user to api)
 function useCreateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Contracts`;
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      try {
+        const response = await axios.post(url, user, { headers });
+        console.log("Response:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error:", error);
+        throw error; // Important to throw the error so the mutation can handle it
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      // Use a fallback to an empty array if prevUsers is not defined
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random(),
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
-
 function useGetUsers() {
   let params = useParams();
   let userId = params.id;
@@ -433,7 +410,7 @@ function useGetUsers() {
 }
 
 //UPDATE hook (put user in api)
-function useUpdateUser(types) {
+function useUpdateUser() {
   const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
 
@@ -443,39 +420,21 @@ function useUpdateUser(types) {
       console.log(data);
       //send api update request here
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      function findArrayElementByTitle(array, title) {
-        console.log(
-          array.find((element) => {
-            return element.name === title;
-          })
-        );
-        return array.find((element) => {
-          return element.name === title;
+      console.log(user);
+      axios
+        .put(url, data, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
         });
-      }
-
-      const newUser = {
-        name: user.name,
-        priority: user.priority,
-        educationTypeId: findArrayElementByTitle(
-          types,
-          user["educationType.name"]
-        ).id,
-      };
-      // axios
-      //   .put(url, data, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
     },
     //client side optimistic update
     //client side optimistic update
@@ -492,12 +451,27 @@ function useUpdateUser(types) {
 
 //DELETE hook (delete user in api)
 function useDeleteUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/${location}/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {
@@ -524,6 +498,6 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
-    gender: !validateRequired(user.gender) ? "First Name is Required" : "",
+    number: !validateRequired(user.number) ? "First Name is Required" : "",
   };
 }

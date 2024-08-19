@@ -115,7 +115,7 @@ const CertificateForm = () => {
           cursor: " pointer ",
         }}
       >
-        Sertifikatı generasiya et
+        <strong>SERTİFİKATI GENERASİYA ET</strong>
       </button>
       {showCertificate && (
         <div>

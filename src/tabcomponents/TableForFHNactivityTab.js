@@ -51,12 +51,17 @@ const Example = () => {
               ...validationErrors,
               startDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date", // Set the input type to 'date'
+            },
+          },
         },
       },
       {
         accessorKey: "finishDate",
         header: "Bitmə tarixi",
+        type: " date",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,

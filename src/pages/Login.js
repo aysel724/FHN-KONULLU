@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Checkbox, Form, Input } from "antd";
+
+import { useAuth } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 function Login() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const handleLogin = () => {
     fetch("https://api-volunteers.fhn.gov.az/api/v1/Auth", {
       method: "POST",
@@ -27,12 +28,13 @@ function Login() {
         return response.json();
       })
       .then((data) => {
-        const token = data.data.token;
-        const payload = jwtDecode(token);
-        console.log(payload);
-        console.log("Login successful:", data);
-        navigate("/Volunteers");
-        // Handle successful login (e.g., update state, redirect)
+        if (data) {
+          console.log(jwtDecode(data.data.token));
+          login(data.data.token); // Assuming login sets the token in context or state
+          navigate("/volunteers"); // Redirect to the protected route
+        } else {
+          setError("Invalid credentials. Please try again.");
+        }
       })
       .catch((error) => {
         console.error("Error logging in:", error);
@@ -436,4 +438,5 @@ function Login() {
     </div>
   );
 }
+
 export default Login;

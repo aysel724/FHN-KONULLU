@@ -157,31 +157,28 @@ export default function TabsUser() {
           }}
         >
           <p>
-            <strong>T'lim :</strong> {userData.description}
+            <strong>Təlimin təsviri :</strong> {userData.description}
           </p>
           <p>
-            <strong>Boy: </strong>
+            <strong>Təlimin başlama tarixi : </strong>
             {userData.startDate}
           </p>
           <p>
-            <strong>Vətəndaşlığı: </strong>
+            <strong>Təlimin bitmə tarixi :</strong>
             {userData.finishDate}
           </p>
           <p>
-            <strong>Ailə vəziyyəti:</strong> {userData.trainingDuration}
+            <strong>Təlimin müddəti :</strong> {userData.trainingDuration}
           </p>
           <p>
-            <strong>Şəxsiyyət vəsiqəsinin seriya və nömrəsi:</strong>
+            <strong>Təlimin keçirildiyi yer :</strong>
             {userData.trainingPlace}
           </p>
           <p>
-            <strong>
-              Şəxsiyyət vəsiqəsinin verildiyi tarix (gün, ay, il):{" "}
-            </strong>{" "}
-            {userData.trainingMaster}
+            <strong>Təlimçi</strong> {userData.trainingMaster}
           </p>
           <p>
-            <strong>Şəxsiyyət vəsiqəsini verən orqanın adı: </strong>
+            <strong>Prioritet</strong>
             {userData.priority}
           </p>
           {/* <p>

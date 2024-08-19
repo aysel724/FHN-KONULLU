@@ -29,6 +29,7 @@ import { key } from "localforage";
 import NewTrainings from "../pages/NewTrainings";
 import Certificate from "./Certificate";
 import CertificatePages from "../pages/CertificatePages";
+import UserIcon from "./UserIcon";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -382,6 +383,7 @@ const Sidebar = () => {
             </div>
             <div
               style={{
+                gap: "20px",
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
@@ -392,7 +394,7 @@ const Sidebar = () => {
               }}
             >
               <Notification></Notification>
-              <p></p>
+              <UserIcon />
             </div>
             {/* </div> */}
           </Header>

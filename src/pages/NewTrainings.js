@@ -430,20 +430,19 @@ export default function NewTrainings() {
             <TextField
               type="date"
               helperText="Təlimin bitmə tarixi "
-              name="gender"
-              id="Gender"
+              name="finishDate"
+              id="FinishDate"
               variant="outlined"
-              value={userData.finishDate}
+              value={userData.finishDate || ""} // Ensure it's either a valid date or an empty string
               onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, finishDate: e.target.value };
-
-                  return data;
-                });
+                console.log(e.target.value); // Log the new value
+                setUserData((prev) => ({
+                  ...prev,
+                  finishDate: e.target.value, // Update the state with the new date
+                }));
               }}
-            />{" "}
-            <TextField
+            />
+            {/* <TextField
               multiple="true"
               type="file"
               helperText="Təlimin sənədləri "
@@ -451,7 +450,7 @@ export default function NewTrainings() {
               id="Gender"
               variant="outlined"
               value={userData?.finishDate}
-            />{" "}
+            />{" "} */}
           </Box>
           <Box
             component="form"
@@ -509,10 +508,10 @@ export default function NewTrainings() {
                 });
               }}
             />
-            {/* <TextField
+            <TextField
               id="vj"
               name="TrainingResultId"
-              label="TrainingResultId "
+              label="Təlimin nəticəsi "
               variant="outlined"
               value={userData?.trainingResultId}
               onChange={(e) => {
@@ -523,30 +522,11 @@ export default function NewTrainings() {
                   return data;
                 });
               }}
-              
-            /> */}
-            {/* <InputLabel id="gd">Təlimin nəticəsi</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="dect"
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, trainingResultId: e.target.value };
-
-                  return data;
-                });
-              }}
-              variant="outlined"
-            >
-              {trainingResult.map((result) => {
-                return <MenuItem value={result.id}>{result.name}</MenuItem>;
-              })}
-            </Select> */}
+            />
             <TextField
               id="vj"
               name="priority"
-              label="priority "
+              label="Prioritet "
               variant="outlined"
               value={userData?.priority}
               onChange={(e) => {

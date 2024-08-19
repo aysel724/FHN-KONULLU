@@ -63,11 +63,11 @@ export default function UserInfo() {
             {userData.name} {userData.surname} {userData.fatherName}
           </h1>
           <p>
-            <strong>FIN:</strong>
+            <strong>FIN: </strong>
             {userData.pinCode}
           </p>
           <p>
-            <strong>Qan qrupu:</strong>
+            <strong>Qan qrupu: </strong>
             {userData.bloodType}
           </p>
           <p>
@@ -80,10 +80,10 @@ export default function UserInfo() {
           </p>
 
           <p>
-            <strong>Status:</strong> {userData.status}
+            <strong>Status: </strong> {userData.status}
           </p>
           <p>
-            <strong>Fəaliyyətə başlama tarixi:</strong> {userData.fin}
+            <strong>Fəaliyyətə başlama tarixi: </strong> {userData.fin}
           </p>
         </div>
         <div

@@ -53,12 +53,6 @@ import { mkConfig, generateCsv, download } from "export-to-csv";
 const Example = () => {
   const columnHelper = createMRTColumnHelper();
 
-  // const csvConfig = mkConfig({
-  //   fieldSeparator: ",",
-  //   decimalSeparator: ".",
-  //   useKeysAsHeaders: true,
-  // });
-
   const handleDownload = async () => {
     try {
       const response = await axios.get(
@@ -73,7 +67,7 @@ const Example = () => {
       }));
 
       const csvConfig = mkConfig({
-        fieldSeparator: ",",
+        fieldSeparator: "  ,",
         decimalSeparator: ".",
         useKeysAsHeaders: true,
       });
@@ -126,20 +120,8 @@ const Example = () => {
 
   const [validationErrors, setValidationErrors] = useState({});
 
-  const pagBUTTON = document.querySelector(
-    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
-  );
-  if (pagBUTTON) {
-    pagBUTTON.textContent = "Göstərilən";
-  }
-
   const columns = useMemo(
     () => [
-      // columnHelper.accessor("id", {
-      //   header: "City",
-      //   enableEditing: false,
-      //   size: 80,
-      // }),
       {
         accessorKey: "id",
         header: "Id",
@@ -150,6 +132,7 @@ const Example = () => {
       {
         accessorKey: "fullName",
         header: "Ad soyad",
+        enableEditing: false,
         muiEditTextFieldProps: {
           enableClickToCopy: true,
           required: true,
@@ -168,6 +151,7 @@ const Example = () => {
         size: 160,
         accessorKey: "pinCode",
         header: "FİN KOD",
+        enableEditing: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.pinCode,
@@ -184,8 +168,8 @@ const Example = () => {
         size: 160,
         accessorKey: "security",
         header: "Daxili təhlükəzlik rəyi",
+        enableEditing: false,
         muiEditTextFieldProps: {
-          required: true,
           error: !!validationErrors?.security,
           helperText: validationErrors?.security,
           onFocus: () =>
@@ -200,6 +184,7 @@ const Example = () => {
       {
         size: 90,
         accessorKey: "gender",
+        enableEditing: false,
         header: "Cins",
         muiEditTextFieldProps: {
           required: true,
@@ -217,6 +202,7 @@ const Example = () => {
       {
         accessorKey: "birthDate",
         header: "Doğum tarixi",
+        enableEditing: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.birthDate,
@@ -232,6 +218,7 @@ const Example = () => {
       {
         accessorKey: "maritalStatus",
         header: " Ailə statusu",
+        enableEditing: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.maritalStatus,
@@ -284,11 +271,6 @@ const Example = () => {
     isFetching: isFetchingUsers,
     isLoading: isLoadingUsers,
   } = useGetUsers();
-  const customButtonProps = {
-    saveButtonText: "hcvbnm",
-    cancelButtonText: "4567",
-  };
-
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
     useUpdateUser();
   //call DELETE hook
@@ -378,12 +360,13 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
     positionActionsColumn: "last",
     enableClickToCopy: true,
     muiTableContainerProps: { sx: { maxHeight: "600px" } },
-
+    muiEditTextFieldProps: {
+      variant: "outlined",
+    },
     enableRowNumbers: true,
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
@@ -435,12 +418,7 @@ const Example = () => {
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons
-            {...customButtonProps}
-            variant="text"
-            table={table}
-            row={row}
-          />
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
@@ -449,23 +427,20 @@ const Example = () => {
       <>
         <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
         <DialogContent
-          {...customButtonProps}
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
           {internalEditComponents} {/* or render custom edit components here */}
         </DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons
-            {...customButtonProps}
-            variant="text"
-            table={table}
-            row={row}
-          />
+          <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
+        <Button variant="contained" onClick={() => table.setEditingRow(row)}>
+          status
+        </Button>
         <Tooltip title="Ətraflı">
           <VisibilityIcon
             style={{ marginTop: "8px" }}

@@ -196,8 +196,8 @@ const Example = () => {
       clickToCopy: "Kopyalamaq üçün klik edin",
       copy: "Kopyala",
       collapse: "Collapse",
+      actions: "Əməliyyatlar",
 
-      columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
 
       edit: "Düzəliş et",

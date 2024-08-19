@@ -24,7 +24,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { edudegree, edutype } from "../makeData";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
@@ -92,42 +92,20 @@ const Example = () => {
       {
         accessorKey: "degree",
         header: "Dərəcəsi",
-        editVariant: "select",
-        editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
-          select: true,
+          required: true,
           error: !!validationErrors?.degree,
           helperText: validationErrors?.degree,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              degree: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "educationDegree",
-      //   header: "Təhsil dərəcəsi",
-      //   editVariant: "select",
-      //   editSelectOptions: edudegree,
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.educationDegree,
-      //     helperText: validationErrors?.educationDegree,
-      //   },
-      // },
 
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Təhsil aldığı müəssəsinin adı",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
       {
         accessorKey: "note",
         header: "Qeyd",
@@ -144,87 +122,6 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "qualification",
-      //   header: "İxtisas",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.qualification,
-      //     helperText: validationErrors?.qualification,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         qualification: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Diplomun seriya və nömrəsi ",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-
-      // {
-      //   accessorKey: "diplomaGivenDate",
-      //   header: "Diplomun verilmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.diplomaGivenDate,
-      //     helperText: validationErrors?.diplomaGivenDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         diplomaGivenDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "startDate",
-      //   header: "Təhsilə başlama tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.startDate,
-      //     helperText: validationErrors?.startDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         startDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "endDate",
-      //   header: "Təhsilin bitmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.endDate,
-      //     helperText: validationErrors?.endDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         endDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
     ],
     [validationErrors]
   );
@@ -248,11 +145,6 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
@@ -260,11 +152,6 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -422,13 +309,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true);
         }}
       >
         Əlavə edin

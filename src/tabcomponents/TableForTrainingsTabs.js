@@ -1,12 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import "../App.css";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
-import { useParams } from "react";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -23,51 +23,74 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { fakeData6, usStates } from "../makeData";
+import { useParams } from "react-router-dom";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
+  const [types, setTypes] = useState([]);
 
+  useEffect(() => {
+    const TypesData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/EducationTypes`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data.data);
+        const newData = response.data.data.map((e) => {
+          const user = {
+            name: e.name,
+            id: e.id,
+          };
+
+          return user;
+        });
+
+        console.log(newData);
+        setTypes(newData);
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    };
+    TypesData();
+  }, []);
+
+  function getTypesNames(arr) {
+    return arr.map((e) => e.name);
+  }
   const columns = useMemo(
     () => [
-      // {
-      //   accessorKey: 'id',
-      //   header: 'Id',
-      //   enableEditing: false,
-      //   size: 80,
-      // },
       {
-        accessorKey: "trainings",
-        header: "Kurs/Təlim adı",
+        accessorKey: "id",
+        header: "Id",
+        enableEditing: false,
+        size: 80,
+      },
+      {
+        accessorKey: "name",
+        header: "T'limin adı",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.trainings,
-          helperText: validationErrors?.trainings,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              trainings: undefined,
+              name: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
       {
-        accessorKey: "skillLevels",
-        header: "Bilik səviyyəsi",
-        editVariant: "select",
-        editSelectOptions: usStates,
-        muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.skillLevels,
-          helperText: validationErrors?.skillLevels,
-        },
-      },
-      {
         accessorKey: "startDate",
-        header: "Başlama tarixi",
+        header: "Başlalma tarixi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -81,11 +104,26 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
+      {
+        accessorKey: "finishDate",
+        header: "Başlalma tarixi",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.finishDate,
+          helperText: validationErrors?.finishDate,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              finishDate: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
     ],
     [validationErrors]
   );
 
-  //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
     useCreateUser();
   //call READ hook
@@ -104,11 +142,6 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
@@ -116,11 +149,6 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -134,20 +162,18 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
+    columns,
     localization: {
+      actions: "Əməlliyatlar",
       cancel: "İmtina",
-
       clearFilter: "Filteri təmizlə",
       clearSearch: "Axtarışı təmizlə",
-
       clearSort: "Sıralamani təmizlə",
       clickToCopy: "Kopyalamaq üçün klik edin",
       copy: "Kopyala",
       collapse: "Collapse",
-
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
-
       edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",
@@ -184,12 +210,10 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
-    columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -210,7 +234,7 @@ const Example = () => {
     //optionally customize modal content
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h5">Yeni dil əlavə edin</DialogTitle>
+        <DialogTitle variant="h5"> əlavə edin</DialogTitle>
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
@@ -249,9 +273,9 @@ const Example = () => {
               <path
                 d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
                 stroke="#4B7D83"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
               <path
                 d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
@@ -260,9 +284,9 @@ const Example = () => {
               <path
                 d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
                 stroke="#4B7D83"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </IconButton>
@@ -278,16 +302,10 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true);
         }}
       >
-        əlavə edin
+        Əlavə edin
       </Button>
     ),
 
@@ -303,41 +321,91 @@ const Example = () => {
 };
 
 //CREATE hook (post new user to api)
+// function useCreateUser() {
+//   const location = useLocation().pathname.substring(1);
+//   const queryClient = useQueryClient();
+//   return useMutation({
+//     mutationFn: async (user) => {
+//       console.log(user);
+//       const url = `https://10.70.3.176/api/v1/Trainings`;
+//       const headers = {
+//         Accept: "*/*",
+//         "Content-Type": "application/json",
+//       };
+//       axios
+//         .post(url, user, { headers })
+//         .then((response) => {
+//           console.log("Response:", response.data);
+//         })
+//         .catch((error) => {
+//           console.error("Error:", error);
+//         });
+//     },
+//     onMutate: (newUserInfo) => {
+//       queryClient.setQueryData(["users"], (prevUsers) => [
+//         ...prevUsers,
+//         {
+//           ...newUserInfo,
+//         },
+//       ]);
+//     },
+//   });
+// }
 function useCreateUser() {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+      const url = `https://10.70.3.176/api/v1/Trainings`; // Replace with your actual API endpoint
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      try {
+        const response = await axios.post(url, user, { headers });
+        console.log("Response:", response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-          id: Math.random(),
-        },
-      ]);
+    onMutate: async (newUserInfo) => {
+      // Optimistically update the cache
+      await queryClient.cancelQueries(["users"]); // Optional: cancel pending refetches
+      const previousUsers = queryClient.getQueryData(["users"]);
+      if (previousUsers) {
+        queryClient.setQueryData(
+          ["users"],
+          [...previousUsers, { ...newUserInfo }]
+        );
+      }
+      return { previousUsers };
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    onError: (err, newUserInfo, context) => {
+      // Rollback to the previous state on error
+      if (context && context.previousUsers) {
+        queryClient.setQueryData(["users"], context.previousUsers);
+      }
+    },
+    onSettled: () => {
+      // Optionally refetch the data after mutation is completed
+      queryClient.invalidateQueries(["users"]);
+    },
   });
 }
 
-//READ hook (get users from api)
 function useGetUsers() {
   let params = useParams();
   let userId = params.id;
-  console.log(userId);
   return useQuery({
     queryKey: ["users"],
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
+          `https://10.70.3.176/api/v1/Trainings/GetAll/${userId}`
         );
 
+        console.log(response.data.data);
         return response.data.data;
       } catch (error) {
         // Handle errors here if needed
@@ -349,15 +417,33 @@ function useGetUsers() {
   });
 }
 
-//UPDATE hook (put user in api)
 function useUpdateUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
+      const data = { ...user };
+      console.log(data);
       //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+
+      const url = `https://10.70.3.176/api/v1/Trainings`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      console.log(user);
+      axios
+        .put(url, data, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
+    //client side optimistic update
     //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
@@ -369,15 +455,28 @@ function useUpdateUser() {
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
-
-//DELETE hook (delete user in api)
 function useDeleteUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/Trainings/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {
@@ -404,8 +503,6 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
-    trainingsNamel: !validateRequired(user.trainingsName)
-      ? "First Name is Required"
-      : "",
+    name: !validateRequired(user.name) ? "First Name is Required" : "",
   };
 }

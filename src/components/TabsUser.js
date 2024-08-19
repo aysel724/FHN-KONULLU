@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import "../App.css";
-
+import CachedIcon from "@mui/icons-material/Cached";
 import TableForlanguageTabs from "../tabcomponents/TableForlanguageTabs";
 import TableForEducationTabs from "../tabcomponents/TableForEducationTabs";
 import TableForLanguage from "../components/TableForLanguage";
@@ -110,38 +110,43 @@ export default function TabsUser() {
           allowScrollButtonsMobile
           aria-label="scrollable force tabs example"
         >
-          <Tab className="tabs" label="Şəxsi məlumatlar" {...a11yProps(0)} />
+          <Tab className="tabs" label="ŞƏXSİ MƏLUMATLAR" {...a11yProps(0)} />
           <Tab
             className="tabs"
-            label="FHN-də könüllülük fəaliyəti"
+            label="FHN-DƏ KÖNÜLLÜK FƏALİYYƏTİ"
             {...a11yProps(1)}
           />
-          <Tab className="tabs" label="Dil bilikləri" {...a11yProps(2)} />
-          <Tab className="tabs" label="Kompüter bilikləri" {...a11yProps(3)} />
-          <Tab className="tabs" label="Kurs və təlimlər" {...a11yProps(4)} />
-          <Tab className="tabs" label="FHN təlimləri " {...a11yProps(5)} />
-          <Tab className="tabs" label="FHN tədbirləri" {...a11yProps(6)} />
-          <Tab className="tabs" label="İdman nailiyyətləri" {...a11yProps(7)} />
-          <Tab className="tabs" label="Əlavə biliklər" {...a11yProps(8)} />
-          <Tab className="tabs" label="Müqavilələr " {...a11yProps(9)} />
+
           <Tab
             className="tabs"
-            label="Sığorta məlumatları"
+            label={<span>DİL BİLİKLƏRİ</span>}
+            {...a11yProps(2)}
+          />
+          <Tab className="tabs" label="KOMPÜTER BİLİKLƏRİ" {...a11yProps(3)} />
+          <Tab className="tabs" label="KURS VƏ TƏLİMLƏR" {...a11yProps(4)} />
+          <Tab className="tabs" label="FHN TƏLİMLƏRİ " {...a11yProps(5)} />
+          <Tab className="tabs" label="FHN TƏDBİRLƏRİ" {...a11yProps(6)} />
+          <Tab className="tabs" label="İDMAN NAİLİYYƏTLƏRİ" {...a11yProps(7)} />
+          <Tab className="tabs" label="ƏLAVƏ BİLİKLƏR" {...a11yProps(8)} />
+          <Tab className="tabs" label="MÜÜQAVİLƏLƏR " {...a11yProps(9)} />
+          <Tab
+            className="tabs"
+            label="SIĞORTA MƏLUMATLARI"
             {...a11yProps(10)}
           />
           <Tab
             className="tabs"
-            label="Könüllülük fəaliyyəti"
+            label="KÖNÜLLÜLÜK FƏALİYYƏTİ"
             {...a11yProps(11)}
           />
-          <Tab className="tabs" label="Təhsil məlumatları" {...a11yProps(12)} />
-          <Tab className="tabs" label="Əmək fəaliyyəti " {...a11yProps(13)} />
+          <Tab className="tabs" label="TƏHSİL MƏLUMATLARI" {...a11yProps(12)} />
+          <Tab className="tabs" label="ƏMƏK FƏALİYYƏTİ" {...a11yProps(13)} />
           <Tab
             className="tabs"
-            label="Əşya və ləvazimatlar"
+            label="ƏŞYA VƏ LƏVAZİMATLAR"
             {...a11yProps(14)}
           />
-          <Tab className="tabs" label="Elektron sənədlər" {...a11yProps(15)} />
+          <Tab className="tabs" label="ELEKTRON SƏNƏDLƏR" {...a11yProps(15)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -154,8 +159,24 @@ export default function TabsUser() {
             textAlign: "left",
           }}
         >
+          {" "}
+          <div style={{ textAlign: "right" }}>
+            {" "}
+            <button
+              style={{
+                padding: "12px",
+                color: "white",
+                backgroundColor: "rgb(75, 125, 131)",
+                borderRadius: "12px",
+                border: "none",
+              }}
+            >
+              <CachedIcon style={{ width: "24px" }}></CachedIcon>
+              <span style={{ padding: "5px" }}> IAMASLA YENİLƏ</span>
+            </button>
+          </div>
           <p>
-            <strong>Hərbi mükələfiyyəti:</strong> {userData.militaryReward}
+            <strong>Hərbi mükələfiyyəti: </strong> {userData.militaryReward}
           </p>
           <p>
             <strong>Boy: </strong>
@@ -166,10 +187,10 @@ export default function TabsUser() {
             {userData.citizenship}
           </p>
           <p>
-            <strong>Ailə vəziyyəti:</strong> {userData.maritalStatus}
+            <strong>Ailə vəziyyəti: </strong> {userData.maritalStatus}
           </p>
           <p>
-            <strong>Şəxsiyyət vəsiqəsinin seriya və nömrəsi:</strong>
+            <strong>Şəxsiyyət vəsiqəsinin seriya və nömrəsi: </strong>
             {userData.pinCode}
           </p>
           <p>
@@ -191,7 +212,7 @@ export default function TabsUser() {
             {userData.currentAddress}
           </p>
           <p>
-            <strong>Elektron-poçt ünvanı:</strong> {userData.email}
+            <strong>Elektron-poçt ünvanı: </strong> {userData.email}
           </p>
           <p>
             <strong>Əlaqə nömrələri: </strong>
