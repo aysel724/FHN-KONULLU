@@ -171,7 +171,6 @@ const Example = () => {
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values);
-
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
