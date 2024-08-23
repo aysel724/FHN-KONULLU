@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -44,20 +43,6 @@ function Login() {
         );
       });
   };
-=======
-import React from "react";
-
-import { Button, Checkbox, Form, Input } from "antd";
-
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
-const onFinishFailed = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
-
-function Login() {
->>>>>>> 0fc649aa14a9cea45b0f5e7b95364144428752e9
   return (
     <div
       style={{
@@ -96,36 +81,20 @@ function Login() {
         {/* <img src={logo} style={{width:"140px"}}/> */}
         <svg
           width="100"
-<<<<<<< HEAD
           height="100"
-=======
-          marginBottom="30"
-          height="auto"
->>>>>>> 0fc649aa14a9cea45b0f5e7b95364144428752e9
           viewBox="0 0 66 87"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-<<<<<<< HEAD
           <g clipPath="url(#clip0_3_874)">
             <path
               fillRule="evenodd"
               clipRule="evenodd"
-=======
-          <g clip-path="url(#clip0_3_874)">
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
->>>>>>> 0fc649aa14a9cea45b0f5e7b95364144428752e9
               d="M32.9349 26.3112L39.769 38.1681L26.2526 38.1996L32.9349 26.3112ZM31.4362 26.3301C30.3338 26.5852 29.4018 26.9852 28.6214 27.5237C27.4819 28.3079 27.3704 28.5598 26.5963 29.5424C24.6733 31.983 24.5711 35.8251 26.4105 38.6783C28.0641 41.2417 31.4145 42.7628 34.6411 42.1109C38.7781 41.2732 41.627 36.8612 40.7661 32.5404C40.0199 28.8054 36.0501 25.2626 31.4362 26.3301Z"
               fill="#E57817"
             />
             <path
-<<<<<<< HEAD
               fillRule="evenodd"
-=======
-              fill-rule="evenodd"
->>>>>>> 0fc649aa14a9cea45b0f5e7b95364144428752e9
               clip-rule="evenodd"
               d="M26.2526 38.1996L39.769 38.1681L32.9349 26.3112L26.2526 38.1996Z"
               fill="#0091DE"
@@ -389,19 +358,12 @@ function Login() {
           </defs>
         </svg>
 
-<<<<<<< HEAD
         <h2 style={{ paddingBottom: "10px", marginTop: "10px" }}>
           {" "}
           FÖVQƏLADƏ HALLAR KÖNÜLLÜLƏRİ
         </h2>
 
         <div
-=======
-        <h2 style={{ paddingBottom: "30px" }}> FÖVQƏLADƏ HALLAR KÖNÜLLÜLƏRİ</h2>
-
-        <Form
-          name="basic"
->>>>>>> 0fc649aa14a9cea45b0f5e7b95364144428752e9
           style={{
             color: "white",
             display: "flex",
@@ -411,7 +373,6 @@ function Login() {
             justifyContent: "center",
             width: 500,
           }}
-<<<<<<< HEAD
         >
           <input
             style={{
@@ -473,57 +434,8 @@ function Login() {
             </span>
           </div>
         )}
-=======
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
-          <Form.Item
-            placeholder="fghj"
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: "İstifadəçi adını daxil edin!",
-              },
-            ]}
-          >
-            <Input size="large" placeholder="İstifadəçi adınızı daxil edin" />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Şifrəni daxil edin!",
-              },
-            ]}
-          >
-            <Input.Password size="large" placeholder="Şifrənizi daxil edin" />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              style={{ width: "500px", margin: "0" }}
-            >
-              Daxil ol
-            </Button>
-          </Form.Item>
-        </Form>
->>>>>>> 0fc649aa14a9cea45b0f5e7b95364144428752e9
       </div>
     </div>
   );
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 0fc649aa14a9cea45b0f5e7b95364144428752e9
 export default Login;
