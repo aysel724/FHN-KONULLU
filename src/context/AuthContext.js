@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
       console.log(expDate, lastDate);
       if (lastDate > expDate) {
         console.log("Hello");
-        localStorage.removeItem("authToken");
       }
     }
   }, []);

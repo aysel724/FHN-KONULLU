@@ -1,10 +1,8 @@
 import React from "react";
-import Table from "../components/Table";
+import TableForAllVolunteers from "../components/TableForAllVolunteers";
 import ModalForDailedFiltration from "../components/ModalForDailedFiltration";
-import { useNavigate } from "react-router-dom";
 import { Button } from "antd";
-export default function Volonteer() {
-  const navigate = useNavigate();
+export default function AllVolunteers() {
   return (
     <>
       {" "}
@@ -19,7 +17,7 @@ export default function Volonteer() {
       >
         {" "}
         <div>
-          <h1>Könüllülər</h1>{" "}
+          <h1>Müraciət edən bütün könüllülər</h1>{" "}
         </div>
         <div
           style={{
@@ -32,14 +30,9 @@ export default function Volonteer() {
           }}
         >
           {" "}
-          <Button onClick={() => navigate(`/allVolunteers`)}>
-            Müraciət edən könüllülərin cədvəli{" "}
-          </Button>
-          <ModalForDailedFiltration />
-          ngs
         </div>
       </div>
-      <Table />
+      <TableForAllVolunteers />
     </>
   );
 }

@@ -129,66 +129,6 @@ const Example = () => {
           helperText: validationErrors?.state,
         },
       },
-      // {
-      //   accessorKey: "educationDegree",
-      //   header: "Təhsil dərəcəsi",
-      //   editVariant: "select",
-      //   editSelectOptions: edudegree,
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.educationDegree,
-      //     helperText: validationErrors?.educationDegree,
-      //   },
-      // },
-
-      // {
-      //   accessorKey: "diplomaGivenDate",
-      //   header: "Diplomun verilmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.diplomaGivenDate,
-      //     helperText: validationErrors?.diplomaGivenDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         diplomaGivenDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "startDate",
-      //   header: "Təhsilə başlama tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.startDate,
-      //     helperText: validationErrors?.startDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         startDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "endDate",
-      //   header: "Təhsilin bitmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.endDate,
-      //     helperText: validationErrors?.endDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         endDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
     ],
     [validationErrors]
   );
@@ -410,26 +350,33 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
 function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Languages`;
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      axios
+        .post(url, user, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random(),
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -467,7 +414,7 @@ function useUpdateUser(types) {
       console.log(data);
       //send api update request here
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
 
       const headers = {
         Accept: "*/*",

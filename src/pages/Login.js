@@ -31,9 +31,9 @@ function Login() {
         if (data) {
           console.log(jwtDecode(data.data.token));
           login(data.data.token); // Assuming login sets the token in context or state
-          navigate("/volunteers"); // Redirect to the protected route
+          navigate("/Volunteers"); // Redirect to the protected route
         } else {
-          setError("Invalid credentials. Please try again.");
+          setError("Daxil etdiyiniz parametrlər yalnışdır.");
         }
       })
       .catch((error) => {

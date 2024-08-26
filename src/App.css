@@ -26,7 +26,9 @@
   background-color: rgb(75, 125, 131) !important;
   color: white;
 }
-
+.custom-cell {
+  color: #7983ff !important;
+}
 /* .App-header { 
   background: rgb(19, 26, 27) url("components/images/shadow.png") repeat-x top!important ;
 

@@ -66,12 +66,6 @@ const Example = () => {
     return arr.map((e) => e.name);
   }
 
-  const pagBUTTON = document.querySelector(
-    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
-  );
-  if (pagBUTTON) {
-    pagBUTTON.textContent = "Göstərilən say";
-  }
   const columns = useMemo(
     () => [
       {
@@ -97,18 +91,6 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-
-      // {
-      //   accessorKey: "status",
-      //   header: "Status",
-      //   editVariant: "select",
-      //   editSelectOptions: usStates,
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.status,
-      //     helperText: validationErrors?.status,
-      //   },
-      // },
       {
         accessorKey: "priority",
         header: "Prioritet",

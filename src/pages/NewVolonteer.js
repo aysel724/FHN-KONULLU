@@ -665,9 +665,10 @@ export default function NewVolonteer() {
               }}
             />
             <TextField
+              required
               name="phoneNumber1"
               id="outlined-basic"
-              label="Əlaqə nömrələri 1*"
+              label="Əlaqə nömrələri 1"
               variant="outlined"
               value={userData.phoneNumber1}
               onChange={(e) => {
@@ -680,9 +681,10 @@ export default function NewVolonteer() {
               }}
             />
             <TextField
+              required
               name="phoneNumber2"
               id="outlined-basic"
-              label="Əlaqə nömrələri 2*"
+              label="Əlaqə nömrələri 2"
               variant="outlined"
               value={userData.phoneNumber2}
               onChange={(e) => {
@@ -695,9 +697,10 @@ export default function NewVolonteer() {
               }}
             />
             <TextField
+              required
               name="email"
               id="filled-basic"
-              label="Elektron-poçt ünvanı*"
+              label="Elektron-poçt ünvanı"
               variant="outlined"
               value={userData.email}
               onChange={(e) => {

@@ -109,17 +109,17 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "qurum",
+        accessorKey: "departmentInCharge",
         header: "Təlimi keçirən qurum",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.qurum,
-          helperText: validationErrors?.qurum,
+          error: !!validationErrors?.departmentInCharge,
+          helperText: validationErrors?.departmentInCharge,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              qurum: undefined,
+              departmentInCharge: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },

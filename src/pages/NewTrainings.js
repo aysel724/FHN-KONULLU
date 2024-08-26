@@ -15,6 +15,7 @@ import Fade from "@mui/material/Fade";
 import { useNavigate } from "react-router-dom";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+
 import btoa from "btoa-lite";
 export default function NewTrainings() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function NewTrainings() {
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
+
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type, message, description) => {
     api[type]({
@@ -44,6 +46,8 @@ export default function NewTrainings() {
   };
   const [volonteerNames, setvolonteerNames] = useState([]);
   const [trainingNames, setTrainingNames] = useState([]);
+  const [files, setFiles] = useState([]);
+
   const [trainingResult, setTrainingResult] = useState([]);
   useEffect(() => {
     const TrainingNamesData = async () => {
@@ -132,14 +136,16 @@ export default function NewTrainings() {
     trainingMaster: "",
     trainingResultId: "",
     priority: "",
+    volunteerIds: [],
+    mesTrainingAttachmentFiles: [],
   });
 
-  function handleSubmit(statusCode) {
+  function handleSubmit() {
     setLoading(true);
 
     setTimeout(() => {
       navigate(`/MesTrainings`);
-    }, 5000);
+    }, 20000);
     console.log(userData);
     function convertDate(date) {
       const dateObject = new Date(date);
@@ -174,21 +180,23 @@ export default function NewTrainings() {
     formData.append("TrainingResultId", userData.trainingResultId);
     formData.append("FinishDate", convertDate(userData.finishDate));
 
-    // function base64ToBlob(base64String, contentType) {
-    //   const byteCharacters = atob(base64String); // Decode base64
-    //   const byteNumbers = new Array(byteCharacters.length);
-    //   for (let i = 0; i < byteCharacters.length; i++) {
-    //     byteNumbers[i] = byteCharacters.charCodeAt(i);
-    //   }
-    //   const byteArray = new Uint8Array(byteNumbers);
-    //   return new Blob([byteArray], { type: contentType });
-    // }
+    formData.append("VolunteerIds", userData.volunteerIds);
 
-    // const contentType = "image/jpeg";
-    // const base64String = `${userData.mesTrainingAttachmentFiles}`; // Example base64 string
-    // const blob = base64ToBlob(base64String, contentType);
+    function base64ToBlob(base64String, contentType) {
+      const byteCharacters = atob(base64String); // Decode base64
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      return new Blob([byteArray], { type: contentType });
+    }
 
-    // formData.append("MesTrainingAttachmentFiles", blob, "filename.jpg");
+    const contentType = "image/jpeg";
+    const base64String = `${userData.mesTrainingAttachmentFiles}`; // Example base64 string
+    const blob = base64ToBlob(base64String, contentType);
+
+    formData.append("MesTrainingAttachmentFiles", blob, "filename.jpg");
 
     // Now you can use formData to send the blob to a server using fetch or XMLHttpRequest
 
@@ -243,18 +251,6 @@ export default function NewTrainings() {
       });
   }
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      setSelectedImage(reader.result);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
   const closeModal = () => {
     setModalIsOpen(false);
   };
@@ -442,15 +438,22 @@ export default function NewTrainings() {
                 }));
               }}
             />
-            {/* <TextField
-              multiple="true"
+            <input
+              multiple
               type="file"
               helperText="Təlimin sənədləri "
-              name="gender"
-              id="Gender"
+              name="files"
+              id="files"
               variant="outlined"
-              value={userData?.finishDate}
-            />{" "} */}
+              value={userData?.files}
+              onChange={(e) => {
+                console.log(e.target.value); // Log the new value
+                setUserData((prev) => ({
+                  ...prev,
+                  files: e.target.value, // Update the state with the new date
+                }));
+              }}
+            />{" "}
           </Box>
           <Box
             component="form"
@@ -537,17 +540,33 @@ export default function NewTrainings() {
                   return data;
                 });
               }}
+            />
+            <TextField
+              id="vj"
+              name="priority"
+              label="Prioritet "
+              variant="outlined"
+              value={userData?.volunteerIds}
+              onChange={(e) => {
+                console.log(userData);
+                setUserData((prev) => {
+                  const data = { ...prev, volunteerIds: e.target.value };
+
+                  return data;
+                });
+              }}
             />{" "}
-            <Autocomplete
+            {/* <Autocomplete
               multiple
               disablePortal
+              // value={userData.volunteerIds}
               id="combo-box-demo"
               options={getTrainingNames(volonteerNames)}
               sx={{ width: 300 }}
               renderInput={(params) => (
                 <TextField {...params} label="Konulluler" />
               )}
-            />
+            /> */}
             <Button variant="contained" onClick={() => handleSubmit()}>
               Yadda saxla
             </Button>

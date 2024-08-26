@@ -20,7 +20,7 @@ import PrivateRoute from "./context/PrivateRoute";
 import TrainingsInfo from "./pages/TrainingsInfo";
 import EventInfo from "./pages/EventInfo";
 import CertificatePages from "./pages/CertificatePages";
-
+import AllVolunteers from "./pages/AllVolunteers";
 function App() {
   return (
     <AuthProvider>
@@ -31,6 +31,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<Sidebar />}>
+                <Route path="/allVolunteers" element={<AllVolunteers />} />
                 <Route path="/Volunteers" element={<Volonteer />} />
                 <Route path="/Volunteers/:id" element={<UserInfo />} />
                 <Route path="/newvolonteer" element={<NewVolonteer />} />

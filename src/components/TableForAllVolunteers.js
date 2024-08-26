@@ -5,6 +5,7 @@ import "../App.css";
 import React from "react";
 import axios from "axios";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
+import logo from "../components/images/FHNLogo.png";
 import {
   createMRTColumnHelper,
   MRT_EditActionButtons,
@@ -119,11 +120,7 @@ const Example = () => {
   const navigate = useNavigate();
 
   const [validationErrors, setValidationErrors] = useState({});
-  const getStatusStyle = (status) => {
-    if (status === "Checked") return { color: "green" };
-    if (status === "Yoxlanmayab") return { color: "red" };
-    return { color: "gray" }; // Default color
-  };
+
   const columns = useMemo(
     () => [
       {
@@ -134,6 +131,7 @@ const Example = () => {
       },
 
       {
+        size: 350,
         accessorKey: "fullName",
         header: "Ad soyad",
         enableEditing: versinon,
@@ -149,6 +147,24 @@ const Example = () => {
               fullName: undefined,
             }),
         },
+        Cell: ({ renderedCellValue, row }) => (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "1rem",
+            }}
+          >
+            <img
+              alt="avatar"
+              height={40}
+              src={row.original.photo || "/path/to/default/avatar.png"} // Provide a default avatar URL if necessary
+              loading="lazy"
+              style={{ borderRadius: "20%", transition: "transform 0.3s ease" }}
+            />
+            <span>{renderedCellValue}</span>
+          </Box>
+        ),
       },
 
       {
@@ -285,49 +301,15 @@ const Example = () => {
     ],
     [validationErrors]
   );
-  const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
+
   const {
     data: fetchedUsers = [],
     isError: isLoadingUsersError,
     isFetching: isFetchingUsers,
     isLoading: isLoadingUsers,
   } = useGetUsers();
-  const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
-  //call DELETE hook
-  const { mutateAsync: deleteUser, isPending: isDeletingUser } =
-    useDeleteUser();
 
   //CREATE action
-  const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
-    setValidationErrors({});
-    await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
-  };
-
-  const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
-    // setValidationErrors({});
-
-    await updateUser(values);
-    table.setEditingRow(null); //exit editing mode
-  };
-  //DELETE action
-  const openDeleteConfirmModal = (row) => {
-    if (window.confirm("təsdiq edirsiz?")) {
-      deleteUser(row.original.id);
-    }
-  };
 
   let params = useParams();
   let id = params.id;
@@ -346,7 +328,6 @@ const Example = () => {
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
 
-      edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",
       rowNumber: "No",
@@ -393,24 +374,15 @@ const Example = () => {
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
     columns,
+    initialState: {
+      columnVisibility: { id: false },
+    },
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
         cursor: "pointer",
       },
     }),
-    MRT_EditActionButtons,
-
-    createDisplayMode: "modal",
-    editDisplayMode: "modal",
-    enableEditing: true,
-    initialState: {
-      columnVisibility: { id: false },
-      columnPinning: { right: ["mrt-row-actions"] },
-    },
-    displayColumnDefOptions: {
-      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
-    },
 
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -424,114 +396,6 @@ const Example = () => {
         minHeight: "500px",
       },
     },
-
-    onCreatingRowCancel: () => setValidationErrors({}),
-    onCreatingRowSave: handleCreateUser,
-    onEditingRowCancel: () => setValidationErrors({}),
-    onEditingRowSave: handleSaveUser,
-    //optionally customize modal content
-
-    renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h5">Yeni könüllü əlavə edin</DialogTitle>
-        <DialogContent
-          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-        >
-          {internalEditComponents} {/* or render custom edit components here */}
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
-    ),
-    //optionally customize modal content
-    renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
-        <DialogContent
-          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-        >
-          {internalEditComponents} {/* or render custom edit components here */}
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
-    ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Button variant="contained" onClick={() => table.setEditingRow(row)}>
-          status
-        </Button>
-        <Tooltip title="Ətraflı">
-          <VisibilityIcon
-            style={{ marginTop: "8px" }}
-            onClick={() => navigate(`/Volunteers/${row.id}`)}
-            variant="contained"
-          >
-            Ətraflı
-          </VisibilityIcon>
-        </Tooltip>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
-                stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
-                fill="#4B7D83"
-              />
-              <path
-                d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
-                stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
-    renderTopToolbarCustomActions: ({ table }) => (
-      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
-        <Button
-          variant="contained"
-          onClick={() => {
-            navigate("/newvolonteer");
-          }}
-        >
-          Yeni könüllü əlavə edin
-        </Button>
-
-        <Button variant="contained" onClick={handleDownload}>
-          Excelə export
-        </Button>
-      </div>
-    ),
-
-    state: {
-      isLoading: isLoadingUsers,
-      isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
-      showAlertBanner: isLoadingUsersError,
-      showProgressBars: isFetchingUsers,
-    },
   });
 
   return (
@@ -540,29 +404,6 @@ const Example = () => {
     </div>
   );
 };
-
-//CREATE hook (post new user to api)
-function useCreateUser() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (user) => {
-      //send api update request here\\\https://10.70.3.176/api/v1/Volunteers?page=1&pageSize=0
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
-    },
-    //client side optimistic update
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-          id: Math.random(),
-        },
-      ]);
-    },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
-  });
-}
 
 //READ hook (get users from api)
 function useGetUsers() {
@@ -597,77 +438,6 @@ function useGetUsers() {
       }
     },
     refetchOnWindowFocus: false,
-  });
-}
-
-function useUpdateUser() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
-
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`;
-
-      const headers = {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      };
-      console.log(user);
-      axios
-        .put(url, data, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    },
-    //client side optimistic update
-    //client side optimistic update
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
-    },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
-  });
-}
-
-function useDeleteUser() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (userId) => {
-      console.log(userId);
-
-      try {
-        const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data);
-
-        // Assuming your API returns data in response.data
-        return response.data.data;
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    },
-    //client side optimistic update
-    onMutate: (userId) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.filter((user) => user.id !== userId)
-      );
-    },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
