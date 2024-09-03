@@ -25,7 +25,6 @@ import {
 import axios from "axios";
 import { columnNames, apiData, headerNames } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Export } from "./Export";
 
 const Example = () => {
   const location = useLocation().pathname.substring(1);

@@ -25,7 +25,7 @@ import {
 } from "@tanstack/react-query";
 import { fakeData6, usStates } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Export } from "./Export";
+
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 const Example = () => {
