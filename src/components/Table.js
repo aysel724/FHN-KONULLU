@@ -223,7 +223,7 @@ const Example = () => {
 
       {
         accessorKey: "birthDate",
-        header: "Doğum tarixi",
+        header: "Doğum tarixi.",
         enableEditing: false,
         muiEditTextFieldProps: {
           required: true,
