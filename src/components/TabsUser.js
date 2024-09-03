@@ -8,7 +8,7 @@ import "../App.css";
 import CachedIcon from "@mui/icons-material/Cached";
 import TableForlanguageTabs from "../tabcomponents/TableForlanguageTabs";
 import TableForEducationTabs from "../tabcomponents/TableForEducationTabs";
-import TableForLanguage from "../components/TableForLanguage";
+import TableForLanguage from "./TableForTrainingDetails";
 import TableFotComputerSkillsTab from "../tabcomponents/TableFotComputerSkillsTab";
 import TableForTrainigsTabs from "../tabcomponents/TableForTrainingsTabs";
 import TableForFHNtrainings from "../tabcomponents/TableForFHNtrainingsTab";

@@ -27,7 +27,7 @@ import { Divider } from "antd";
 import EventInfo from "../pages/EventInfo";
 import { key } from "localforage";
 import NewTrainings from "../pages/NewTrainings";
-import Certificate from "./Certificate";
+
 import CertificatePages from "../pages/CertificatePages";
 import UserIcon from "./UserIcon";
 const { Header, Content, Footer, Sider } = Layout;

@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import "../App.css";
-import TableForLanguage from "../components/TableForLanguage";
+import TableForTrainingDetails from "../components/TableForTrainingDetails";
 
 import { Routes, Route, useParams } from "react-router-dom";
 import { Select, Space } from "antd";
@@ -209,7 +209,7 @@ export default function TabsUser() {
           >
             <Button>Əlavə et</Button>
           </div>
-          <TableForLanguage />
+          <TableForTrainingDetails />
         </div>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
