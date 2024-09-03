@@ -1,0 +1,842 @@
+{
+    "users": [{
+      "name": "Aysel  Hesenova",
+      "status": "Fəaliyyəti dəvam edən",
+      "gender": "qadin",
+      "birthdate": "24.10.1994",
+      "fin": "1y97krw",
+      "famylystatus":"evli",
+      "phone": "+994504962260",
+      "mail": "aska-hesenova94@mail.ru",
+      "start": "23.09.2022",
+      "finish": "--",
+      "army": "---",
+      "boy":190,
+      "education":[{ 
+        "tip":"ali",
+        "name":"ASOIU",
+        "degree":"bacalavr",
+        "facultet":"medical engineering",
+        "diplomNum":"A186540-",
+        "date":"ASOIU",
+        "start":"17.09.2012",
+        "finiish":"28.06.2016"
+      }, {
+      "tip":"orta",
+      "name":"297 ",
+      "degree":"-----",
+      "facultet":"----------",
+      "diplomNum":"------",
+      "date":"------",
+      "start":"17.09.2001",
+      "finiish":"28.06.2012"
+    }
+    ],
+    "passport":{
+    "given": "12.12.2020",
+    "expired": "12.12.2030",
+    "givenBy":"Baku, asan xidmet",
+    "address":"Baku, akademik H aliyev",
+    "address2":"Baku,"
+    },
+      "language": 
+      {
+        "english": "b2",
+        "russian": "C2", 
+        "turkish": "b2",
+        "azerbaijani": "C2"
+      },
+      "skils": [ {
+        "HTML": {
+          "level":"b2",
+          "not":"---------"
+        },
+        "CSS": 
+        {"level":"1 2",
+        "not":"sdfghjk"}, 
+
+        "Bootstrap": 
+        {"level":"b2",
+        "not":"srrtybl;[[[["}
+  
+      }],
+      "anotherskils":  [ {
+        "HTML": {
+          "level":"b2",
+          "not":"---------"
+        },
+        "CSS": 
+        {"level":"1 2",
+        "not":"sdfghjk"}, 
+
+        "Bootstrap": 
+        {"level":"b2",
+        "not":"srrtybl;[[[["}
+  
+      }],
+      "courses":[ {
+     
+         " name":"Frontend",
+          "date1":"11.11.2012",
+          "date2":"---------"
+        },
+    {  
+          " name":"Frontend",
+           "date1":"11.11.2012",
+           "date2":"---------"
+         }
+       
+  
+      ],
+      "trainings": [
+      { "name": "Yanğın söndürmə",
+      "desc": "-----------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "time":"10 mgun",
+      "adress": "20 yanvar",
+      "couch": "Elnur Aliyev",
+      "resault": "yaxwi" ,
+      "documents":[]
+     
+    },
+    { "name": "XilasETME",
+      "desc": "-----------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "time":"20 GUN",
+      "adress": "20 yanvar",
+      "couch": "ANAR Aliyev",
+      "resault": "yaxwi" ,
+      "documents":[]
+     
+    } ],
+    
+      "events": [
+        { "name": "Anım günü",
+        "desc": "-----------",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "time":"1 gun",
+        "adress": "20 yanvar",
+        "couch": "ANAR Aliyev", 
+        "numberOfVolonteers":
+         200,
+        "note" :"-----------------"
+      
+    
+       
+      },
+      { "name": "Zəfər günü",
+      "desc": "-----------",
+      "start":"08.11.2020",
+      "finish":"21.11.2011",
+      "time":"1 gun",
+      "adress": "20 yanvar",
+      "couch": "ANAR Aliyev",
+      "note" :"-----------------"
+      , "numberOfVolonteers":
+      200
+       
+      } ],
+
+
+      "sport": [
+        { "name": "JUDO",
+        "LEVEL": "-----------",
+        "desc":"11.11.2011"
+    
+       
+      },
+      { "name": "qaydasiz doyus",
+      "LEVEL": "-----------",
+      "desc":"11.11.2011"
+       
+      } ],
+      "Insurance": [
+        { "name": "Azersigorta",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011"
+    
+       
+      },
+      {  "name": "Azersigorta",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011"
+       
+      } ],
+      "contract": [
+        { "number": "Azersigorta",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011"
+    
+       
+      },
+      {  "number": "Azersigorta",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011"
+       
+      } ],
+      "activity":[
+        { "name": "ASAN Könüllülük",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011",
+        "field":"dfghjkl",
+        "desc2":"11.11.2011"
+    
+       
+      },
+      { "name": "--------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011",
+      "field":"dfghjkl",
+      "desc2":"11.11.2011"
+  
+       
+      } ], 
+      "activityFHN":[
+        {
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011",
+        "field":"dfghjkl"
+      },
+      {  "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011",
+      "field":"dfghjkl"
+       
+      } ],
+
+
+      "job":
+        { "name":"GTSolutions",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "position":"11.11.2011",
+        "field":"dfghjkl"
+      } ,
+      "sraff": [
+        {"name":"forma",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "field":"dfghjkl"
+      },
+      { "name":"xxxxxx",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "position":"11.11.2011",
+      "field":"dfghjkl"
+       
+      } ],
+      "docs": [
+        {"name":"diplom",
+        "place":"ASOIU",
+        "files":"docs.pdf",
+        "field":"dfghjkl"
+      },
+      {"name":"sertificat",
+      "place":"ASOIU",
+      "files":"docs.pdf",
+      "field":"dfghjkl"
+    } ]
+     
+    },
+    {
+      "name": "Ceyhun Asgarov",
+      "status": "Fəaliyyəti dəvam edən",
+      "gender": "kishhi",
+      "birthdate": "24.10.1994",
+      "fin": "1y97krw",
+      "famylystatus":"evli",
+      "phone": "+994504962260",
+      "mail": "aska-hesenova94@mail.ru",
+      "start": "23.09.2022",
+      "finish": "--",
+      "army": "---",
+      "boy":190,
+      "education":[{ 
+        "tip":"ali",
+        "name":"ASOIU",
+        "degree":"bacalavr",
+        "facultet":"medical engineering",
+        "diplomNum":"A186540-",
+        "date":"ASOIU",
+        "start":"17.09.2012",
+        "finiish":"28.06.2016"
+      }, {
+      "tip":"orta",
+      "name":"297 ",
+      "degree":"-----",
+      "facultet":"----------",
+      "diplomNum":"------",
+      "date":"------",
+      "start":"17.09.2001",
+      "finiish":"28.06.2012"
+    }
+    ],
+    "passport":{
+    "given": "12.12.2020",
+    "expired": "12.12.2030",
+    "givenBy":"Baku, asan xidmet",
+    "address":"Baku, akademik H aliyev",
+    "address2":"Baku,"
+    },
+      "language": 
+      {
+        "english": "b2",
+        "russian": "C2", 
+        "turkish": "b2",
+        "azerbaijani": "C2"
+      },
+      "skils": [ {
+        "HTML": {
+          "level":"b2",
+          "not":"---------"
+        },
+        "CSS": 
+        {"level":"1 2",
+        "not":"sdfghjk"}, 
+
+        "Bootstrap": 
+        {"level":"b2",
+        "not":"srrtybl;[[[["}
+  
+      }],
+      "anotherskils":  [ {
+        "HTML": {
+          "level":"b2",
+          "not":"---------"
+        },
+        "CSS": 
+        {"level":"1 2",
+        "not":"sdfghjk"}, 
+
+        "Bootstrap": 
+        {"level":"b2",
+        "not":"srrtybl;[[[["}
+  
+      }],
+      "courses":[ {
+     
+         " name":"Frontend",
+          "date1":"11.11.2012",
+          "date2":"---------"
+        },
+    {  
+          " name":"Frontend",
+           "date1":"11.11.2012",
+           "date2":"---------"
+         }
+       
+  
+      ],
+      "trainings": [
+      { "name": "Yanğın söndürmə",
+      "desc": "-----------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "time":"10 mgun",
+      "adress": "20 yanvar",
+      "couch": "Elnur Aliyev",
+      "resault": "yaxwi" 
+     
+    },
+    { "name": "XilasETME",
+      "desc": "-----------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "time":"20 GUN",
+      "adress": "20 yanvar",
+      "couch": "ANAR Aliyev",
+      "resault": "yaxwi" 
+     
+    } ],
+    
+      "events": [
+        { "name": "Anım günü",
+        "desc": "-----------",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "time":"1 gun",
+        "adress": "20 yanvar"
+    
+       
+      },
+      { "name": "XilasETME",
+        "desc": "-----------",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "time":"20 GUN",
+        "adress": "20 yanvar"
+       
+      } ],
+
+
+      "sport": [
+        { "name": "JUDO",
+        "LEVEL": "-----------",
+        "desc":"11.11.2011"
+    
+       
+      },
+      { "name": "qaydasiz doyus",
+      "LEVEL": "-----------",
+      "desc":"11.11.2011"
+       
+      } ],
+      "Insurance": [
+        { "name": "Azersigorta",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011"
+    
+       
+      },
+      {  "name": "Azersigorta",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011"
+       
+      } ],
+      "contract": [
+        { "number": "Azersigorta",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011"
+    
+       
+      },
+      {  "number": "Azersigorta",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011"
+       
+      } ],
+      "activity":[
+        { "name": "ASAN Könüllülük",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011",
+        "field":"dfghjkl",
+        "desc2":"11.11.2011"
+    
+       
+      },
+      { "name": "--------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011",
+      "field":"dfghjkl",
+      "desc2":"11.11.2011"
+  
+       
+      } ], 
+      "activityFHN":[
+        {
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011",
+        "field":"dfghjkl"
+      },
+      {  "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011",
+      "field":"dfghjkl"
+       
+      } ],
+
+
+      "job":[
+        {"name":"GTSolutions",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "position":"11.11.2011",
+        "field":"dfghjkl"
+      },
+      { "name":"GTSolutions",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "position":"11.11.2011",
+      "field":"dfghjkl"
+       
+      } ],
+      "sraff": [
+        {"name":"forma",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "field":"dfghjkl"
+      },
+      { "name":"xxxxxx",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "position":"11.11.2011",
+      "field":"dfghjkl"
+       
+      } ],
+      "docs": [
+        {"name":"diplom",
+        "place":"ASOIU",
+        "files":"docs.pdf",
+        "field":"dfghjkl"
+      },
+      {"name":"sertificat",
+      "place":"ASOIU",
+      "files":"docs.pdf",
+      "field":"dfghjkl"
+    } ]
+     
+    },
+    {
+      "name": "Ayla  asgarova",
+      "status": "Fəaliyyəti dəvam edən",
+      "gender": "qadin",
+      "birthdate": "24.10.1994",
+      "fin": "1y97krw",
+      "famylystatus":"evli",
+      "phone": "+994504962260",
+      "mail": "aska-hesenova94@mail.ru",
+      "start": "23.09.2022",
+      "finish": "--",
+      "army": "---",
+      "boy":190,
+      "education":[{ 
+        "tip":"ali",
+        "name":"ASOIU",
+        "degree":"bacalavr",
+        "facultet":"medical engineering",
+        "diplomNum":"A186540-",
+        "date":"ASOIU",
+        "start":"17.09.2012",
+        "finiish":"28.06.2016"
+      }, {
+      "tip":"orta",
+      "name":"297 ",
+      "degree":"-----",
+      "facultet":"----------",
+      "diplomNum":"------",
+      "date":"------",
+      "start":"17.09.2001",
+      "finiish":"28.06.2012"
+    }
+    ],
+    "passport":{
+    "given": "12.12.2020",
+    "expired": "12.12.2030",
+    "givenBy":"Baku, asan xidmet",
+    "address":"Baku, akademik H aliyev",
+    "address2":"Baku,"
+    },
+      "language": 
+      {
+        "english": "b2",
+        "russian": "C2", 
+        "turkish": "b2",
+        "azerbaijani": "C2"
+      },
+      "skils": [ {
+        "HTML": {
+          "level":"b2",
+          "not":"---------"
+        },
+        "CSS": 
+        {"level":"1 2",
+        "not":"sdfghjk"}, 
+
+        "Bootstrap": 
+        {"level":"b2",
+        "not":"srrtybl;[[[["}
+  
+      }],
+      "anotherskils":  [ {
+        "HTML": {
+          "level":"b2",
+          "not":"---------"
+        },
+        "CSS": 
+        {"level":"1 2",
+        "not":"sdfghjk"}, 
+
+        "Bootstrap": 
+        {"level":"b2",
+        "not":"srrtybl;[[[["}
+  
+      }],
+      "courses":[ {
+     
+         " name":"Frontend",
+          "date1":"11.11.2012",
+          "date2":"---------"
+        },
+    {  
+          " name":"Frontend",
+           "date1":"11.11.2012",
+           "date2":"---------"
+         }
+       
+  
+      ],
+      "trainings": [
+      { "name": "Yanğın söndürmə",
+      "desc": "-----------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "time":"10 mgun",
+      "adress": "20 yanvar",
+      "couch": "Elnur Aliyev",
+      "resault": "yaxwi" 
+     
+    },
+    { "name": "XilasETME",
+      "desc": "-----------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "time":"20 GUN",
+      "adress": "20 yanvar",
+      "couch": "ANAR Aliyev",
+      "resault": "yaxwi" 
+     
+    } ],
+    
+      "events": [
+        { "name": "Anım günü",
+        "desc": "-----------",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "time":"1 gun",
+        "adress": "20 yanvar"
+    
+       
+      },
+      { "name": "XilasETME",
+        "desc": "-----------",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "time":"20 GUN",
+        "adress": "20 yanvar"
+       
+      } ],
+
+
+      "sport": [
+        { "name": "JUDO",
+        "LEVEL": "-----------",
+        "desc":"11.11.2011"
+    
+       
+      },
+      { "name": "qaydasiz doyus",
+      "LEVEL": "-----------",
+      "desc":"11.11.2011"
+       
+      } ],
+      "Insurance": [
+        { "name": "Azersigorta",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011"
+    
+       
+      },
+      {  "name": "Azersigorta",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011"
+       
+      } ],
+      "contract": [
+        { "number": "Azersigorta",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011"
+    
+       
+      },
+      {  "number": "Azersigorta",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011"
+       
+      } ],
+      "activity":[
+        { "name": "ASAN Könüllülük",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011",
+        "field":"dfghjkl",
+        "desc2":"11.11.2011"
+    
+       
+      },
+      { "name": "--------",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011",
+      "field":"dfghjkl",
+      "desc2":"11.11.2011"
+  
+       
+      } ], 
+      "activityFHN":[
+        {
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "desc":"11.11.2011",
+        "field":"dfghjkl"
+      },
+      {  "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "desc":"11.11.2011",
+      "field":"dfghjkl"
+       
+      } ],
+
+
+      "job":[
+        {"name":"GTSolutions",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "position":"11.11.2011",
+        "field":"dfghjkl"
+      },
+      { "name":"GTSolutions",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "position":"11.11.2011",
+      "field":"dfghjkl"
+       
+      } ],
+      "sraff": [
+        {"name":"forma",
+        "start":"11.11.2011",
+        "finish":"21.11.2011",
+        "field":"dfghjkl"
+      },
+      { "name":"xxxxxx",
+      "start":"11.11.2011",
+      "finish":"21.11.2011",
+      "position":"11.11.2011",
+      "field":"dfghjkl"
+       
+      } ],
+      "docs": [
+        {"name":"diplom",
+        "place":"ASOIU",
+        "files":"docs.pdf",
+        "field":"dfghjkl"
+      },
+      {"name":"sertificat",
+      "place":"ASOIU",
+      "files":"docs.pdf",
+      "field":"dfghjkl"
+    } ]
+     
+    } ],
+
+
+
+"_comment": "telimler section",
+
+
+
+
+
+    "Təlimlər": [{
+      "Təlimin adı": "Yanğın söndürmə",
+      "Təlimin məzmunu": "xxxxxxxxx",
+      "Təlimin başlama tarixi": "08.10.2002",
+      "Təlimin bitme tarixi": "08.10.2002",
+      "Təlimin muddeti": "10 gün",
+      "Təlimin keçirilmə yeri": "20 yanvar",
+      "Təlimçi": "08.10.2002",
+      "İştirakçı sayı": "20 yanvar",
+      "Təlimin neticesi": "ela'",
+      "docs":"//doc.pptx"
+
+  
+    } ,
+    {
+      "Təlimin adı": "Xilasetmə",
+      "Təlimin məzmunu": "xxxxxxxxx",
+      "Təlimin başlama tarixi": "08.10.2002",
+      "Təlimin bitme tarixi": "08.10.2002",
+      "Təlimin muddeti": "10 gün",
+      "Təlimin keçirilmə yeri": "20 yanvar",
+      "Təlimçi": "08.10.2002",
+      "İştirakçı sayı": "20 yanvar",
+      "Təlimin neticesi": "ela'",
+      "docs":"//doc.pptx"
+
+
+  
+    } ,{
+      "Təlimin adı": "Yeni nəsil texnologiyalar",
+      "Təlimin məzmunu": "xxxxxxxxx",
+      "Təlimin başlama tarixi": "08.10.2002",
+      "Təlimin bitme tarixi": "08.10.2002",
+      "Təlimin muddeti": "10 gün",
+      "Təlimin keçirilmə yeri": "20 yanvar",
+      "Təlimçi": "08.10.2002",
+      "İştirakçı sayı": "20 yanvar",
+      "Təlimin neticesi": "ela'", "docs":"//doc.pptx"
+
+
+  
+    } ],
+
+
+
+
+    
+
+    "Tədbirler": [{
+      "Tədbirin adı": "Yanğın söndürmə",
+      "Təlimin məzmunu": "xxxxxxxxx",
+      "Təlimin başlama tarixi": "08.10.2002",
+      "Təlimin bitme tarixi": "08.10.2002",
+      "Təlimin muddeti": "10 gün",
+      "Təlimin keçirilmə yeri": "20 yanvar",
+      "Təlimçi": "08.10.2002",
+      "İştirakçı sayı": "20 yanvar",
+      "Təlimin neticesi": "ela'",
+      "docs":"//doc.pptx"
+
+  
+    } ,
+    {
+      "Tədbirin adı": "Yanğın söndürmə",
+      "Təlimin məzmunu": "xxxxxxxxx",
+      "Təlimin başlama tarixi": "08.10.2002",
+      "Təlimin bitme tarixi": "08.10.2002",
+      "Təlimin muddeti": "10 gün",
+      "Təlimin keçirilmə yeri": "20 yanvar",
+      "Təlimçi": "08.10.2002",
+      "İştirakçı sayı": "20 yanvar",
+      "Təlimin neticesi": "ela'",
+      "docs":"//doc.pptx"
+
+
+  
+    } ,{
+      "Tədbirin adı": "Yanğın söndürmə",
+      "Təlimin məzmunu": "xxxxxxxxx",
+      "Təlimin başlama tarixi": "08.10.2002",
+      "Təlimin bitme tarixi": "08.10.2002",
+      "Təlimin muddeti": "10 gün",
+      "Təlimin keçirilmə yeri": "20 yanvar",
+      "Təlimçi": "08.10.2002",
+      "İştirakçı sayı": "20 yanvar",
+      "Təlimin neticesi": "ela'",
+      "docs":"//doc.pptx"
+
+
+  
+    } ]
+
+   }
