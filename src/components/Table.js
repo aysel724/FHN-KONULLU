@@ -534,7 +534,7 @@ const Example = () => {
             navigate("/newvolonteer");
           }}
         >
-          Yeni könüllü əlavə edin
+          Yeni könüllü əlavə edin.
         </Button>
 
         <Button variant="contained" onClick={handleDownload}>
