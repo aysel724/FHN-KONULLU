@@ -201,13 +201,10 @@ export default function NewTrainings() {
     formData.append("TrainingResultId", userData.trainingResultId);
     formData.append("FinishDate", convertDate(userData.finishDate));
     formData.append("Priority", userData.priority);
-    formData.append("VolunteerIds", userData.volunteerIds);
-
-    // formData.append(
-    //   "MesTrainingAttachmentFiles",
-    //   userData.mesTrainingAttachmentFiles
-    // );
-
+    // formData.append("VolunteerIds", userData.volunteerIds);
+    [...userData.volunteerIds].forEach((id) => {
+      formData.append("VolunteerIds", id);
+    });
     [...userData.mesTrainingAttachmentFiles].forEach((image) => {
       formData.append("MesTrainingAttachmentFiles", image);
     });
@@ -560,7 +557,6 @@ export default function NewTrainings() {
               disablePortal
               value={value}
               onChange={(e, newValue) => {
-                e.preventDefault();
                 setValue(newValue);
                 setUserData((prev) => {
                   const data = {

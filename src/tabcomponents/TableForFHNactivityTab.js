@@ -391,9 +391,13 @@ function useCreateUser(types) {
   return useMutation({
     mutationFn: async (user) => {
       function findArrayElementByTitle(array, title) {
-        return array.find((element) => {
-          return element.name === title;
-        });
+        if (title === undefined) {
+          return null;
+        } else {
+          return array.find((element) => {
+            return element.name === title;
+          }).id;
+        }
       }
 
       function convertDate(date) {
@@ -421,13 +425,16 @@ function useCreateUser(types) {
       const newUser = {
         volunteerId: userId,
         startDate: convertDate(user.startDate),
-        endDate: convertDate(user.endDate),
+        endDate:
+          convertDate(user.endDate) !== "NaN-NaN-NaNTNaN:NaN:NaNZ"
+            ? convertDate(user.endDate)
+            : null,
         // mesVoluntaryActivityEndReasons:
-        //   user["mesVoluntaryActivityEndReasons.name"],
+        //   user["mesVoluntaryActivityEndReason.name"],
         mesVoluntaryActivityEndReasonId: findArrayElementByTitle(
           types,
-          user["mesVoluntaryActivityEndReasons.name"]
-        ).id,
+          user["mesVoluntaryActivityEndReason.name"]
+        ),
         note: user.note,
       };
       console.log(newUser);
@@ -436,7 +443,7 @@ function useCreateUser(types) {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-
+      console.log(newUser);
       axios
         .post(url, newUser, { headers })
         .then((response) => {
@@ -489,9 +496,13 @@ function useUpdateUser(types) {
     mutationFn: async (user) => {
       //send api update request here
       function findArrayElementByTitle(array, title) {
-        return array.find((element) => {
-          return element.name === title;
-        });
+        if (title === undefined) {
+          return null;
+        } else {
+          return array.find((element) => {
+            return element.name === title;
+          }).id;
+        }
       }
       const url = "https://api-volunteers.fhn.gov.az/api/v1/VoluntaryOfMeses";
 
@@ -523,24 +534,27 @@ function useUpdateUser(types) {
 
       const newUser = {
         id: user.id,
-        volunteerId: userId,
+        volunteerId: parseInt(userId),
         startDate: convertDate(user.startDate),
-        endDate: convertDate(user.endDate),
+        endDate:
+          convertDate(user.endDate) !== "NaN-NaN-NaNTNaN:NaN:NaNZ"
+            ? convertDate(user.endDate)
+            : null,
         mesVoluntaryActivityEndReasonId: findArrayElementByTitle(
           types,
-          user["mesVoluntaryActivityEndReasons.name"]
-        ).id,
+          user["mesVoluntaryActivityEndReason.name"]
+        ),
         note: user.note,
       };
       console.log(newUser);
-      // axios
-      //   .put(url, newUser, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
+      axios
+        .put(url, newUser, { headers })
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
     //client side optimistic update
     //client side optimistic update
