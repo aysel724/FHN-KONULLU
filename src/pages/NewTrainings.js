@@ -17,6 +17,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 import btoa from "btoa-lite";
+import convertDate from "../utils/convertDate";
+import base64ToBlob from "../utils/base64ToBlob";
 export default function NewTrainings() {
   const navigate = useNavigate();
   const style = {
@@ -147,27 +149,7 @@ export default function NewTrainings() {
       navigate(`/MesTrainings`);
     }, 20000);
     console.log(userData);
-    function convertDate(date) {
-      const dateObject = new Date(date);
-
-      // Get UTC time string
-      const utcYear = dateObject.getUTCFullYear();
-      const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-      const utcDay = dateObject.getUTCDate();
-      const utcHours = dateObject.getUTCHours();
-      const utcMinutes = dateObject.getUTCMinutes();
-      const utcSeconds = dateObject.getUTCSeconds();
-
-      // Construct the UTC date string in ISO 8601 format
-      const utcDateTimeString = `${utcYear}-${utcMonth
-        .toString()
-        .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-        .toString()
-        .padStart(2, "0")}:${utcMinutes
-        .toString()
-        .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-      return utcDateTimeString;
-    }
+   
 
     const formData = new FormData();
     formData.append("StartDate", convertDate(userData.startDate));
@@ -182,15 +164,7 @@ export default function NewTrainings() {
 
     formData.append("VolunteerIds", userData.volunteerIds);
 
-    function base64ToBlob(base64String, contentType) {
-      const byteCharacters = atob(base64String); // Decode base64
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      return new Blob([byteArray], { type: contentType });
-    }
+    
 
     const contentType = "image/jpeg";
     const base64String = `${userData.mesTrainingAttachmentFiles}`; // Example base64 string
@@ -255,53 +229,7 @@ export default function NewTrainings() {
     setModalIsOpen(false);
   };
 
-  // async function getData() {
-  //   const options = {
-  //     method: "GET",
-
-  //     url: `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/GetInfoFromIamas?documentNumber=${passportData.seriaNumber}${passportData.docNumber}&fin=${passportData.fin}`,
-  //     headers: {
-  //       accept: "*/*",
-  //     },
-  //   };
-
-  //   try {
-  //     const response = await axios.request(options);
-  //     console.log(response.data.data);
-  //     setLoading(false);
-  //     setUserData((pre) => ({
-  //       ...pre,
-  //       idCardNumber: response.data.data.idCardNumber,
-  //       pinCode: response.data.data.pinCode,
-  //       name: response.data.data.name,
-  //       surname: response.data.data.surname,
-  //       fatherName: response.data.data.fatherName,
-  //       gender: response.data.data.gender,
-  //       militaryReward: response.data.data.militaryReward,
-  //       birthDate: response.data.data.birthDate,
-  //       birthPlace: response.data.data.birthPlace,
-  //       height: response.data.data.height,
-  //       citizenship: response.data.data.citizenship,
-  //       maritalStatus: response.data.data.maritalStatus,
-  //       identityCardGivenStructureName:
-  //         response.data.data.identityCardGivenStructureName,
-  //       identityCardReceivingDate: response.data.data.identityCardReceivingDate,
-
-  //       registrationAddress: response.data.data.registrationAddress,
-  //       currentAddress: response.data.data.currentAddress,
-  //       photo: response.data.data.photo,
-  //       isIAMASInfo: true,
-  //       phoneNumber1: "",
-  //       phoneNumber2: "",
-  //       email: "",
-  //     }));
-  //   } catch (error) {
-  //     setError(true);
-  //     setLoading(false);
-  //     setModalIsOpen(true);
-  //     setUserData((pre) => ({ ...pre, isIAMASInfo: false }));
-  //   }
-  // }
+  
 
   return (
     <>
@@ -367,7 +295,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, mesTrainingNameId: e.target.value };
-
                   return data;
                 });
               }}
@@ -387,7 +314,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, departmentInCharge: e.target.value };
-
                   return data;
                 });
               }}
@@ -402,7 +328,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, description: e.target.value };
-
                   return data;
                 });
               }}
@@ -418,7 +343,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, startDate: e.target.value };
-
                   return data;
                 });
               }}
@@ -549,18 +473,7 @@ export default function NewTrainings() {
                   return data;
                 });
               }}
-            />{" "}
-            {/* <Autocomplete
-              multiple
-              disablePortal
-              // value={userData.volunteerIds}
-              id="combo-box-demo"
-              options={getTrainingNames(volonteerNames)}
-              sx={{ width: 300 }}
-              renderInput={(params) => (
-                <TextField {...params} label="Konulluler" />
-              )}
-            /> */}
+            />
             <Button variant="contained" onClick={() => handleSubmit()}>
               Yadda saxla
             </Button>
