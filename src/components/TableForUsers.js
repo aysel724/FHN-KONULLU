@@ -23,6 +23,7 @@ import {
 } from '@tanstack/react-query';
 import { fakeData3, usStates3 } from '../makeData';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { validateEmail } from '../utils/validateEmail';
 
 
 const Example = () => {
@@ -206,6 +207,7 @@ const Example = () => {
 <path d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z" fill="#4B7D83"/>
 <path d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353" stroke="#4B7D83" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
+
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -332,13 +334,7 @@ const Uxtable = () => (
 export default Uxtable;
 
 const validateRequired = (value) => !!value.length;
-const validateEmail = (mail) =>
-  !!mail.length &&
-  mail
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-    );
+
 
 function validateUser(user) {
   return {
