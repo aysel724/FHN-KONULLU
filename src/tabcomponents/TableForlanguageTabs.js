@@ -26,7 +26,6 @@ import {
 import { useParams } from "react-router-dom";
 import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
-
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
@@ -64,7 +63,6 @@ const Example = () => {
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
   }
-
   useEffect(() => {
     const TypesData = async () => {
       try {

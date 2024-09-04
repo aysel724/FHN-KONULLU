@@ -536,7 +536,7 @@ const Example = () => {
 
   return (
     <div className="table-container">
-      <MaterialReactTable table={table} />
+      <MaterialReactTable table={table}  />
     </div>
   );
 };

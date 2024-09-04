@@ -476,7 +476,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, trainingDuration: e.target.value };
-
                   return data;
                 });
               }}
@@ -491,7 +490,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, trainingPlace: e.target.value };
-
                   return data;
                 });
               }}
@@ -506,7 +504,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, trainingMaster: e.target.value };
-
                   return data;
                 });
               }}
@@ -521,7 +518,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, trainingResultId: e.target.value };
-
                   return data;
                 });
               }}
@@ -536,7 +532,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, priority: e.target.value };
-
                   return data;
                 });
               }}
@@ -551,7 +546,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, volunteerIds: e.target.value };
-
                   return data;
                 });
               }}

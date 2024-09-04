@@ -80,7 +80,6 @@ const Example = () => {
         },
       },
     ],
-
     columnNames[location].map((column) => {
       return {
         accessorKey: column.accessorKey,
@@ -91,6 +90,8 @@ const Example = () => {
     }),
     [validationErrors]
   );
+  console.log('12345')
+
 
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
