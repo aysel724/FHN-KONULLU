@@ -29,6 +29,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { H1 } from "@blueprintjs/core";
+import validateUser from '.././utils/validateUser'
+
 const Example = () => {
   const navigate = useNavigate();
   const excel = useExcelJS({
@@ -672,17 +674,4 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
-function validateUser(user) {
-  return {
-    name: !validateRequired(user.name) ? "Xana boş qala bilməz" : "",
-    startDate: !validateRequired(user.startDate) ? "Xana boş qala bilməz" : "",
-    personInCharge: !validateRequired(user.personInCharge)
-      ? "Xana boş qala bilməz"
-      : "",
-    finishDate: !validateRequired(user.finishDate)
-      ? "Xana boş qala bilməz"
-      : "",
-  };
-}

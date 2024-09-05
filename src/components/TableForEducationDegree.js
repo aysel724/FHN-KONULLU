@@ -26,6 +26,7 @@ import axios from "axios";
 import { columnNames, apiData, headerNames } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Export } from "./Export";
+import validateUser from '.././utils/validateUser'
 
 const Example = () => {
   const location = useLocation().pathname.substring(1);
@@ -550,16 +551,7 @@ const Uxtable = () => {
 };
 
 export default Uxtable;
-const validateRequired = (value) => {
-  return !!value && !!value.length;
-};
 
-function validateUser(user) {
-  return {
-    name: !validateRequired(user.name) ? "Xana boş qala bilməz" : "",
-    priority: !validateRequired(user.priority) ? "Xana boş qala bilməz" : "",
-  };
-}
 // return {
 //   firstName: !validateRequired(user.firstName)
 //     ? "First Name is Required"

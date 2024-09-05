@@ -24,7 +24,7 @@ import {
 import { fakeData6, usStates } from '../makeData';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Export } from './Export';
-
+import validateUser from '.././utils/validateUser'
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -329,14 +329,5 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
 
-function validateUser(user) {
-  return {
-    insurance: !validateRequired(user.insurance)
-      ? 'First Name is Required'
-      : '',
-
-  };
-}

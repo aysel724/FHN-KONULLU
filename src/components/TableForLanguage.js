@@ -27,6 +27,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Export } from "./Export";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import validateUser from '.././utils/validateUser'
+
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
@@ -391,12 +393,4 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
-function validateUser(user) {
-  return {
-    volunteer: !validateRequired(user.volunteer)
-      ? "First Name is Required"
-      : "",
-  };
-}
