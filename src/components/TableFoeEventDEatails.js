@@ -16,6 +16,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
+import { MRT_Localization_AZ } from "material-react-table/locales/az";
 import {
   QueryClient,
   QueryClientProvider,
@@ -268,7 +269,9 @@ const Example = () => {
     },
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <MaterialReactTable table={table} localization={MRT_Localization_AZ} />
+  );
 };
 
 //CREATE hook (post new user to api)

@@ -104,6 +104,7 @@ const Example = () => {
       },
 
       {
+        size: 300,
         accessorKey: "fullName",
         header: "Ad soyad",
         enableEditing: false,
@@ -534,7 +535,7 @@ const Example = () => {
             navigate("/newvolonteer");
           }}
         >
-          Yeni könüllü əlavə edin.
+          Yeni könüllü əlavə edin
         </Button>
 
         <Button variant="contained" onClick={handleDownload}>
@@ -602,7 +603,7 @@ function useGetUsers() {
           fullName: `${user.name} ${user.surname} ${user.fatherName}`.trim(),
           security: `${
             user.securityCheckResults[0]?.securityCheckResultName?.name ||
-            "Yoxlanmayab"
+            "Yoxlanmayıb"
           }`,
         }));
 

@@ -299,21 +299,21 @@ const Example = () => {
       //     helperText: validationErrors?.state,
       //   },
       // },
-      {
-        accessorKey: "volunteerIds",
-        header: "konulluler",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.volunteerIds,
-          helperText: validationErrors?.volunteerIds,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              volunteerIds: undefined,
-            }),
-        },
-      },
+      // {
+      //   accessorKey: "volunteerIds",
+      //   header: "konulluler",
+      //   muiEditTextFieldProps: {
+      //     required: true,
+      //     error: !!validationErrors?.volunteerIds,
+      //     helperText: validationErrors?.volunteerIds,
+      //     //remove any previous validation errors when user focuses on the input
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         volunteerIds: undefined,
+      //       }),
+      //   },
+      // },
     ],
     [validationErrors]
   );

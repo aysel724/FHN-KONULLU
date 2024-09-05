@@ -505,14 +505,27 @@ function useUpdateUser(types) {
   });
 }
 
-//DELETE hook (delete user in api)
 function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/ComputerSkills/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {

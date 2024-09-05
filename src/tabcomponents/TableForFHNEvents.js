@@ -207,21 +207,21 @@ const Example = () => {
             }),
         },
       },
-      {
-        accessorKey: "volunteers",
-        header: "konulluler",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.volunteers,
-          helperText: validationErrors?.volunteers,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              volunteers: undefined,
-            }),
-        },
-      },
+      // {
+      //   accessorKey: "volunteers",
+      //   header: "konulluler",
+      //   muiEditTextFieldProps: {
+      //     required: true,
+      //     error: !!validationErrors?.volunteers,
+      //     helperText: validationErrors?.volunteers,
+      //     //remove any previous validation errors when user focuses on the input
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         volunteers: undefined,
+      //       }),
+      //   },
+      // },
     ],
     [validationErrors]
   );
@@ -348,10 +348,12 @@ const Example = () => {
     MRT_EditActionButtons,
     createDisplayMode: "modal", //default ('row', and 'custom' are also available)
     editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
-    enableEditing: true,
+
     initialState: {
+      columnVisibility: { id: false },
       columnPinning: { right: ["mrt-row-actions"] },
     },
+
     displayColumnDefOptions: { "mrt-row-actions": { size: 150 } },
 
     getRowId: (row) => row.id,
@@ -385,82 +387,6 @@ const Example = () => {
       </>
     ),
     //optionally customize modal content
-    renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
-        <DialogContent
-          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-        >
-          {internalEditComponents} {/* or render custom edit components here */}
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
-    ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Ətraflı">
-          <VisibilityIcon
-            style={{ marginTop: "8px" }}
-            onClick={() => navigate(`/events/${row.id}`)}
-            variant="contained"
-          >
-            Ətraflı
-          </VisibilityIcon>
-        </Tooltip>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
-                stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
-                fill="#4B7D83"
-              />
-              <path
-                d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
-                stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
-    renderTopToolbarCustomActions: ({ table }) => (
-      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
-        <Button
-          variant="contained"
-          onClick={() => {
-            table.setCreatingRow(true);
-          }}
-        >
-          Yeni tədbir əlavə et
-        </Button>
-        <Button variant="contained" onClick={onClick}>
-          Excelə export
-        </Button>
-      </div>
-    ),
 
     state: {
       isLoading: isLoadingUsers,

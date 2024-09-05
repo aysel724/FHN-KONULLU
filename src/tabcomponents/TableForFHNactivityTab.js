@@ -213,12 +213,15 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
     localization: {
       cancel: "İmtina",
 
       clearFilter: "Filteri təmizlə",
       clearSearch: "Axtarışı təmizlə",
-
+      actions: "Əməliyyatlar",
       clearSort: "Sıralamani təmizlə",
       clickToCopy: "Kopyalamaq üçün klik edin",
       copy: "Kopyala",
@@ -282,6 +285,10 @@ const Example = () => {
         minHeight: "500px",
       },
     },
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
@@ -316,7 +323,6 @@ const Example = () => {
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Button variant="contained">Sertifikat yüklə </Button>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
             <svg

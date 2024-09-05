@@ -481,7 +481,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -497,7 +496,7 @@ function useGetUsers() {
         );
 
         console.log(response.data.data);
-        return response.data.data.insurances;
+        return response.data.data;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);

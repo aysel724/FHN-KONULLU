@@ -456,7 +456,6 @@ function useUpdateUser() {
   });
 }
 function useDeleteUser() {
-  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {

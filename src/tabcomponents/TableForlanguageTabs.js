@@ -29,7 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
-
+  const [types1, setTypes1] = useState([]);
   useEffect(() => {
     const TypesData = async () => {
       try {
@@ -60,7 +60,7 @@ const Example = () => {
     TypesData();
   }, []);
 
-  function getTypesNames(arr) {
+  function getLevelNames(arr) {
     return arr.map((e) => e.name);
   }
 
@@ -84,7 +84,7 @@ const Example = () => {
         });
 
         console.log(newData);
-        setTypes(newData);
+        setTypes1(newData);
       } catch (error) {
         // Handle errors here if needed
         console.error("Error fetching users:", error);
@@ -109,7 +109,7 @@ const Example = () => {
         accessorKey: "languageName.name",
         header: "Dil",
         editVariant: "select",
-        editSelectOptions: getTypesNames(types),
+        editSelectOptions: getTypesNames(types1),
         muiEditTextFieldProps: {
           select: true,
           error: !!validationErrors?.state,
@@ -121,7 +121,7 @@ const Example = () => {
         accessorKey: "languageProficiencyLevel.name",
         header: "Bilik səviyyəsi",
         editVariant: "select",
-        editSelectOptions: getTypesNames(types),
+        editSelectOptions: getLevelNames(types),
         muiEditTextFieldProps: {
           select: true,
           error: !!validationErrors?.state,
@@ -129,7 +129,7 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors, types]
+    [validationErrors, types, types1]
   );
 
   //call CREATE hook
@@ -181,12 +181,15 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
     localization: {
       cancel: "İmtina",
 
       clearFilter: "Filteri təmizlə",
       clearSearch: "Axtarışı təmizlə",
-
+      actions: "Əməliyyatlar",
       clearSort: "Sıralamani təmizlə",
       clickToCopy: "Kopyalamaq üçün klik edin",
       copy: "Kopyala",
@@ -249,6 +252,10 @@ const Example = () => {
       sx: {
         minHeight: "500px",
       },
+    },
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
@@ -459,15 +466,27 @@ function useUpdateUser(types) {
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
-
-//DELETE hook (delete user in api)
 function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/Languages/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {

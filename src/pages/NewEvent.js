@@ -192,31 +192,31 @@ export default function NewTrainings() {
     console.log(userData);
     const formData = new FormData();
     formData.append("StartDate", convertDate(userData.startDate));
-    formData.append("MesTrainingNameId", userData.mesTrainingNameId);
+    formData.append("Name", userData.name);
     formData.append("DepartmentInCharge", userData.departmentInCharge);
     formData.append("Description", userData.description);
-    formData.append("TrainingDuration", userData.trainingDuration);
-    formData.append("TrainingPlace", userData.trainingPlace);
-    formData.append("TrainingMaster", userData.trainingMaster);
-    formData.append("TrainingResultId", userData.trainingResultId);
+    formData.append("EventDuration", userData.eventDuration);
+
+    formData.append("EventPlace", userData.eventPlace);
     formData.append("FinishDate", convertDate(userData.finishDate));
-    formData.append("Priority", userData.priority);
-    formData.append("VolunteerIds", userData.volunteerIds);
+    [...userData.volunteerIds].forEach((id) => {
+      formData.append("VolunteerIds", id);
+    });
 
     // formData.append(
     //   "MesTrainingAttachmentFiles",
     //   userData.mesTrainingAttachmentFiles
     // );
 
-    [...userData.mesTrainingAttachmentFiles].forEach((image) => {
-      formData.append("MesTrainingAttachmentFiles", image);
+    [...userData.eventAttachments].forEach((file) => {
+      formData.append("EventAttachmentFiles", file);
     });
 
     // Now you can use formData to send the blob to a server using fetch or XMLHttpRequest
 
     console.log(formData);
     axios
-      .post(`https://api-volunteers.fhn.gov.az/api/v1/MesTrainings`, formData)
+      .post(`https://api-volunteers.fhn.gov.az/api/v1/Events`, formData)
       .then((response) => {
         setLoading(false);
         openNotificationWithIcon(
@@ -326,11 +326,26 @@ export default function NewTrainings() {
           >
             {" "}
             <TextField
-              label="Təlimin adı keçirən qurum*"
+              label="Tədbirin adı *"
               id="Name"
               name="name"
               variant="outlined"
               value={userData.name}
+              onChange={(e) => {
+                console.log(userData);
+                setUserData((prev) => {
+                  const data = { ...prev, name: e.target.value };
+
+                  return data;
+                });
+              }}
+            />
+            <TextField
+              label="Tədbiri keçirən qurum*"
+              id="Name"
+              name="name"
+              variant="outlined"
+              value={userData.departmentInCharge}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
@@ -341,23 +356,8 @@ export default function NewTrainings() {
               }}
             />
             <TextField
-              label="Təlimin məzmunu"
-              name="surname"
-              id="Surname"
-              variant="outlined"
-              value={userData.description}
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, description: e.target.value };
-
-                  return data;
-                });
-              }}
-            />
-            <TextField
               type="date"
-              helperText="Təlimin başlanma tarixi "
+              helperText="Tədbirin başlanma tarixi "
               name="fatherName"
               id="FatherName"
               variant="outlined"
@@ -373,7 +373,7 @@ export default function NewTrainings() {
             />
             <TextField
               type="date"
-              helperText="Təlimin bitmə tarixi "
+              helperText="Tədbirin bitmə tarixi "
               name="finishDate"
               id="FinishDate"
               variant="outlined"
@@ -389,15 +389,15 @@ export default function NewTrainings() {
             <input
               multiple
               type="file"
-              helperText="Təlimin sənədləri "
-              name="MesTrainingAttachmentFiles"
+              helperText="Tədbirin sənədləri "
+              name="EventAttachmentFiles"
               id="files"
               variant="outlined"
               onChange={(e) => {
                 console.log(e.target.files); // Log the new value
                 setUserData((prev) => ({
                   ...prev,
-                  mesTrainingAttachmentFiles: e.target.files, // Update the state with the new date
+                  eventAttachments: e.target.files, // Update the state with the new date
                 }));
               }}
             />{" "}
@@ -418,11 +418,11 @@ export default function NewTrainings() {
               name="militaryReward"
               label="Təlimin müddəti "
               variant="outlined"
-              value={userData?.trainingDuration}
+              value={userData?.eventDuration}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
-                  const data = { ...prev, trainingDuration: e.target.value };
+                  const data = { ...prev, eventDuration: e.target.value };
 
                   return data;
                 });
@@ -433,11 +433,11 @@ export default function NewTrainings() {
               label="Təlimin keçirilmə yeri "
               name="height"
               variant="outlined"
-              value={userData?.trainingPlace}
+              value={userData?.eventPlace}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
-                  const data = { ...prev, trainingPlace: e.target.value };
+                  const data = { ...prev, eventPlace: e.target.value };
 
                   return data;
                 });
@@ -448,41 +448,11 @@ export default function NewTrainings() {
               name="birthDate"
               label="Təlimçi "
               variant="outlined"
-              value={userData?.trainingMaster}
+              value={userData?.personInCharge}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
-                  const data = { ...prev, trainingMaster: e.target.value };
-
-                  return data;
-                });
-              }}
-            />
-            <TextField
-              id="vj"
-              name="TrainingResultId"
-              label="Təlimin nəticəsi "
-              variant="outlined"
-              value={userData?.trainingResultId}
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, trainingResultId: e.target.value };
-
-                  return data;
-                });
-              }}
-            />
-            <TextField
-              id="vj"
-              name="priority"
-              label="Prioritet "
-              variant="outlined"
-              value={userData?.priority}
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, priority: e.target.value };
+                  const data = { ...prev, personInCharge: e.target.value };
 
                   return data;
                 });
