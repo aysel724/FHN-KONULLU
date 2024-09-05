@@ -32,6 +32,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
 import { useExcelJS } from "react-use-exceljs";
 import { mkConfig, generateCsv, download } from "export-to-csv";
+import { useVolunteers } from "../context/VolunterContext";
 
 // columnHelper.accessor('lastName', {
 //   header: 'Last Name',
@@ -53,7 +54,6 @@ import { mkConfig, generateCsv, download } from "export-to-csv";
 const Example = () => {
   const token = localStorage.getItem("authToken");
   const role = jwtDecode(token).unique_name;
-  // const role = "jadmin";
   console.log(role);
   const columnHelper = createMRTColumnHelper();
 
@@ -94,6 +94,9 @@ const Example = () => {
 
   const [validationErrors, setValidationErrors] = useState({});
 
+  // CONTEXT VOLUNTER
+  const { volunteers } = useVolunteers();
+  console.log(volunteers, "volunteers");
   const columns = useMemo(
     () => [
       {
@@ -334,6 +337,7 @@ const Example = () => {
 
   let params = useParams();
   let id = params.id;
+
   const table = useMaterialReactTable({
     localization: {
       cancel: "İmtina",
@@ -396,7 +400,7 @@ const Example = () => {
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
     columns,
-    data: fetchedUsers,
+    data: volunteers.length > 0 ? volunteers : fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
         cursor: "pointer",

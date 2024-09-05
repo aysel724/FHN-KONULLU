@@ -3,53 +3,95 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import "../App.css";
+import MultipleSelectCheckmarks from "./ui/multipleSelect";
+import {
+  useLanguages,
+  useComputerSkills,
+  useEducationDegree,
+  useSecurityStatus,
+  useVoluntaryStatus,
+} from "../services/get";
+import { useVolunteers } from "../context/VolunterContext";
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
+
   bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
+  border: "1px solid grey",
+  boxShadow: 14,
+  borderRadius: 2,
   p: 4,
 };
 
 export default function ModalForDailedFiltration() {
+  //HOOK
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [status, setStatus] = React.useState("");
-  const [language, setLanguage] = React.useState("");
-  const [gender, setGender] = React.useState("");
-  const [knowledge, setKnowledge] = React.useState("");
-  const [education, setEducation] = React.useState("");
-  const [security, setSecurity] = React.useState("");
-  const [marriage, setMarriage] = React.useState("");
-  const handleChange = (event) => {
-    setStatus(event.target.value);
+  const [status, setStatus] = React.useState([]);
+  const [language, setLanguage] = React.useState([]);
+  const [knowledge, setKnowledge] = React.useState([]);
+  const [education, setEducation] = React.useState([]);
+  const [security, setSecurity] = React.useState([]);
+  const [marriage, setMarriage] = React.useState([]);
+  const [gender, setGender] = React.useState([]);
+
+  // CUSTOM HOOK
+  const languages = useLanguages();
+  const computerSkills = useComputerSkills();
+  const educationDegrees = useEducationDegree();
+  const securityStatuses = useSecurityStatus();
+  const valuntaryStatuses = useVoluntaryStatus();
+  const maritalStatus = [
+    { id: 1, name: "Evli" },
+    { id: 2, name: "Subay" },
+  ];
+  const genderStatus = [
+    { id: 1, name: "Qadın" },
+    { id: 2, name: "Kişi" },
+  ];
+
+  // useContext
+  const { volunteers, setQueryString } = useVolunteers();
+  const handleFilterChange = (setState) => (selected) => {
+    setState(selected);
   };
-  const handleChange1 = (event) => {
-    setGender(event.target.value);
+
+  const handleSubmit = () => {
+    const filters = [];
+
+    const addFilters = (field, values) => {
+      if (values.length > 0) {
+        values.forEach((value) => {
+          filters.push({
+            field: field,
+            operator: "eq",
+            value: value,
+          });
+        });
+      }
+    };
+
+    addFilters("Educations.EducationType.Name", education);
+    addFilters("SecurityCheckResults.SecurityCheckResultName.Name", security);
+    addFilters(
+      "ComputerSkillToVolunteers.ComputerSkill.ComputerSkillName.Name",
+      knowledge
+    );
+    addFilters("VoluntaryOfMesStatus.Name", status);
+    addFilters("LanguageToVolunteers.Language.LanguageName.Name", language);
+    addFilters("MaritalStatus", marriage);
+    addFilters("Gender", gender);
+    const queryString = JSON.stringify({ filters, logic: "and" });
+
+    // Sadece queryString'i ayarla
+    setQueryString(queryString);
   };
-  const handleChange2 = (event) => {
-    setLanguage(event.target.value);
-  };
-  const handleChange3 = (event) => {
-    setKnowledge(event.target.value);
-  };
-  const handleChange4 = (event) => {
-    setEducation(event.target.value);
-  };
-  const handleChange5 = (event) => {
-    setSecurity(event.target.value);
-    setMarriage(event.target.value);
-  };
+
   return (
     <div>
       <Button variant="contained" onClick={handleOpen}>
@@ -66,115 +108,53 @@ export default function ModalForDailedFiltration() {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Könüllülərin detallı axtarışı
           </Typography>
-          <FormControl fullWidth sx={{ margin: "2%" }}>
-            <InputLabel id="demo-simple-select-label">Dil biliy</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={language}
-              label="Dil biliyi"
-              onChange={handleChange2}
-            >
-              <MenuItem value={1}>en</MenuItem>
-              <MenuItem value={2}>rus</MenuItem>
-              <MenuItem value={3}>az</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ margin: "2%" }}>
-            <InputLabel id="demo-simple-select-label">Status</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={status}
-              label="Status"
-              onChange={handleChange}
-            >
-              <MenuItem value={10}>active</MenuItem>
-              <MenuItem value={20}>deactive</MenuItem>
-              <MenuItem value={30}>in grogress</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ margin: "2%" }}>
-            <InputLabel id="demo-simple-select-label">
-              Kompüter biliyi
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={knowledge}
-              label="Təhsil səviyyəsi"
-              onChange={handleChange3}
-            >
-              <MenuItem value={4}>html</MenuItem>
-              <MenuItem value={5}>css</MenuItem>
-              <MenuItem value={6}>js</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ margin: "2%" }}>
-            <InputLabel id="demo-simple-select-label">
-              Təhlükəsizlik statusu
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={security}
-              label="T'hluk'sizlik statusu"
-              onChange={handleChange5}
-            >
-              <MenuItem value={4}>+</MenuItem>
-              <MenuItem value={5}>-</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ margin: "2%" }}>
-            <InputLabel id="demo-simple-select-label">
-              Evlilik statusu
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={marriage}
-              label="Evlilik statusu"
-              onChange={handleChange5}
-            >
-              <MenuItem value={4}>evli</MenuItem>
-              <MenuItem value={5}>subay</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ margin: "2%" }}>
-            <InputLabel id="demo-simple-select-label">Cinsi</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={gender}
-              label="Cinsi"
-              onChange={handleChange1}
-            >
-              <MenuItem value={7}>Qadin</MenuItem>
-              <MenuItem value={8}>Kishi</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ margin: "2%" }}>
-            <InputLabel id="demo-simple-select-label">
-              Təhsil səviyyəsi
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={education}
-              label="Kompüter bilikləri"
-              onChange={handleChange4}
-            >
-              <MenuItem value={11}>Ali</MenuItem>
-              <MenuItem value={21}>Orta</MenuItem>
-              <MenuItem value={33}>Natamam</MenuItem>
-            </Select>
-          </FormControl>
+          <MultipleSelectCheckmarks
+            label={"Dil biliyi"}
+            data={languages}
+            selectedValues={language}
+            onChange={handleFilterChange(setLanguage)}
+          />
+          <MultipleSelectCheckmarks
+            label={"Status"}
+            data={valuntaryStatuses}
+            selectedValues={status}
+            onChange={handleFilterChange(setStatus)}
+          />
+          <MultipleSelectCheckmarks
+            label={"Kompüter bilikləri"}
+            data={computerSkills}
+            selectedValues={knowledge}
+            onChange={handleFilterChange(setKnowledge)}
+          />
+          <MultipleSelectCheckmarks
+            label={"Təhlükəsizlik statusu"}
+            data={securityStatuses}
+            selectedValues={security}
+            onChange={handleFilterChange(setSecurity)}
+          />
+          <MultipleSelectCheckmarks
+            label={"Evlilik statusu"}
+            data={maritalStatus}
+            selectedValues={marriage}
+            onChange={handleFilterChange(setMarriage)}
+          />
+          <MultipleSelectCheckmarks
+            label={"Cinsi"}
+            data={genderStatus}
+            selectedValues={gender}
+            onChange={handleFilterChange(setGender)}
+          />
+          <MultipleSelectCheckmarks
+            label={"Təhsil səviyyəsi"}
+            data={educationDegrees}
+            selectedValues={education}
+            onChange={handleFilterChange(setEducation)}
+          />
           <Button
-            onClick={handleClose}
+            onClick={handleSubmit}
             variant="contained"
             sx={{ margin: "2%" }}
           >
-            {" "}
             Filtr et
           </Button>
         </Box>

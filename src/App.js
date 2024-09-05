@@ -1,8 +1,8 @@
-import * as React from "react";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { VolunteersProvider } from "./context/VolunterContext";
 import Sidebar from "./components/Sidebar";
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import NewEvent from "./pages/NewEvent";
@@ -11,9 +11,7 @@ import NewTrainings from "./pages/NewTrainings";
 import UserInfo from "./pages/UserInfo";
 import Volonteer from "./pages/Volonteer";
 import NewVolonteer from "./pages/NewVolonteer";
-import { AuthProvider } from "./context/AuthContext";
 import TableForEducationType from "./components/TableForEducationType";
-// import AuthProvider from "./context/AuthContext";
 import Events from "./pages/Events";
 import Trainings from "./pages/Trainings";
 import PrivateRoute from "./context/PrivateRoute";
@@ -21,12 +19,12 @@ import TrainingsInfo from "./pages/TrainingsInfo";
 import EventInfo from "./pages/EventInfo";
 import CertificatePages from "./pages/CertificatePages";
 import AllVolunteers from "./pages/AllVolunteers";
+
 function App() {
   return (
     <AuthProvider>
-      <div className="App">
-        {" "}
-        <>
+      <VolunteersProvider>
+        <div className="App">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route element={<PrivateRoute />}>
@@ -42,7 +40,6 @@ function App() {
                 <Route path="/events" element={<Events />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/certificate" element={<CertificatePages />} />
-                {/* <Route path="/Login" element={<Login />} /> */}
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/newtrainings" element={<NewTrainings />} />
                 <Route
@@ -93,12 +90,12 @@ function App() {
                   path="/LanguageProficiencyLevels"
                   element={<TableForEducationType />}
                 />
-                <Route path="/userinfo" element={<UserInfo />} />{" "}
+                <Route path="/userinfo" element={<UserInfo />} />
               </Route>
             </Route>
           </Routes>
-        </>
-      </div>
+        </div>
+      </VolunteersProvider>
     </AuthProvider>
   );
 }
