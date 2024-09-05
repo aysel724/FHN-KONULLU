@@ -464,7 +464,6 @@ const validateEmail = (mail) =>
 function validateUser(user) {
   return {
     phoneNumber1: !validateRequired(user.phoneNumber1) ? "Xananı doldurun" : "",
-
     email: !validateEmail(user.email) ? "Xananı doldurun" : "",
   };
 }
