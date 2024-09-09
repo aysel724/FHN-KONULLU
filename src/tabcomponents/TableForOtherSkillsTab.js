@@ -24,12 +24,14 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-
+import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
+import EditIcon from "../assets/editIcon";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
+  const [types, setTypes] = useState([]);
 
   useEffect(() => {
     TypesData(setTypes,"AdditionalKnowledges");
@@ -80,7 +82,7 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors]
+    [validationErrors, types]
   );
 
   //call CREATE hook
@@ -237,32 +239,7 @@ const Example = () => {
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
-                stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
-                fill="#4B7D83"
-              />
-              <path
-                d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
-                stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <EditIcon/>
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -300,47 +277,26 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
+//CREATE hook (post new user to api)
 function useCreateUser() {
-  let params = useParams();
-  let userId = params.id;
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (user) => {
-      console.log(user);
-
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges`;
-
-      const headers = {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      };
-
-      const newUser = {
-        name: user.name,
-        note: user.note,
-        volunteerId: userId,
-      };
-      // console.log(newUser);
-
-      try {
-        const response = await axios.post(url, newUser, { headers });
-        window.location.reload();
-        // console.log(user);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
+      //send api update request here
+      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
+      return Promise.resolve();
     },
+    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
+      queryClient.setQueryData(["users"], (prevUsers) => [
         ...prevUsers,
         {
           ...newUserInfo,
+          id: Math.random(),
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
+    // onSettled: () => queryClient.invalidateQueries({ ......queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -367,72 +323,72 @@ function useGetUsers() {
   });
 }
 
-function useUpdateUser() {
-  let params = useParams();
-  let userId = params.id;
+//UPDATE hook (put user in api)
+function useUpdateUser(types) {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      console.log(user);
+      const data = { ...user };
+      console.log(data);
+      //send api update request here
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges`;
+      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
+      function findArrayElementByTitle(array, title) {
+        console.log(
+          array.find((element) => {
+            return element.name === title;
+          })
+        );
+        return array.find((element) => {
+          return element.name === title;
+        });
+      }
 
       const newUser = {
         name: user.name,
-        note: user.note,
-        id: user.id,
+        priority: user.priority,
+        educationTypeId: findArrayElementByTitle(
+          types,
+          user["educationType.name"]
+        ).id,
       };
-      // console.log(newUser);
-
-      try {
-        const response = await axios.put(url, newUser, { headers });
-        window.location.reload();
-        // console.log(user);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
+      // axios
+      //   .put(url, data, { headers })
+      //   .then((response) => {
+      //     console.log("Response:", response.data);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error:", error);
+      //   });
     },
+    //client side optimistic update
+    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
-      ]);
+      queryClient.setQueryData(["users"], (prevUsers) =>
+        prevUsers?.map((prevUser) =>
+          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
+        )
+      );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
+
 //DELETE hook (delete user in api)
 function useDeleteUser() {
-  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      console.log(userId);
-      try {
-        const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges/${userId}`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data);
-
-        // Assuming your API returns data in response.data
-        return response.data.data;
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
+      //send api update request here
+      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
+      return Promise.resolve();
     },
     //client side optimistic update
     onMutate: (userId) => {

@@ -26,6 +26,8 @@ import {
 } from "@tanstack/react-query";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateVolunterActivity } from "../utils/validateUser";
+import EditIcon from "../assets/editIcon";
+import { convertDate } from "../utils/convertDate";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -290,32 +292,7 @@ const Example = () => {
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
-                stroke="#4B7D83"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
-                fill="#4B7D83"
-              />
-              <path
-                d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
-                stroke="#4B7D83"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <EditIcon/>
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -368,27 +345,7 @@ function useCreateUser() {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      function convertDate(date) {
-        const dateObject = new Date(date);
 
-        // Get UTC time string
-        const utcYear = dateObject.getUTCFullYear();
-        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-        const utcDay = dateObject.getUTCDate();
-        const utcHours = dateObject.getUTCHours();
-        const utcMinutes = dateObject.getUTCMinutes();
-        const utcSeconds = dateObject.getUTCSeconds();
-
-        // Construct the UTC date string in ISO 8601 format
-        const utcDateTimeString = `${utcYear}-${utcMonth
-          .toString()
-          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-          .toString()
-          .padStart(2, "0")}:${utcMinutes
-          .toString()
-          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-        return utcDateTimeString;
-      }
 
       const newUser = {
         name: user.name,

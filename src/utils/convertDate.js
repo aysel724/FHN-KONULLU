@@ -1,4 +1,4 @@
-export default function convertDate(date) {
+export function convertDate(date) {
     const dateObject = new Date(date);
 
     // Get UTC time string
