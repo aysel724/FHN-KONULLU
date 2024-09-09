@@ -80,9 +80,9 @@ export default function NewVolonteer() {
 
   function handleSubmit(statusCode) {
     setLoading(true);
-    setTimeout(() => {
-      navigate(`/Volunteers`);
-    }, 2000);
+    // setTimeout(() => {
+    //   navigate(`/Volunteers`);
+    // }, 2000);
     console.log(userData);
     function convertDate(date) {
       const dateObject = new Date(date);

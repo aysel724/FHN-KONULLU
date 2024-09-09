@@ -22,64 +22,60 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { fakeData1 } from "../makeData";
+
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useExcelJS } from "react-use-exceljs";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { H1 } from "@blueprintjs/core";
+
 const Example = () => {
+  const [imageData, setImageData] = useState(null);
   const navigate = useNavigate();
-  const excel = useExcelJS({
-    filename: "Tədbirlər siyahısı.xlsx",
-    worksheets: [
-      {
-        name: "Sheet 1",
-        columns: [
-          {
-            header: "Tədbirin adı",
-            key: "name",
-            width: 30,
-          },
-          {
-            header: "Başlama vaxtı",
-            key: "startDate",
-            width: 32,
-          },
-          {
-            header: "Bitmə tarixi",
-            key: "finishDate",
-            width: 30,
-          },
-          {
-            header: "Tədbirin keçirilmə ünvanı",
-            key: "eventPlace",
-            width: 30,
-          },
-          {
-            header: "Tədbirin müddəti",
-            key: "time",
-            width: 32,
-          },
-          {
-            header: "Tədbir üzrə məsul şəxs",
-            key: "couch",
-            width: 30,
-          },
-        ],
-      },
-    ],
-  });
-  const onClick = () => {
-    excel.download();
+  const handleExportToExcel = async (table) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
+
+    // Get visible columns
+    const visibleColumns = table.getState().columnVisibility;
+
+    // Add header row
+    const headers = table.getHeaderGroups().flatMap(
+      (group) =>
+        group.headers
+          .filter((header) => visibleColumns[header.id] !== false)
+          .map((header) => header.columnDef?.header || header.id) // Fallback to header.id if columnDef.header is undefined
+    );
+
+    console.log("Headers:", headers); // Ensure headers are correctly populated
+
+    const headerRow = worksheet.addRow(headers);
+    headerRow.eachCell({ includeEmpty: true }, (cell) => {
+      cell.font = { bold: true, size: 14 };
+    });
+
+    worksheet.getColumn(1).width = 0; // Adjust width for Column 1
+    worksheet.getColumn(2).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(3).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(4).width = 30; // Adjust width for Column 1
+    worksheet.getColumn(5).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(6).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(7).width = 30; // Adjust width for Column 1
+    worksheet.getColumn(8).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(9).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(10).width = 0;
+    // Add data rows
+    table.getRowModel().rows.forEach((row) => {
+      const rowData = headers.map((header) => row.original[header] || ""); // Ensure you handle undefined values
+      worksheet.addRow(rowData);
+    });
+    // Save the Excel file
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      saveAs(new Blob([buffer]), "konulluler.xlsx");
+    });
   };
-  const pagBUTTON = document.querySelector(
-    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
-  );
-  if (pagBUTTON) {
-    pagBUTTON.textContent = "Göstərilən";
-  }
+
   const [types, setTypes] = useState([]);
   useEffect(() => {
     const TypesData = async () => {
@@ -272,48 +268,6 @@ const Example = () => {
             }),
         },
       },
-      // {
-      //   accessorKey: "volunteers",
-      //   header: "konulluler",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.volunteers,
-      //     helperText: validationErrors?.volunteers,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         volunteers: undefined,
-      //       }),
-      //   },
-      // },
-
-      // {
-      //   accessorKey: "volunteers",
-      //   header: "konulluler",
-      //   editVariant: "select",
-      //   editSelectOptions: getTypesNames(types),
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.state,
-      //     helperText: validationErrors?.state,
-      //   },
-      // },
-      // {
-      //   accessorKey: "volunteerIds",
-      //   header: "konulluler",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.volunteerIds,
-      //     helperText: validationErrors?.volunteerIds,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         volunteerIds: undefined,
-      //       }),
-      //   },
-      // },
     ],
     [validationErrors]
   );
@@ -551,7 +505,7 @@ const Example = () => {
         >
           Yeni tədbir əlavə et
         </Button>
-        <Button variant="contained" onClick={onClick}>
+        <Button variant="contained" onClick={() => handleExportToExcel(table)}>
           Excelə export
         </Button>
       </div>
@@ -608,8 +562,9 @@ function useGetUsers() {
           ...user,
 
           sum: user.volunteers.length,
+          // files: user.eventAttachments.forEach((e) => e.id),
         }));
-
+        console.log(users);
         return users;
       } catch (error) {
         console.error("Error fetching users:", error);

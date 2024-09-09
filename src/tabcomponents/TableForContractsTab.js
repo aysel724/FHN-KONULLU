@@ -121,7 +121,7 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors, types]
+    [validationErrors]
   );
 
   //call CREATE hook
@@ -347,22 +347,56 @@ function useCreateUser() {
 
   return useMutation({
     mutationFn: async (user) => {
+      console.log(user);
+
       const url = `https://api-volunteers.fhn.gov.az/api/v1/Contracts`;
+
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
+
+      const newUser = {
+        number: user.number,
+        startDate: convertDate(user.startDate),
+        endDate: convertDate(user.endDate),
+        note: user.note,
+        volunteerId: userId,
+      };
+
+      // console.log(newUser);
+
       try {
-        const response = await axios.post(url, user, { headers });
-        console.log("Response:", response.data);
-        return response.data;
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
       } catch (error) {
         console.error("Error:", error);
-        throw error; // Important to throw the error so the mutation can handle it
       }
     },
     onMutate: (newUserInfo) => {
-      // Use a fallback to an empty array if prevUsers is not defined
       queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
@@ -370,6 +404,7 @@ function useCreateUser() {
         },
       ]);
     },
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useGetUsers() {
@@ -396,41 +431,72 @@ function useGetUsers() {
 
 //UPDATE hook (put user in api)
 function useUpdateUser() {
-  const location = useLocation().pathname.substring(1);
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
+      console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Contracts`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      console.log(user);
-      axios
-        .put(url, data, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
+
+      const newUser = {
+        id: user.id,
+        number: user.number,
+        startDate: convertDate(user.startDate),
+        endDate: convertDate(user.endDate),
+        note: user.note,
+        volunteerId: userId,
+      };
+
+      // console.log(newUser);
+
+      try {
+        const response = await axios.put(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -443,7 +509,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/${location}/${userId}`,
+          `https://api-volunteers.fhn.gov.az/api/v1/Contracts/${userId}`,
           {
             headers: { accept: "*/*" },
           }

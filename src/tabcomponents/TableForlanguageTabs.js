@@ -81,8 +81,10 @@ const Example = () => {
   );
 
   //call CREATE hook
-  const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
+  const { mutateAsync: createUser, isPending: isCreatingUser } = useCreateUser(
+    types,
+    types1
+  );
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -91,8 +93,10 @@ const Example = () => {
     isLoading: isLoadingUsers,
   } = useGetUsers();
   //call UPDATE hook
-  const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
+  const { mutateAsync: updateUser, isPending: isUpdatingUser } = useUpdateUser(
+    types,
+    types1
+  );
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
@@ -304,34 +308,64 @@ const Example = () => {
 
   return <MaterialReactTable table={table} />;
 };
-
-function useCreateUser() {
+function useCreateUser(types, types1) {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
+
       const url = `https://api-volunteers.fhn.gov.az/api/v1/Languages`;
+
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      axios
-        .post(url, user, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+
+      function findArrayElementByTitle(array, title) {
+        console.log(
+          array.find((element) => {
+            return element.name === title;
+          })
+        );
+        return array.find((element) => {
+          return element.name === title;
+        }).id;
+      }
+
+      const newUser = {
+        volunteerId: userId,
+        languageProficiencyLevelId: findArrayElementByTitle(
+          types,
+          user["languageProficiencyLevel.name"]
+        ),
+        languageNameId: findArrayElementByTitle(
+          types1,
+          user["languageName.name"]
+        ),
+      };
+      // console.log(newUser);
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
           ...newUserInfo,
         },
       ]);
     },
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -358,23 +392,22 @@ function useGetUsers() {
   });
 }
 
-//UPDATE hook (put user in api)
-function useUpdateUser(types) {
-  const location = useLocation().pathname.substring(1);
+function useUpdateUser(types, types1) {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
+      console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Languages`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
+
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -383,36 +416,41 @@ function useUpdateUser(types) {
         );
         return array.find((element) => {
           return element.name === title;
-        });
+        }).id;
       }
 
       const newUser = {
-        name: user.name,
-        priority: user.priority,
-        educationTypeId: findArrayElementByTitle(
+        id: user.id,
+
+        languageProficiencyLevelId: findArrayElementByTitle(
           types,
-          user["educationType.name"]
-        ).id,
+          user["languageProficiencyLevel.name"]
+        ),
+        languageNameId: findArrayElementByTitle(
+          types1,
+          user["languageName.name"]
+        ),
       };
-      // axios
-      //   .put(url, data, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
+      // console.log(newUser);
+
+      try {
+        const response = await axios.put(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useDeleteUser() {
@@ -457,5 +495,4 @@ const Uxtable = () => (
 );
 
 export default Uxtable;
-
 

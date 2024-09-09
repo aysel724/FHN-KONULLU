@@ -79,10 +79,6 @@ export default function NewTrainings() {
     TrainingNamesData();
   }, []);
 
-  function getTrainingNames(arr) {
-    return arr.map((e) => e.name);
-  }
-
   useEffect(() => {
     const TrainingNamesData = async () => {
       try {
@@ -109,6 +105,34 @@ export default function NewTrainings() {
       }
     };
     TrainingNamesData();
+  }, []);
+
+  useEffect(() => {
+    const TrainingResultsData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/TrainingResults`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data.data);
+        const newData = response.data.data.map((e) => {
+          return {
+            name: e.name,
+            id: e.id,
+          };
+        });
+
+        console.log(newData);
+        setTrainingResult(newData);
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    };
+    TrainingResultsData();
   }, []);
 
   // function getTrainingNames(arr) {
@@ -266,58 +290,10 @@ export default function NewTrainings() {
     setModalIsOpen(false);
   };
 
-  // async function getData() {
-  //   const options = {
-  //     method: "GET",
-
-  //     url: `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/GetInfoFromIamas?documentNumber=${passportData.seriaNumber}${passportData.docNumber}&fin=${passportData.fin}`,
-  //     headers: {
-  //       accept: "*/*",
-  //     },
-  //   };
-
-  //   try {
-  //     const response = await axios.request(options);
-  //     console.log(response.data.data);
-  //     setLoading(false);
-  //     setUserData((pre) => ({
-  //       ...pre,
-  //       idCardNumber: response.data.data.idCardNumber,
-  //       pinCode: response.data.data.pinCode,
-  //       name: response.data.data.name,
-  //       surname: response.data.data.surname,
-  //       fatherName: response.data.data.fatherName,
-  //       gender: response.data.data.gender,
-  //       militaryReward: response.data.data.militaryReward,
-  //       birthDate: response.data.data.birthDate,
-  //       birthPlace: response.data.data.birthPlace,
-  //       height: response.data.data.height,
-  //       citizenship: response.data.data.citizenship,
-  //       maritalStatus: response.data.data.maritalStatus,
-  //       identityCardGivenStructureName:
-  //         response.data.data.identityCardGivenStructureName,
-  //       identityCardReceivingDate: response.data.data.identityCardReceivingDate,
-
-  //       registrationAddress: response.data.data.registrationAddress,
-  //       currentAddress: response.data.data.currentAddress,
-  //       photo: response.data.data.photo,
-  //       isIAMASInfo: true,
-  //       phoneNumber1: "",
-  //       phoneNumber2: "",
-  //       email: "",
-  //     }));
-  //   } catch (error) {
-  //     setError(true);
-  //     setLoading(false);
-  //     setModalIsOpen(true);
-  //     setUserData((pre) => ({ ...pre, isIAMASInfo: false }));
-  //   }
-  // }
-
   return (
     <>
       {contextHolder}
-      {isLoading && <div className="loader">Loading...</div>}
+      {isLoading && <div className="loader">Yüklənir...</div>}
       {error && (
         <Modal
           aria-labelledby="transition-modal-title"
@@ -370,10 +346,10 @@ export default function NewTrainings() {
             }}
           >
             {" "}
-            <InputLabel id="demo-simple-select-label">Təlimin adı</InputLabel>
+            <InputLabel id="321">Təlimin adı</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
+              labelId="321"
+              id="321"
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
@@ -465,122 +441,138 @@ export default function NewTrainings() {
               }}
             />{" "}
           </Box>
-          <Box
-            component="form"
-            sx={{
-              "& > :not(style)": {
-                m: 2,
-                width: "50ch",
-                display: "flex",
-                flexDirection: "column",
-              },
+          <FormControl
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "60px",
             }}
           >
-            <TextField
-              id="filled-basic"
-              name="militaryReward"
-              label="Təlimin müddəti "
-              variant="outlined"
-              value={userData?.trainingDuration}
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, trainingDuration: e.target.value };
-
-                  return data;
-                });
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": {
+                  m: 2,
+                  width: "50ch",
+                  display: "flex",
+                  flexDirection: "column",
+                },
               }}
-            />
-            <TextField
-              id="Height"
-              label="Təlimin keçirilmə yeri "
-              name="height"
-              variant="outlined"
-              value={userData?.trainingPlace}
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, trainingPlace: e.target.value };
+            >
+              {" "}
+              <InputLabel id="arestrdytfy">Təlimin neticesi</InputLabel>
+              <Select
+                sx={{
+                  width: "50ch",
+                }}
+                labelId="arestrdytfy"
+                id="arestrdytfy"
+                onChange={(e) => {
+                  console.log(userData);
+                  setUserData((prev) => {
+                    const data = { ...prev, trainingResultId: e.target.value };
 
-                  return data;
-                });
-              }}
-            />
-            <TextField
-              id="vj"
-              name="birthDate"
-              label="Təlimçi "
-              variant="outlined"
-              value={userData?.trainingMaster}
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, trainingMaster: e.target.value };
+                    return data;
+                  });
+                }}
+                variant="outlined"
+              >
+                {trainingResult.map((training) => {
+                  return (
+                    <MenuItem value={training.id}>{training.name}</MenuItem>
+                  );
+                })}
+              </Select>
+              <TextField
+                id="filled-basic"
+                name="militaryReward"
+                label="Təlimin müddəti "
+                variant="outlined"
+                value={userData?.trainingDuration}
+                onChange={(e) => {
+                  console.log(userData);
+                  setUserData((prev) => {
+                    const data = { ...prev, trainingDuration: e.target.value };
 
-                  return data;
-                });
-              }}
-            />
-            <TextField
-              id="vj"
-              name="TrainingResultId"
-              label="Təlimin nəticəsi "
-              variant="outlined"
-              value={userData?.trainingResultId}
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, trainingResultId: e.target.value };
+                    return data;
+                  });
+                }}
+              />
+              <TextField
+                id="Height"
+                label="Təlimin keçirilmə yeri "
+                name="height"
+                variant="outlined"
+                value={userData?.trainingPlace}
+                onChange={(e) => {
+                  console.log(userData);
+                  setUserData((prev) => {
+                    const data = { ...prev, trainingPlace: e.target.value };
 
-                  return data;
-                });
-              }}
-            />
-            <TextField
-              id="vj"
-              name="priority"
-              label="Prioritet "
-              variant="outlined"
-              value={userData?.priority}
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, priority: e.target.value };
+                    return data;
+                  });
+                }}
+              />
+              <TextField
+                id="vj"
+                name="birthDate"
+                label="Təlimçi "
+                variant="outlined"
+                value={userData?.trainingMaster}
+                onChange={(e) => {
+                  console.log(userData);
+                  setUserData((prev) => {
+                    const data = { ...prev, trainingMaster: e.target.value };
 
-                  return data;
-                });
-              }}
-            />
+                    return data;
+                  });
+                }}
+              />
+              <TextField
+                id="vj"
+                name="priority"
+                label="Prioritet "
+                variant="outlined"
+                value={userData?.priority}
+                onChange={(e) => {
+                  console.log(userData);
+                  setUserData((prev) => {
+                    const data = { ...prev, priority: e.target.value };
 
-            <Autocomplete
-              multiple
-              disablePortal
-              value={value}
-              onChange={(e, newValue) => {
-                setValue(newValue);
-                setUserData((prev) => {
-                  const data = {
-                    ...prev,
-                    volunteerIds: newValue.map((e) => {
-                      return e.id;
-                    }),
-                  };
+                    return data;
+                  });
+                }}
+              />
+              <Autocomplete
+                multiple
+                disablePortal
+                value={value}
+                onChange={(e, newValue) => {
+                  setValue(newValue);
+                  setUserData((prev) => {
+                    const data = {
+                      ...prev,
+                      volunteerIds: newValue.map((e) => {
+                        return e.id;
+                      }),
+                    };
 
-                  return data;
-                });
-              }}
-              // value={userData.volunteerIds}
-              id="combo-box-demo"
-              options={volonteerNames}
-              sx={{ width: 300 }}
-              renderInput={(params) => (
-                <TextField {...params} label="Konulluler" />
-              )}
-            />
-            <Button variant="contained" onClick={() => handleSubmit()}>
-              Yadda saxla
-            </Button>
-          </Box>
+                    return data;
+                  });
+                }}
+                // value={userData.volunteerIds}
+                id="combo-box-demo"
+                options={volonteerNames}
+                sx={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Konulluler" />
+                )}
+              />
+              <Button variant="contained" onClick={() => handleSubmit()}>
+                Yadda saxla
+              </Button>
+            </Box>
+          </FormControl>
         </FormControl>
       </div>
     </>

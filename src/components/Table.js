@@ -1,4 +1,4 @@
-import { useMemo, useState, version } from "react";
+import { useMemo, useState, version, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -30,63 +30,94 @@ import {
 } from "@tanstack/react-query";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
-import { useExcelJS } from "react-use-exceljs";
-import { mkConfig, generateCsv, download } from "export-to-csv";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+
 import { useVolunteers } from "../context/VolunterContext";
 
-// columnHelper.accessor('lastName', {
-//   header: 'Last Name',
-//   size: 120,
-// }),
-// columnHelper.accessor('company', {
-//   header: 'Company',
-//   size: 300,
-// }),
-// columnHelper.accessor('city', {
-//   header: 'City',
-// }),
-// columnHelper.accessor('country', {
-//   header: 'Country',
-//   size: 220,
-// }),
-// ];
-
 const Example = () => {
+  const [securityTypes, setSecurityTypes] = useState([]);
+
+  useEffect(() => {
+    const TypesData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/SecurityCheckResultName`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data.data);
+        const newData = response.data.data.map((e) => {
+          const user = {
+            name: e.name,
+            id: e.id,
+          };
+
+          return user;
+        });
+
+        console.log(newData);
+        setSecurityTypes(newData);
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    };
+    TypesData();
+  }, []);
+
+  function getSecurityTypesNames(arr) {
+    return arr.map((e) => e.name);
+  }
+
   const token = localStorage.getItem("authToken");
-  const role = jwtDecode(token).unique_name;
+  // const role = jwtDecode(token).unique_name;
+  const role = "atef";
   console.log(role);
-  const columnHelper = createMRTColumnHelper();
+  const handleExportToExcel = async (table) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
 
-  const handleDownload = async () => {
-    try {
-      const response = await axios.get(
-        "https://api-volunteers.fhn.gov.az/api/v1/Volunteers"
-      );
-      const users = response.data.data;
+    // Get visible columns
+    const visibleColumns = table.getState().columnVisibility;
 
-      const usersForCsv = users.map((user) => ({
-        id: user.id,
-        name: `${user.name} ${user.surname}`, // Example: Concatenate name and surname
-        email: user.email,
-        gender: user.gender,
-        birthday: user.birthday,
-      }));
+    // Add header row
+    const headers = table.getHeaderGroups().flatMap(
+      (group) =>
+        group.headers
+          .filter((header) => visibleColumns[header.id] !== false)
+          .map((header) => header.columnDef?.header || header.id) // Fallback to header.id if columnDef.header is undefined
+    );
 
-      const csvConfig = mkConfig({
-        fieldSeparator: "  ,",
-        decimalSeparator: ".",
-        useKeysAsHeaders: true,
-      });
-      const csv = generateCsv(csvConfig)(usersForCsv);
+    console.log("Headers:", headers); // Ensure headers are correctly populated
 
-      // Download the CSV file
-      download(csvConfig)(csv);
-    } catch (error) {
-      console.error("Error downloading data:", error);
-      // Handle error if needed
-    }
+    const headerRow = worksheet.addRow(headers);
+    headerRow.eachCell({ includeEmpty: true }, (cell) => {
+      cell.font = { bold: true, size: 14 };
+    });
+    worksheet.getColumn(1).width = 0; // Adjust width for Column 1
+    worksheet.getColumn(2).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(3).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(4).width = 30; // Adjust width for Column 1
+    worksheet.getColumn(5).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(6).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(7).width = 30; // Adjust width for Column 1
+    worksheet.getColumn(8).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(9).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(10).width = 30;
+    worksheet.getColumn(11).width = 30;
+    worksheet.getColumn(13).width = 0;
+    table.getRowModel().rows.forEach((row) => {
+      const rowData = headers.map((header) => row.original[header] || ""); // Ensure you handle undefined values
+      worksheet.addRow(rowData);
+    });
+    // Save the Excel file
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      saveAs(new Blob([buffer]), "konulluler.xlsx");
+    });
   };
-
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -142,40 +173,36 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
+
       {
-        size: 250,
         accessorKey: "security",
         header: "Daxili təhlükəzlik rəyi",
         enableEditing: role !== "Volunteers",
+        editVariant: "select",
+        editSelectOptions: getSecurityTypesNames(securityTypes),
         muiEditTextFieldProps: {
-          required: true,
+          select: true,
           error: !!validationErrors?.security,
           helperText: validationErrors?.security,
+        },
+      },
+      {
+        size: 250,
+        accessorKey: "description",
+        header: "Daxili təhlükəzlik qeydi",
+        enableEditing: role !== "Volunteers",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.description,
+          helperText: validationErrors?.description,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              security: undefined,
+              description: undefined,
             }),
         },
       },
-      // {
-      //   size: 250,
-      //   accessorKey: "note",
-      //   header: "Daxili təhlükəzlik qeydi",
-      //   enableEditing: role !== "Volunteers",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.note,
-      //     helperText: validationErrors?.note,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         note: undefined,
-      //       }),
-      //   },
-      // },
       {
         size: 250,
         accessorKey: "voluntaryOfMesStatus.name",
@@ -289,7 +316,7 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors]
+    [validationErrors, securityTypes]
   );
   const { mutateAsync: createUser, isPending: isCreatingUser } =
     useCreateUser();
@@ -299,8 +326,10 @@ const Example = () => {
     isFetching: isFetchingUsers,
     isLoading: isLoadingUsers,
   } = useGetUsers();
-  const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
+  const { mutateAsync: updateUser, isPending: isUpdatingUser } = useUpdateUser(
+    role,
+    securityTypes
+  );
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
@@ -412,7 +441,7 @@ const Example = () => {
     editDisplayMode: "modal",
     enableEditing: true,
     initialState: {
-      columnVisibility: { id: false },
+      columnVisibility: { id: false, description: role !== "Volunteers" },
       columnPinning: { right: ["mrt-row-actions"] },
     },
     displayColumnDefOptions: {
@@ -465,19 +494,19 @@ const Example = () => {
         </DialogActions>
       </>
     ),
-    renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h3">123</DialogTitle>
-        <DialogContent
-          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-        >
-          {internalEditComponents} {/* or render custom edit components here */}
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
-    ),
+    // renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
+    //   <>
+    //     <DialogTitle variant="h3"></DialogTitle>
+    //     <DialogContent
+    //       sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+    //     >
+    //       {internalEditComponents} {/* or render custom edit components here */}
+    //     </DialogContent>
+    //     <DialogActions>
+    //       <MRT_EditActionButtons variant="text" table={table} row={row} />
+    //     </DialogActions>
+    //   </>
+    // ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
         {/* {role === "Volunteers" && (
@@ -542,7 +571,10 @@ const Example = () => {
           Yeni könüllü əlavə edin
         </Button>
 
-        <Button variant="contained" onClick={handleDownload}>
+        {/* <Button variant="contained" onClick={handleDownload}>
+          Excelə export
+        </Button> */}
+        <Button variant="contained" onClick={() => handleExportToExcel(table)}>
           Excelə export
         </Button>
       </div>
@@ -606,8 +638,12 @@ function useGetUsers() {
           ...user,
           fullName: `${user.name} ${user.surname} ${user.fatherName}`.trim(),
           security: `${
-            user.securityCheckResults[0]?.securityCheckResultName?.name ||
-            "Yoxlanmayıb"
+            user.securityCheckResults[user.securityCheckResults.length - 1]
+              ?.securityCheckResultName?.name || "Yoxlanmayıb"
+          }`,
+          description: `${
+            user.securityCheckResults[user.securityCheckResults.length - 1]
+              ?.description || "Yoxlanmayıb"
           }`,
         }));
 
@@ -623,30 +659,77 @@ function useGetUsers() {
 }
 
 //UPDATE hook (put user in api)
-function useUpdateUser() {
+function useUpdateUser(role, securityTypes) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user, checkFromIamas: false };
-      console.log(data);
-      //send api update request here
-
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`;
-
-      const headers = {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      };
-      console.log(user);
-      axios
-        .put(url, data, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
+      if (role === "Volunteers") {
+        const formData = new FormData();
+        formData.append("Id", user.id);
+        formData.append("Email", user.email);
+        formData.append("PhoneNumber1", user.phoneNumber1);
+        formData.append("PhoneNumber2", user.phoneNumber2);
+        formData.append("CheckFromIamas", false);
+        formData.append("QueryParams", {
+          additionalProp1: "string",
+          additionalProp2: "string",
+          additionalProp3: "string",
         });
+
+        console.log("salam");
+        //send api update request here
+
+        const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`;
+
+        const headers = {
+          Accept: "*/*",
+        };
+
+        axios
+          .put(url, formData, { headers })
+          .then((response) => {
+            console.log("Response:", response.data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      } else {
+        const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/AddVolunteerCheckResult`;
+
+        const headers = {
+          Accept: "*/*",
+        };
+
+        function findArrayElementByTitle(array, title) {
+          console.log(
+            array.find((element) => {
+              return element.name === title;
+            })
+          );
+          return array.find((element) => {
+            return element.name === title;
+          }).id;
+        }
+
+        const data = {
+          securityCheckResultNameId: findArrayElementByTitle(
+            securityTypes,
+            user.security
+          ),
+          volunteerId: user.id,
+          description: user.description,
+        };
+        console.log(data);
+        axios
+          .post(url, data, { headers })
+          .then((response) => {
+            console.log("Response:", response.data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
     },
     //client side optimistic update
     //client side optimistic update
