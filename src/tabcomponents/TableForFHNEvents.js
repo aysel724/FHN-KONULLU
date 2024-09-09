@@ -30,6 +30,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { H1 } from "@blueprintjs/core";
+import { BASE_URL } from "../api/baseURL";
 const Example = () => {
   let params = useParams();
   let userId = params.id;
@@ -207,21 +208,6 @@ const Example = () => {
             }),
         },
       },
-      // {
-      //   accessorKey: "volunteers",
-      //   header: "konulluler",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.volunteers,
-      //     helperText: validationErrors?.volunteers,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         volunteers: undefined,
-      //       }),
-      //   },
-      // },
     ],
     [validationErrors]
   );
@@ -401,7 +387,7 @@ function useCreateUser() {
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Events`;
+      const url = `${BASE_URL}/Events`;
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
@@ -433,7 +419,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
+          `${BASE_URL}/Volunteers/${userId}`
         );
 
         return response.data.data.events;
@@ -457,7 +443,7 @@ function useUpdateUser() {
       console.log(data);
       //send api update request here
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Events`;
+      const url = `${BASE_URL}/Events`;
 
       const headers = {
         Accept: "*/*",
@@ -494,7 +480,7 @@ function useDeleteUser() {
 
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}`,
+          `${BASE_URL}/Events/${userId}`,
           {
             headers: { accept: "*/*" },
           }

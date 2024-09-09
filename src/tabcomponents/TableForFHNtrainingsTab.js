@@ -19,6 +19,7 @@ import { useParams } from "react-router-dom";
 import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
+import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -323,7 +324,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
+          `${BASE_URL}/Volunteers/${userId}`
         );
 
         console.log(response.data.data);

@@ -30,6 +30,7 @@ import { validateInsurance } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/editIcon";
 import { convertDate } from "../utils/convertDate";
+import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -319,7 +320,7 @@ function useCreateUser(types) {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Insurances`;
+      const url = `${BASE_URL}/Insurances`;
 
       const headers = {
         Accept: "*/*",
@@ -400,7 +401,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
+          `${BASE_URL}/Volunteers/${userId}`
         );
 
         console.log(response.data.data);
@@ -424,7 +425,7 @@ function useUpdateUser(types) {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Insurances`;
+      const url = `${BASE_URL}/Insurances`;
 
       const headers = {
         Accept: "*/*",
@@ -483,7 +484,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Insurances/${userId}`,
+          `${BASE_URL}/Insurances/${userId}`,
           {
             headers: { accept: "*/*" },
           }

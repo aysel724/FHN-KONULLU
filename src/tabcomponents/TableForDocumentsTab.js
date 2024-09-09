@@ -29,6 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { validateElectronDocument } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/editIcon";
+import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -317,7 +318,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments/GetAll/${userId}`
+          `${BASE_URL}/ElectronicDocuments/GetAll/${userId}`
         );
 
         return response.data.data;
@@ -341,7 +342,7 @@ function useUpdateUser(types) {
       const data = { ...user };
       console.log(data);
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
 
       const headers = {
         Accept: "*/*",
@@ -387,7 +388,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments/${userId}`,
+          `${BASE_URL}/ElectronicDocuments/${userId}`,
           {
             headers: { accept: "*/*" },
           }

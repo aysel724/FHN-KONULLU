@@ -29,6 +29,7 @@ import { validateLanguageLevel } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/editIcon";
 import { useDeleteUser } from "../api/tabComponentsDelete/DeleteUser";
+import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -288,7 +289,7 @@ function useCreateUser(types, types1) {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Languages`;
+      const url = `${BASE_URL}/Languages`;
 
       const headers = {
         Accept: "*/*",
@@ -348,7 +349,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Languages/GetAll/${userId}`
+          `${BASE_URL}/Languages/GetAll/${userId}`
         );
 
         console.log(response.data.data);
@@ -372,7 +373,7 @@ function useUpdateUser(types, types1) {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Languages`;
+      const url = `${BASE_URL}/Languages`;
 
       const headers = {
         Accept: "*/*",
@@ -431,7 +432,7 @@ function useUpdateUser(types, types1) {
 //       console.log(userId);
 //       try {
 //         const response = await axios.delete(
-//           `https://api-volunteers.fhn.gov.az/api/v1/Languages/${userId}`,
+//           `${BASE_URL}/Languages/${userId}`,
 //           {
 //             headers: { accept: "*/*" },
 //           }

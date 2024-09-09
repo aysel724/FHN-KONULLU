@@ -310,13 +310,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true); 
         }}
       >
         Əlavə edin
@@ -401,7 +395,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/VoluntaryOfMeses/GetAll/${userId}`
+          `${BASE_URL}/VoluntaryOfMeses/GetAll/${userId}`
         );
 
         console.log(response.data.data);
@@ -433,7 +427,7 @@ function useUpdateUser(types) {
           }).id;
         }
       }
-      const url = "https://api-volunteers.fhn.gov.az/api/v1/VoluntaryOfMeses";
+      const url = "${BASE_URL}/VoluntaryOfMeses";
 
       const headers = {
         Accept: "*/*",
@@ -487,7 +481,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/VoluntaryOfMeses/${userId}`,
+          `${BASE_URL}/VoluntaryOfMeses/${userId}`,
           {
             headers: { accept: "*/*" },
           }

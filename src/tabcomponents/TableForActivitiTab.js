@@ -28,6 +28,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { validateVolunterActivity } from "../utils/validateUser";
 import EditIcon from "../assets/editIcon";
 import { convertDate } from "../utils/convertDate";
+import { BASE_URL } from "../api/baseURL";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -339,7 +340,7 @@ function useCreateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/VoluntaryActivities`;
+      const url = `${BASE_URL}/VoluntaryActivities`;
 
       const headers = {
         Accept: "*/*",
@@ -386,7 +387,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/VoluntaryActivities/GetAll/${userId}`
+          `${BASE_URL}/VoluntaryActivities/GetAll/${userId}`
         );
 
         console.log(response);
@@ -409,7 +410,7 @@ function useUpdateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/VoluntaryActivities`;
+      const url = `${BASE_URL}/VoluntaryActivities`;
 
       const headers = {
         Accept: "*/*",
@@ -477,7 +478,7 @@ function useDeleteUser() {
 
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/VoluntaryActivities/${userId}`,
+          `${BASE_URL}/VoluntaryActivities/${userId}`,
           {
             headers: { accept: "*/*" },
           }

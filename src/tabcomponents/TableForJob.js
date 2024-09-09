@@ -29,6 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { validateFields, validateLaborActivity } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/editIcon";
+import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -374,7 +375,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/LaborActivities/GetAll/${userId}`
+          `${BASE_URL}/LaborActivities/GetAll/${userId}`
         );
 
         console.log(response.data.data);
@@ -455,7 +456,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/LaborActivities/${userId}`,
+          `${BASE_URL}/LaborActivities/${userId}`,
           {
             headers: { accept: "*/*" },
           }

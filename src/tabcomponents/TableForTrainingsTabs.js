@@ -29,6 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/editIcon";
 import { convertDate } from "../utils/convertDate";
+import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -291,7 +292,7 @@ function useCreateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Trainings`;
+      const url = `${BASE_URL}/Trainings`;
 
       const headers = {
         Accept: "*/*",
@@ -360,7 +361,7 @@ function useUpdateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Trainings`;
+      const url = `${BASE_URL}/Trainings`;
 
       const headers = {
         Accept: "*/*",
@@ -402,7 +403,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Trainings/${userId}`,
+          `${BASE_URL}/Trainings/${userId}`,
           {
             headers: { accept: "*/*" },
           }

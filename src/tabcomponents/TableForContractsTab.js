@@ -30,6 +30,7 @@ import { validateContract } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/editIcon";
 import { convertDate } from "../utils/convertDate";
+import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -326,33 +327,13 @@ function useCreateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Contracts`;
+      const url = `${BASE_URL}/Contracts`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      function convertDate(date) {
-        const dateObject = new Date(date);
 
-        // Get UTC time string
-        const utcYear = dateObject.getUTCFullYear();
-        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-        const utcDay = dateObject.getUTCDate();
-        const utcHours = dateObject.getUTCHours();
-        const utcMinutes = dateObject.getUTCMinutes();
-        const utcSeconds = dateObject.getUTCSeconds();
-
-        // Construct the UTC date string in ISO 8601 format
-        const utcDateTimeString = `${utcYear}-${utcMonth
-          .toString()
-          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-          .toString()
-          .padStart(2, "0")}:${utcMinutes
-          .toString()
-          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-        return utcDateTimeString;
-      }
 
       const newUser = {
         number: user.number,
@@ -392,7 +373,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Contracts/GetAll/${userId}`
+          `${BASE_URL}/Contracts/GetAll/${userId}`
         );
 
         return response.data.data;
@@ -416,7 +397,7 @@ function useUpdateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Contracts`;
+      const url = `${BASE_URL}/Contracts`;
 
       const headers = {
         Accept: "*/*",
@@ -464,7 +445,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Contracts/${userId}`,
+          `${BASE_URL}/Contracts/${userId}`,
           {
             headers: { accept: "*/*" },
           }
