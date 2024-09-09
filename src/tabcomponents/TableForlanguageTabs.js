@@ -32,42 +32,15 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [types1, setTypes1] = useState([]);
-  useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/LanguageProficiencyLevels`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
 
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
-  }, []);
-
+  
   function getLevelNames(arr) {
     return arr.map((e) => e.name);
   }
-
+  
   useEffect(() => {
     TypesData(setTypes,"LanguageNames");
+    TypesData(setTypes,"LanguageProficiencyLevels");
   }, []);
 
   function getTypesNames(arr) {

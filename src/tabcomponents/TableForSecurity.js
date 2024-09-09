@@ -126,18 +126,14 @@ const Example = () => {
   const table = useMaterialReactTable({
     localization: {
       cancel: "İmtina",
-
       clearFilter: "Filteri təmizlə",
       clearSearch: "Axtarışı təmizlə",
-
       clearSort: "Sıralamani təmizlə",
       clickToCopy: "Kopyalamaq üçün klik edin",
       copy: "Kopyala",
       collapse: "Collapse",
-
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
-
       edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",

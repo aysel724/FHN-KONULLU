@@ -162,7 +162,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
 
   //UPDATE action

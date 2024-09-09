@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
