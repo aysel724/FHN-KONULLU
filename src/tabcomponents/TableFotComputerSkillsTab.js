@@ -25,39 +25,14 @@ import {
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { TypesData } from "../api/tabComponentsGet/TypesData";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [degrees, setDegrees] = useState([]);
   useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/ComputerSkillNames`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
+    TypesData(setTypes,"ComputerSkillNames");
   }, []);
 
   function getTypesNames(arr) {
@@ -535,10 +510,4 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
-function validateUser(user) {
-  return {
-    gender: !validateRequired(user.gender) ? "First Name is Required" : "",
-  };
-}

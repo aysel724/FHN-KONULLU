@@ -393,4 +393,3 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-

@@ -461,10 +461,4 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
-function validateUser(user) {
-  return {
-    gender: !validateRequired(user.gender) ? "First Name is Required" : "",
-  };
-}

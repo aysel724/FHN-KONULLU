@@ -250,11 +250,8 @@ const Example = () => {
       setValidationErrors(newValidationErrors);
       return;
     }
-
     setValidationErrors({});
-
     await createUser(values);
-
     table.setCreatingRow(null); //exit creating mode
   };
   //UPDATE action

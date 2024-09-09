@@ -23,9 +23,19 @@ import {
 } from "@tanstack/react-query";
 import { fakeData6, results } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { TypesData } from "../api/tabComponentsGet/TypesData";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
+  const [types, setTypes] = useState([]);
+
+  useEffect(() => {
+    TypesData(setTypes,"Supplies");
+  }, []);
+
+  function getTypesNames(arr) {
+    return arr.map((e) => e.name);
+  }
 
   const columns = useMemo(
     () => [

@@ -23,7 +23,7 @@ import {
 } from "@tanstack/react-query";
 import { fakeData6, results } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import { validateVolunterActivity } from "../utils/validateUser";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -52,7 +52,6 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
@@ -60,13 +59,16 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.startDate,
           helperText: validationErrors?.startDate,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               startDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date",
+            },
+          },
         },
       },
       {
@@ -76,13 +78,16 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.endDate,
           helperText: validationErrors?.endDate,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               endDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date",
+            },
+          },
         },
       },
       {
@@ -114,7 +119,6 @@ const Example = () => {
               ...validationErrors,
               interestOfVoluntryField: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -156,7 +160,7 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
+    const newValidationErrors = validateVolunterActivity(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
@@ -168,7 +172,7 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
+    const newValidationErrors = validateVolunterActivity(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
@@ -441,10 +445,4 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
-function validateUser(user) {
-  return {
-    activity: !validateRequired(user.activity) ? "First Name is Required" : "",
-  };
-}
