@@ -24,145 +24,108 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import axios from "axios";
-
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import  { validateFHNVolunterActivity } from '.././utils/validateUser'
+import { TypesData } from "../api/tabComponentsGet/TypesData";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
+  const [endDate, setEndDate] = useState(false)
 
   useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/MesVoluntaryActivityEndReasons`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
+    TypesData(setTypes,"MesVoluntaryActivityEndReasons");
     console.log(types);
   }, []);
 
-  function getTypesNames(arr) {
-    return arr.map((e) => e.name);
-  }
+  const getTypesNames = (types) => {
+    if (!types) return [];
+    return types.map(type => type.name);
+  };
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "id",
-        header: "Id",
-        enableEditing: false,
-        size: 80,
-      },
+  const handleDateChange = (event) => {
+    if (event.target.value) {
+      setEndDate(true); 
+    } else {
+      setEndDate(false);
+    }
+  };
 
-      {
-        accessorKey: "startDate",
-        header: "Başlama tarixi",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              startDate: undefined,
-            }),
-          InputProps: {
-            inputProps: {
-              type: "date", // Set the input type to 'date'
-            },
+
+  const columns = useMemo(() => [
+    {
+      accessorKey: "id",
+      header: "Id",
+      enableEditing: false,
+      size: 80,
+    },
+    {
+      accessorKey: "startDate",
+      header: "Başlama tarixi",
+      muiEditTextFieldProps: {
+        required: true,
+        error: !!validationErrors?.startDate,
+        helperText: validationErrors?.startDate,
+        onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            startDate: undefined,
+          }),
+        InputProps: {
+          inputProps: {
+            type: "date",
           },
         },
       },
-      {
-        accessorKey: "endDate",
-        header: "Bitmə tarixi",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.endDate,
-          helperText: validationErrors?.endDate,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              endDate: undefined,
-            }),
-          InputProps: {
-            inputProps: {
-              type: "date", // Set the input type to 'date'
-            },
+    },
+    {
+      accessorKey: "endDate",
+      header: "Bitmə tarixi",
+      muiEditTextFieldProps: {
+        required: true,
+        error: !!validationErrors?.endDate,
+        helperText: validationErrors?.endDate,
+        onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            endDate: undefined,
+          }),
+        InputProps: {
+          inputProps: {
+            type: "date",
+            onChange: handleDateChange,
           },
-          //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "mesVoluntaryActivityEndReasons",
-      //   header: "Fəaliyyətin bitmə səbəbi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.mesVoluntaryActivityEndReasons,
-      //     helperText: validationErrors?.mesVoluntaryActivityEndReasons,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         mesVoluntaryActivityEndReasons: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
+    },
+
       {
         accessorKey: "mesVoluntaryActivityEndReason.name",
         header: "Fəaliyyətin bitmə səbəbi",
         editVariant: "select",
+        enableEditing: endDate,
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
+          error: !!validationErrors?.["mesVoluntaryActivityEndReason.name"],
+          helperText: validationErrors?.["mesVoluntaryActivityEndReason.name"],
         },
       },
-
-      {
-        accessorKey: "note",
-        header: "Qeyd",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.note,
-          helperText: validationErrors?.note,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              note: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
+    {
+      accessorKey: "note",
+      header: "Qeyd",
+      muiEditTextFieldProps: {
+        required: true,
+        error: !!validationErrors?.note,
+        helperText: validationErrors?.note,
+        onFocus: () =>
+          setValidationErrors({
+            ...validationErrors,
+            note: undefined,
+          }),
       },
-    ],
-    [validationErrors, types]
-  );
+    },
+  ], [validationErrors, types, endDate]);
+  
 
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
@@ -183,8 +146,10 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
+    // setEndDate(values)
+    const newValidationErrors = validateFHNVolunterActivity(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
+      console.log("Validation errors present:", newValidationErrors);  
       setValidationErrors(newValidationErrors);
       return;
     }
@@ -195,7 +160,7 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
+    const newValidationErrors = validateFHNVolunterActivity(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
@@ -211,7 +176,6 @@ const Example = () => {
       deleteUser(row.original.id);
     }
   };
-
   const table = useMaterialReactTable({
     enableRowNumbers: true,
     enableStickyHeader: true,
@@ -289,7 +253,10 @@ const Example = () => {
       columnVisibility: { id: false },
       columnPinning: { right: ["mrt-row-actions"] },
     },
-    onCreatingRowCancel: () => setValidationErrors({}),
+    onCreatingRowCancel:  () => {
+      setValidationErrors({});
+      setEndDate(false);
+    },
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleSaveUser,
@@ -538,6 +505,7 @@ function useUpdateUser(types) {
         return utcDateTimeString;
       }
 
+      
       const newUser = {
         id: user.id,
         volunteerId: parseInt(userId),
@@ -620,12 +588,5 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
-function validateUser(user) {
-  return {
-    startDate: !validateRequired(user.startDate)
-      ? "First Name is Required"
-      : "",
-  };
-}
+

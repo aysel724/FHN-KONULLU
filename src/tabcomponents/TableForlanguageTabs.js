@@ -25,6 +25,8 @@ import {
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { validateLanguageLevel } from "../utils/validateUser";
+import { TypesData } from "../api/tabComponentsGet/TypesData";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -65,33 +67,7 @@ const Example = () => {
   }
 
   useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/LanguageNames`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes1(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
+    TypesData(setTypes,"LanguageNames");
   }, []);
 
   function getTypesNames(arr) {
@@ -112,11 +88,10 @@ const Example = () => {
         editSelectOptions: getTypesNames(types1),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.state,
-          helperText: validationErrors?.state,
+          error: !!validationErrors?.["languageName.name"],
+          helperText: validationErrors?.["languageName.name"],
         },
       },
-
       {
         accessorKey: "languageProficiencyLevel.name",
         header: "Bilik səviyyəsi",
@@ -124,8 +99,8 @@ const Example = () => {
         editSelectOptions: getLevelNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.state,
-          helperText: validationErrors?.state,
+          error: !!validationErrors?.["languageProficiencyLevel.name"],
+          helperText: validationErrors?.["languageProficiencyLevel.name"],
         },
       },
     ],
@@ -151,11 +126,12 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
+    const newValidationErrors = validateLanguageLevel(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      console.log(newValidationErrors)
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
@@ -163,11 +139,11 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
+    const newValidationErrors = validateLanguageLevel(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -509,12 +485,4 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
-function validateUser(user) {
-  return {
-    languageNameId: !validateRequired(user.languageNameId)
-      ? "First Name is Required"
-      : "",
-  };
-}

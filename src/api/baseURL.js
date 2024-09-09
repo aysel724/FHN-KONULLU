@@ -1,0 +1,1 @@
+export const BASE_URL = "https://api-volunteers.fhn.gov.az/api/v1"

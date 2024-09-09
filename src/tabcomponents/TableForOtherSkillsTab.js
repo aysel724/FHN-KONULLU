@@ -32,33 +32,7 @@ const Example = () => {
   const [types, setTypes] = useState([]);
 
   useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
+    TypesData(setTypes,"AdditionalKnowledges");
   }, []);
 
   function getTypesNames(arr) {
@@ -460,10 +434,3 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
-
-function validateUser(user) {
-  return {
-    gender: !validateRequired(user.gender) ? "First Name is Required" : "",
-  };
-}

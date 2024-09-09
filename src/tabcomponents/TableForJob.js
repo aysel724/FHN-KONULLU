@@ -26,39 +26,15 @@ import {
 import { useParams } from "react-router-dom";
 import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { validateFields, validateLaborActivity } from "../utils/validateUser";
+import { TypesData } from "../api/tabComponentsGet/TypesData";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
 
   useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/EducationTypes`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
+    TypesData(setTypes,"EducationTypes");
   }, []);
 
   function getTypesNames(arr) {
@@ -67,12 +43,11 @@ const Example = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "id",
+        accessorKey: "jobId",
         header: "Id",
         enableEditing: false,
         size: 80,
       },
-
       {
         accessorKey: "workplace",
         header: "İş yeri",
@@ -80,13 +55,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.workplace,
           helperText: validationErrors?.workplace,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               workplace: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -113,13 +86,16 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.startDate,
           helperText: validationErrors?.startDate,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               startDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date",
+            },
+          },
         },
       },
       {
@@ -129,13 +105,16 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.endDate,
           helperText: validationErrors?.endDate,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               endDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date",
+            },
+          },
         },
       },
       {
@@ -176,24 +155,37 @@ const Example = () => {
     useDeleteUser();
 
   //CREATE action
+  // const handleCreateUser = async ({ values, table }) => {
+  //   const newValidationErrors = validateFields(values);
+  //   if (Object.values(newValidationErrors).some((error) => error)) {
+  //     setValidationErrors(newValidationErrors);
+  //     return;
+  //   }
+  //   setValidationErrors({});
+  //   await createUser(values);
+  //   table.setCreatingRow(null); 
+  // };
   const handleCreateUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
+    // setEndDate(values)
+    const newValidationErrors = validateLaborActivity(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      console.log("Validation errors present:", newValidationErrors);  
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
-
+  
+  
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
+    const newValidationErrors = validateLaborActivity(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -509,10 +501,4 @@ const Uxtable = () => (
 
 export default Uxtable;
 
-const validateRequired = (value) => !!value.length;
 
-function validateUser(user) {
-  return {
-    gender: !validateRequired(user.gender) ? "First Name is Required" : "",
-  };
-}
