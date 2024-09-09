@@ -26,6 +26,7 @@ import {
 import { useParams } from "react-router-dom";
 import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { TypesData } from "../api/tabComponentsGet/TypesData";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
