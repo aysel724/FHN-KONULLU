@@ -24,46 +24,12 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { edudegree, edutype } from "../makeData";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
-  const [types, setTypes] = useState([]);
 
-  useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
-  }, []);
-
-  function getTypesNames(arr) {
-    return arr.map((e) => e.name);
-  }
   const columns = useMemo(
     () => [
       {
@@ -106,7 +72,7 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors, types]
+    [validationErrors]
   );
 
   //call CREATE hook
@@ -326,26 +292,47 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
 function useCreateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+
+      const newUser = {
+        name: user.name,
+        note: user.note,
+        volunteerId: userId,
+      };
+      // console.log(newUser);
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random(),
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ ......queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -372,72 +359,72 @@ function useGetUsers() {
   });
 }
 
-//UPDATE hook (put user in api)
-function useUpdateUser(types) {
-  const location = useLocation().pathname.substring(1);
+function useUpdateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
+      console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      function findArrayElementByTitle(array, title) {
-        console.log(
-          array.find((element) => {
-            return element.name === title;
-          })
-        );
-        return array.find((element) => {
-          return element.name === title;
-        });
-      }
 
       const newUser = {
         name: user.name,
-        priority: user.priority,
-        educationTypeId: findArrayElementByTitle(
-          types,
-          user["educationType.name"]
-        ).id,
+        note: user.note,
+        id: user.id,
       };
-      // axios
-      //   .put(url, data, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
+      // console.log(newUser);
+
+      try {
+        const response = await axios.put(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
-
 //DELETE hook (delete user in api)
 function useDeleteUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {

@@ -392,7 +392,7 @@ function useGetUsers() {
         );
 
         console.log(response.data.data);
-        return response.data.data.sportAchievements;
+        return response.data.data.supplies;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);

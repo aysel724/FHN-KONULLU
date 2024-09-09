@@ -32,9 +32,6 @@ export default function Volonteer() {
           }}
         >
           {" "}
-          <Button onClick={() => navigate(`/allVolunteers`)}>
-            Müraciət edən könüllülərin cədvəli{" "}
-          </Button>
           <ModalForDailedFiltration />
         </div>
       </div>

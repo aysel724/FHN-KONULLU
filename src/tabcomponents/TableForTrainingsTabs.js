@@ -29,41 +29,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
-  const [types, setTypes] = useState([]);
-
-  useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/EducationTypes`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
-  }, []);
-
-  function getTypesNames(arr) {
-    return arr.map((e) => e.name);
-  }
   const columns = useMemo(
     () => [
       {
@@ -101,12 +66,17 @@ const Example = () => {
               ...validationErrors,
               startDate: undefined,
             }),
+          InputProps: {
+            inputProps: {
+              type: "date", // Set the input type to 'date'
+            },
+          },
           //optionally add validation checking for onBlur or onChange
         },
       },
       {
         accessorKey: "finishDate",
-        header: "Başlalma tarixi",
+        header: "Bitmə tarixi",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,
@@ -117,11 +87,16 @@ const Example = () => {
               ...validationErrors,
               finishDate: undefined,
             }),
+          InputProps: {
+            inputProps: {
+              type: "date", // Set the input type to 'date'
+            },
+          },
           //optionally add validation checking for onBlur or onChange
         },
       },
     ],
-    [validationErrors, types]
+    [validationErrors]
   );
 
   const { mutateAsync: createUser, isPending: isCreatingUser } =
@@ -320,77 +295,70 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
-// function useCreateUser() {
-//   const location = useLocation().pathname.substring(1);
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: async (user) => {
-//       console.log(user);
-//       const url = `https://10.70.3.176/api/v1/Trainings`;
-//       const headers = {
-//         Accept: "*/*",
-//         "Content-Type": "application/json",
-//       };
-//       axios
-//         .post(url, user, { headers })
-//         .then((response) => {
-//           console.log("Response:", response.data);
-//         })
-//         .catch((error) => {
-//           console.error("Error:", error);
-//         });
-//     },
-//     onMutate: (newUserInfo) => {
-//       queryClient.setQueryData(["users"], (prevUsers) => [
-//         ...prevUsers,
-//         {
-//           ...newUserInfo,
-//         },
-//       ]);
-//     },
-//   });
-// }
 function useCreateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
-      const url = `https://10.70.3.176/api/v1/Trainings`; // Replace with your actual API endpoint
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Trainings`;
+
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
+
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
+
+      const newUser = {
+        name: user.name,
+        startDate: convertDate(user.startDate),
+        finishDate: convertDate(user.finishDate),
+        volunteerId: userId,
+      };
+      // console.log(newUser);
+
       try {
-        const response = await axios.post(url, user, { headers });
-        console.log("Response:", response.data);
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
       } catch (error) {
         console.error("Error:", error);
       }
     },
-    onMutate: async (newUserInfo) => {
-      // Optimistically update the cache
-      await queryClient.cancelQueries(["users"]); // Optional: cancel pending refetches
-      const previousUsers = queryClient.getQueryData(["users"]);
-      if (previousUsers) {
-        queryClient.setQueryData(
-          ["users"],
-          [...previousUsers, { ...newUserInfo }]
-        );
-      }
-      return { previousUsers };
+    onMutate: (newUserInfo) => {
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    onError: (err, newUserInfo, context) => {
-      // Rollback to the previous state on error
-      if (context && context.previousUsers) {
-        queryClient.setQueryData(["users"], context.previousUsers);
-      }
-    },
-    onSettled: () => {
-      // Optionally refetch the data after mutation is completed
-      queryClient.invalidateQueries(["users"]);
-    },
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -418,41 +386,47 @@ function useGetUsers() {
 }
 
 function useUpdateUser() {
-  const location = useLocation().pathname.substring(1);
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
+      console.log(user);
 
-      const url = `https://10.70.3.176/api/v1/Trainings`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Trainings`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      console.log(user);
-      axios
-        .put(url, data, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+
+      const newUser = {
+        name: user.name,
+        startDate: user.startDate,
+        finishDate: user.finishDate,
+        id: user.id,
+      };
+      // console.log(newUser);
+
+      try {
+        const response = await axios.put(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useDeleteUser() {
@@ -483,7 +457,7 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQusers'] }), //refetch users after mutation, disabled for demo
   });
 }
 

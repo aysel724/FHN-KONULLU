@@ -107,26 +107,26 @@ const Example = () => {
       },
 
       {
-        accessorKey: "computerSkillNameId",
+        accessorKey: "computerSkillName.name",
         header: "Biliyin adı",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.degree,
-          helperText: validationErrors?.degree,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
         },
       },
 
       {
-        accessorKey: "skillLevelId",
+        accessorKey: "skillLevel.name",
         header: "Biliyin dərəcəsi",
         editVariant: "select",
         editSelectOptions: getDegreesNames(degrees),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.degree,
-          helperText: validationErrors?.degree,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
         },
       },
       {
@@ -162,12 +162,14 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors, types]
+    [validationErrors, types, degrees]
   );
 
   //call CREATE hook
-  const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
+  const { mutateAsync: createUser, isPending: isCreatingUser } = useCreateUser(
+    types,
+    degrees
+  );
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -176,8 +178,10 @@ const Example = () => {
     isLoading: isLoadingUsers,
   } = useGetUsers();
   //call UPDATE hook
-  const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
+  const { mutateAsync: updateUser, isPending: isUpdatingUser } = useUpdateUser(
+    types,
+    degrees
+  );
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
@@ -393,34 +397,63 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-function useCreateUser() {
-  const location = useLocation().pathname.substring(1);
+function useCreateUser(types, degrees) {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/ComputerSkills`;
+
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      axios
-        .post(url, user, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+
+      function findArrayElementByTitle(array, title) {
+        console.log(
+          array.find((element) => {
+            return element.name === title;
+          })
+        );
+        return array.find((element) => {
+          return element.name === title;
+        }).id;
+      }
+
+      const newUser = {
+        priority: user.priority,
+        note: user.note,
+        volunteerId: userId,
+        computerSkillNameId: findArrayElementByTitle(
+          types,
+          user["computerSkillName.name"]
+        ),
+        skillLevelId: findArrayElementByTitle(degrees, user["skillLevel.name"]),
+      };
+      // console.log(newUser);
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
           ...newUserInfo,
         },
       ]);
     },
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -432,11 +465,11 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
+          `https://api-volunteers.fhn.gov.az/api/v1/ComputerSkills/GetAll/${userId}`
         );
 
         console.log(response.data.data);
-        return response.data.data.computerSkills;
+        return response.data.data;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);
@@ -447,23 +480,22 @@ function useGetUsers() {
   });
 }
 
-//UPDATE hook (put user in api)
-function useUpdateUser(types) {
-  const location = useLocation().pathname.substring(1);
+function useUpdateUser(types, degrees) {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
+      console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/ComputerSkills`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
+
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -472,36 +504,40 @@ function useUpdateUser(types) {
         );
         return array.find((element) => {
           return element.name === title;
-        });
+        }).id;
       }
 
       const newUser = {
-        name: user.name,
+        id: user.id,
         priority: user.priority,
-        educationTypeId: findArrayElementByTitle(
+        note: user.note,
+        volunteerId: userId,
+        computerSkillNameId: findArrayElementByTitle(
           types,
-          user["educationType.name"]
-        ).id,
+          user["computerSkillName.name"]
+        ),
+        skillLevelId: findArrayElementByTitle(degrees, user["skillLevel.name"]),
       };
-      // axios
-      //   .put(url, data, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
+      // console.log(newUser);
+
+      try {
+        const response = await axios.put(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -533,7 +569,7 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClientes({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 

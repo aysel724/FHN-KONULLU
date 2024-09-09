@@ -80,8 +80,8 @@ const Example = () => {
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.degree,
-          helperText: validationErrors?.degree,
+          error: !!validationErrors?.insuranceCompanyId,
+          helperText: validationErrors?.insuranceCompanyId,
         },
       },
       {
@@ -97,9 +97,14 @@ const Example = () => {
               ...validationErrors,
               name: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date", // Set the input type to 'date'
+            },
+          },
         },
       },
+
       {
         accessorKey: "endDate",
         header: "Bitmə tarixi",
@@ -113,37 +118,14 @@ const Example = () => {
               ...validationErrors,
               endDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date", // Set the input type to 'date'
+            },
+          },
         },
       },
-      // {
-      //   accessorKey: "educationDegree",
-      //   header: "Təhsil dərəcəsi",
-      //   editVariant: "select",
-      //   editSelectOptions: edudegree,
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.educationDegree,
-      //     helperText: validationErrors?.educationDegree,
-      //   },
-      // },
 
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Təhsil aldığı müəssəsinin adı",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
       {
         accessorKey: "note",
         header: "Qeyd",
@@ -160,94 +142,13 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "qualification",
-      //   header: "İxtisas",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.qualification,
-      //     helperText: validationErrors?.qualification,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         qualification: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Diplomun seriya və nömrəsi ",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-
-      // {
-      //   accessorKey: "diplomaGivenDate",
-      //   header: "Diplomun verilmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.diplomaGivenDate,
-      //     helperText: validationErrors?.diplomaGivenDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         diplomaGivenDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "startDate",
-      //   header: "Təhsilə başlama tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.startDate,
-      //     helperText: validationErrors?.startDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         startDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "endDate",
-      //   header: "Təhsilin bitmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.endDate,
-      //     helperText: validationErrors?.endDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         endDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
     ],
     [validationErrors, types]
   );
 
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
+    useCreateUser(types);
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -257,7 +158,7 @@ const Example = () => {
   } = useGetUsers();
   //call UPDATE hook
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
+    useUpdateUser(types);
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
@@ -463,24 +364,85 @@ const Example = () => {
 };
 
 //CREATE hook (post new user to api)
-function useCreateUser() {
+function useCreateUser(types) {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Insurances`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+
+      function findArrayElementByTitle(array, title) {
+        console.log(
+          array.find((element) => {
+            return element.name === title;
+          })
+        );
+        return array.find((element) => {
+          return element.name === title;
+        }).id;
+      }
+
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
+
+      const newUser = {
+        startDate: convertDate(user.startDate),
+        endDate: convertDate(user.endDate),
+        note: user.note,
+        volunteerId: userId,
+        insuranceCompanyId: findArrayElementByTitle(
+          types,
+          user["insuranceCompanyId"]
+        ),
+      };
+      console.log(newUser);
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random(),
         },
       ]);
     },
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -492,11 +454,11 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Insurances/GetAll/${userId}`
+          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
         );
 
         console.log(response.data.data);
-        return response.data.data;
+        return response.data.data.insurances;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);
@@ -507,23 +469,22 @@ function useGetUsers() {
   });
 }
 
-//UPDATE hook (put user in api)
 function useUpdateUser(types) {
-  const location = useLocation().pathname.substring(1);
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
+      console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Insurances`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
+
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -535,44 +496,81 @@ function useUpdateUser(types) {
         });
       }
 
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
+
       const newUser = {
-        name: user.name,
-        priority: user.priority,
-        educationTypeId: findArrayElementByTitle(
-          types,
-          user["educationType.name"]
-        ).id,
+        id: user.id,
+        startDate: convertDate(user.startDate),
+        endDate: convertDate(user.endDate),
+        note: user.note,
+        volunteerId: userId,
+        insuranceCompanyId: user.insuranceCompanyId,
       };
-      // axios
-      //   .put(url, data, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
+      // console.log(newUser);
+
+      try {
+        const response = await axios.put(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
-
 //DELETE hook (delete user in api)
 function useDeleteUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/Insurances/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {
@@ -583,7 +581,6 @@ function useDeleteUser() {
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
-
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
@@ -599,6 +596,8 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
-    gender: !validateRequired(user.gender) ? "First Name is Required" : "",
+    insuranceCompanyId: !validateRequired(user.insuranceCompanyId)
+      ? "First Name is Required"
+      : "",
   };
 }

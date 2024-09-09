@@ -50,6 +50,35 @@ export default function TabsUser() {
   let params = useParams();
   let userId = params.id;
   console.log(userId);
+  const [volonteerIDs, setVolonteerIDs] = useState([]);
+
+  const handleChange1 = (value) => {
+    setVolonteerIDs(value);
+    console.log(`selected ${value}`);
+  };
+
+  async function postVolonteers(array) {
+    const url = `https://api-volunteers.fhn.gov.az/api/v1/Events/AddVolunteerToEvent`;
+
+    const headers = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    };
+
+    const newUser = {
+      eventId: userId,
+      volunteerIds: array,
+    };
+
+    try {
+      const response = await axios.post(url, newUser, { headers });
+      window.location.reload();
+      // console.log(user);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
 
   const [userData, setUserData] = useState({
     id: "",
@@ -63,9 +92,7 @@ export default function TabsUser() {
     note: "",
     volunteers: [],
   });
-  const handleChange1 = (value) => {
-    console.log(`selected ${value}`);
-  };
+
   useEffect(() => {
     axios
       .get(`https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}`)
@@ -211,7 +238,13 @@ export default function TabsUser() {
               width: "100%",
             }}
           >
-            <Button>Əlavə et</Button>
+            <Button
+              onClick={() => {
+                postVolonteers(volonteerIDs);
+              }}
+            >
+              Əlavə et
+            </Button>
           </div>
           <TableFoeEventDEatails />
         </div>

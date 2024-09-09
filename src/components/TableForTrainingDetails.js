@@ -112,32 +112,35 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "note",
+        accessorKey: "comments",
         header: "Qeyd",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.note,
-          helperText: validationErrors?.note,
+          error: !!validationErrors?.comments,
+          helperText: validationErrors?.comments,
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              note: undefined,
+              comments: undefined,
             }),
         },
       },
       {
-        accessorKey: "trainingResult.name",
+        accessorKey: "evaluationResult",
         header: "Nəticə",
-        editVariant: "select",
-        editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.state,
-          helperText: validationErrors?.state,
+          required: true,
+          error: !!validationErrors?.evaluationResult,
+          helperText: validationErrors?.evaluationResult,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              evaluationResult: undefined,
+            }),
         },
       },
     ],
-    [validationErrors, types]
+    [validationErrors]
   );
 
   //call CREATE hook
@@ -248,13 +251,13 @@ const Example = () => {
             <DeleteIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="qiym'l'nidr">
+        <Tooltip title="Qiymətləndir">
           <Button
             style={{ marginTop: "8px" }}
             onClick={() => table.setEditingRow(row)}
             variant="contained"
           >
-            Qiymətləndir
+            Qİymətləndİr
           </Button>
         </Tooltip>
       </Box>
@@ -346,56 +349,49 @@ function useGetUsers() {
   });
 }
 
-// function useGetUsers() {
-//   return useQuery({
-//     queryKey: ["users"],
-//     queryFn: async () => {
-//       try {
-//         const response = await axios.get(
-//           "https://api-volunteers.fhn.gov.az/api/v1/MesTraining/39"
-//         ); // Replace with your actual URL
-
-//         // // Check if the response data has the expected structure
-//         // if (response.data && Array.isArray(response.data.data)) {
-//         //   const users = response.data.data;
-
-//         //   // Debugging output: Print all volunteers for each user
-//         //   users.forEach((user) => {
-//         //     console.log(user.volunteers); // Print volunteers for each user object
-//         //   });
-
-//           return users; // Return the users array
-//         } else {
-//           console.error("Unexpected response structure:", response.data);
-//           return []; // Return an empty array if data is not as expected
-//         }
-//       } catch (error) {
-//         console.error("Error fetching users:", error);
-//         throw error; // Rethrow error to be handled by react-query
-//       }
-//     },
-//     refetchOnWindowFocus: false,
-//   });
-// }
-
 //UPDATE hook (put user in api)
 function useUpdateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/EvaluateVolunteer`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+
+      const newUser = {
+        volunteerId: user.id,
+        mesTrainingId: userId,
+        evaluationResult: user.evaluationResult,
+        comments: user.comments,
+      };
+      console.log(newUser);
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        // window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 

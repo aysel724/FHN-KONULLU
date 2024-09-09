@@ -60,7 +60,11 @@ const Example = () => {
               ...validationErrors,
               startDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date", // Set the input type to 'date'
+            },
+          },
         },
       },
       {
@@ -76,7 +80,11 @@ const Example = () => {
               ...validationErrors,
               endDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date", // Set the input type to 'date'
+            },
+          },
         },
       },
       {
@@ -150,11 +158,11 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
+    // const newValidationErrors = validateUser(values);
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
@@ -162,11 +170,11 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
+    // const newValidationErrors = validateUser(values);
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -283,7 +291,6 @@ const Example = () => {
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Button variant="contained">Sertifikat yüklə </Button>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
             <svg
@@ -349,25 +356,71 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
 function useCreateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/VoluntaryActivities`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
+
+      const newUser = {
+        name: user.name,
+        note: user.note,
+        volunteerId: userId,
+        interestOfVoluntryField: user.interestOfVoluntryField,
+        description: user.description,
+        endDate: convertDate(user.endDate),
+        startDate: convertDate(user.startDate),
+      };
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random(),
         },
       ]);
     },
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -393,25 +446,72 @@ function useGetUsers() {
     refetchOnWindowFocus: false,
   });
 }
-
-//UPDATE hook (put user in api)
 function useUpdateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/VoluntaryActivities`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
+
+      const newUser = {
+        id: user.id,
+        name: user.name,
+        note: user.note,
+        volunteerId: userId,
+        interestOfVoluntryField: user.interestOfVoluntryField,
+        description: user.description,
+        endDate: convertDate(user.endDate),
+        startDate: convertDate(user.startDate),
+      };
+
+      try {
+        const response = await axios.put(url, newUser, { headers });
+        window.location.reload();
+        console.log(newUser);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -462,6 +562,6 @@ const validateRequired = (value) => !!value.length;
 
 function validateUser(user) {
   return {
-    activity: !validateRequired(user.activity) ? "First Name is Required" : "",
+    name: !validateRequired(user.name) ? "First Name is Required" : "",
   };
 }

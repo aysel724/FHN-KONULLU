@@ -22,7 +22,7 @@ import Events from "../pages/Events";
 import Trainings from "../pages/Trainings";
 import icon1 from "../components/images/3.png";
 import TrainingsInfo from "../pages/TrainingsInfo";
-import AllVolunteers from "../pages/AllVolunteers";
+
 import { Divider } from "antd";
 import EventInfo from "../pages/EventInfo";
 import { key } from "localforage";
@@ -418,7 +418,7 @@ const Sidebar = () => {
               <Route path="/events" element={<Events />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/certificate" element={<CertificatePages />} />
-              <Route path="/allVolunteers" element={<AllVolunteers />} />
+
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
 

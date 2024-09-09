@@ -127,18 +127,22 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "trainingResult.name",
+        accessorKey: "evaluationResult",
         header: "Nəticə",
-        editVariant: "select",
-        editSelectOptions: getTypesNames(types),
+        header: "Qeyd",
         muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.state,
-          helperText: validationErrors?.state,
+          required: true,
+          error: !!validationErrors?.evaluationResult,
+          helperText: validationErrors?.evaluationResult,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              evaluationResult: undefined,
+            }),
         },
       },
     ],
-    [validationErrors, types]
+    [validationErrors]
   );
 
   //call CREATE hook
@@ -249,13 +253,13 @@ const Example = () => {
             <DeleteIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="qiym'l'nidr">
+        <Tooltip title="Könüllünən tədbirdə iştirakınını qiymətləndir">
           <Button
             style={{ marginTop: "8px" }}
             onClick={() => table.setEditingRow(row)}
             variant="contained"
           >
-            Qiymətləndir
+            Qİymətləndİr
           </Button>
         </Tooltip>
       </Box>
@@ -346,12 +350,29 @@ function useUpdateUser() {
 
 //DELETE hook (delete user in api)
 function useDeleteUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+    mutationFn: async (user) => {
+      console.log(userId);
+
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}/${user}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {

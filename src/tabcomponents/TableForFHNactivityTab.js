@@ -183,12 +183,13 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
-    setValidationErrors({});
+    // console.log(values);
+    // const newValidationErrors = validateUser(values);
+    // if (Object.values(newValidationErrors).some((error) => error)) {
+    //   setValidationErrors(newValidationErrors);
+    //   return;
+    // }
+    // setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
   };
@@ -605,7 +606,7 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettlenvalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 

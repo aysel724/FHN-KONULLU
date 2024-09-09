@@ -30,6 +30,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
+  const [degrees, setDegrees] = useState([]);
 
   useEffect(() => {
     const TypesData = async () => {
@@ -64,6 +65,40 @@ const Example = () => {
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
   }
+
+  useEffect(() => {
+    const TypesData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api-volunteers.fhn.gov.az/api/v1/EducationDegrees`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data.data);
+        const newData = response.data.data.map((e) => {
+          const user = {
+            name: e.name,
+            id: e.id,
+          };
+
+          return user;
+        });
+
+        console.log(newData);
+        setDegrees(newData);
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    };
+    TypesData();
+  }, []);
+
+  function getdegreeNames(arr) {
+    return arr.map((e) => e.name);
+  }
   const columns = useMemo(
     () => [
       {
@@ -96,8 +131,19 @@ const Example = () => {
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.state,
-          helperText: validationErrors?.state,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
+        },
+      },
+      {
+        accessorKey: "degree",
+        header: "Təhsilinin dərəcəsi",
+        editVariant: "select",
+        editSelectOptions: getdegreeNames(degrees),
+        muiEditTextFieldProps: {
+          select: true,
+          error: !!validationErrors?.degree,
+          helperText: validationErrors?.degree,
         },
       },
       // {
@@ -156,6 +202,22 @@ const Example = () => {
             setValidationErrors({
               ...validationErrors,
               qualification: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+      {
+        accessorKey: "faculty",
+        header: "Fakültə",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.faculty,
+          helperText: validationErrors?.faculty,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              faculty: undefined,
             }),
           //optionally add validation checking for onBlur or onChange
         },
@@ -479,7 +541,14 @@ function useGetUsers() {
           `https://api-volunteers.fhn.gov.az/api/v1/Education/GetAll/${userId}`
         );
 
-        return response.data.data;
+        const users = response.data.data.map((user) => ({
+          ...user,
+
+          degree: `${user.educationType.name}`,
+        }));
+        console.log(response.data.data, "users");
+
+        return users;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);
@@ -550,12 +619,27 @@ function useUpdateUser(types) {
 
 //DELETE hook (delete user in api)
 function useDeleteUser() {
+  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `https://api-volunteers.fhn.gov.az/api/v1/Education/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
+
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
     },
     //client side optimistic update
     onMutate: (userId) => {
@@ -566,7 +650,6 @@ function useDeleteUser() {
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
-
 const queryClient = new QueryClient();
 
 const Uxtable = () => (

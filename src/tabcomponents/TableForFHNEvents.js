@@ -518,7 +518,7 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => ({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 

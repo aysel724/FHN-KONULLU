@@ -7,15 +7,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
-import {
-  Box,
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
+
 import {
   QueryClient,
   QueryClientProvider,
@@ -24,8 +16,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { edudegree, edutype } from "../makeData";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -90,7 +80,7 @@ const Example = () => {
       },
 
       {
-        accessorKey: "mesTrainingNameId",
+        accessorKey: "mesTrainingName.name",
         header: "Təlimin adı",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
@@ -183,7 +173,7 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors]
+    [validationErrors, types]
   );
 
   //call CREATE hook
@@ -288,10 +278,14 @@ const Example = () => {
       // ... and many more - see link below for full list of translation keys
     },
     columns,
+    enableRowNumbers: true,
     data: fetchedUsers,
     createDisplayMode: "modal", //default ('row', and 'custom' are also available)
     editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
-    enableEditing: true,
+    enableEditing: false,
+    initialState: {
+      columnVisibility: { id: false },
+    },
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {

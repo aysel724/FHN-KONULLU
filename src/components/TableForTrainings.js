@@ -26,52 +26,53 @@ import {
 } from "@tanstack/react-query";
 import { fakeData1 } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useExcelJS } from "react-use-exceljs";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 import axios from "axios";
 import { useEffect } from "react";
 const Example = () => {
-  const excel = useExcelJS({
-    filename: "Tədbirlər siyahısı.xlsx",
-    worksheets: [
-      {
-        name: "Sheet 1",
-        columns: [
-          {
-            header: "Tədbirin adı",
-            key: "name",
-            width: 30,
-          },
-          {
-            header: "Başlama vaxtı",
-            key: "startDate",
-            width: 32,
-          },
-          {
-            header: "Bitmə tarixi",
-            key: "finishDate",
-            width: 30,
-          },
-          {
-            header: "Tədbirin keçirilmə ünvanı",
-            key: "trainingPlace",
-            width: 30,
-          },
-          {
-            header: "Tədbirin müddəti",
-            key: "trainingDuration",
-            width: 60,
-          },
-          {
-            header: "Tədbir üzrə məsul şəxs",
-            key: "trainingMaster",
-            width: 30,
-          },
-        ],
-      },
-    ],
-  });
-  const onClick = () => {
-    excel.download(table);
+  const handleExportToExcel = async (table) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
+
+    // Get visible columns
+    const visibleColumns = table.getState().columnVisibility;
+
+    // Add header row
+    const headers = table.getHeaderGroups().flatMap(
+      (group) =>
+        group.headers
+          .filter((header) => visibleColumns[header.id] !== false)
+          .map((header) => header.columnDef?.header || header.id) // Fallback to header.id if columnDef.header is undefined
+    );
+
+    console.log("Headers:", headers); // Ensure headers are correctly populated
+
+    const headerRow = worksheet.addRow(headers);
+    headerRow.eachCell({ includeEmpty: true }, (cell) => {
+      cell.font = { bold: true, size: 14 };
+    });
+
+    worksheet.getColumn(1).width = 0; // Adjust width for Column 1
+    worksheet.getColumn(2).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(3).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(4).width = 30; // Adjust width for Column 1
+    worksheet.getColumn(5).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(6).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(7).width = 30; // Adjust width for Column 1
+    worksheet.getColumn(8).width = 30; // Adjust width for Column 2
+    worksheet.getColumn(9).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(10).width = 0;
+    // Add data rows
+    table.getRowModel().rows.forEach((row) => {
+      const rowData = headers.map((header) => row.original[header] || ""); // Ensure you handle undefined values
+      worksheet.addRow(rowData);
+    });
+
+    // Save the Excel file
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      saveAs(new Blob([buffer]), "konulluler.xlsx");
+    });
   };
 
   const navigate = useNavigate();
@@ -496,7 +497,7 @@ const Example = () => {
         >
           Yeni təlim əlavə et
         </Button>
-        <Button variant="contained" onClick={onClick}>
+        <Button variant="contained" onClick={() => handleExportToExcel(table)}>
           Excelə export
         </Button>
       </div>
@@ -601,7 +602,34 @@ function useUpdateUser() {
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
+      // const data = { ...user };
+      const data = {
+        // mesTrainingNameId: 1,
+        // departmentInCharge: user.departmentInCharge,
+        // description: user.description,
+        // startDate: user.startDate,
+        // finishDate: user.finishDate,
+        // trainingDuration: user.trainingDuration,
+        // trainingPlace: user.trainingPlace,
+        // trainingMaster: user.trainingMaster,
+        // trainingResultId: 1,
+
+        // mesTrainingAttachmentFiles: [],
+        // id: user.id,
+        // priority: user.priority,
+        id: 53,
+        description: "123",
+        startDate: "2024-09-08T00:00:00Z",
+        finishDate: "2024-09-15T00:00:00Z",
+        departmentInCharge: "123",
+        trainingDuration: "123",
+        trainingPlace: "123",
+        trainingMaster: "123",
+        priority: 1,
+        mesTrainingNameId: 2,
+        trainingResultId: 2,
+        mesTrainingAttachmentFiles: [],
+      };
       console.log(data);
       //send api update request here
 
@@ -609,9 +637,8 @@ function useUpdateUser() {
 
       const headers = {
         Accept: "*/*",
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       };
-      console.log(user);
       axios
         .put(url, data, { headers })
         .then((response) => {

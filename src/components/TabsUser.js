@@ -61,6 +61,38 @@ function a11yProps(index) {
   };
 }
 
+function refreshUser(user) {
+  const formData = new FormData();
+  formData.append("Id", user.id);
+  formData.append("Email", user.email);
+  formData.append("PhoneNumber1", user.phoneNumber1);
+  formData.append("PhoneNumber2", user.phoneNumber2);
+  formData.append("CheckFromIamas", true);
+  formData.append("QueryParams", {
+    additionalProp1: "string",
+    additionalProp2: "string",
+    additionalProp3: "string",
+  });
+
+  // console.log(data);
+  //send api update request here
+
+  const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`;
+
+  const headers = {
+    Accept: "*/*",
+  };
+
+  axios
+    .put(url, formData, { headers })
+    .then((response) => {
+      console.log("Response:", response.data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
 export default function TabsUser() {
   let params = useParams();
   let userId = params.id;
@@ -80,6 +112,7 @@ export default function TabsUser() {
     phoneNumber1: "",
     phoneNumber2: "",
     email: "",
+    idCardNumber: "",
   });
 
   useEffect(() => {
@@ -177,6 +210,9 @@ export default function TabsUser() {
                 backgroundColor: "rgb(75, 125, 131)",
                 borderRadius: "12px",
                 border: "none",
+              }}
+              onClick={() => {
+                refreshUser(userData);
               }}
             >
               IAMASLA YENİLƏ
