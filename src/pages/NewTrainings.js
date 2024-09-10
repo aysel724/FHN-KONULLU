@@ -19,6 +19,7 @@ import Select from "@mui/material/Select";
 import btoa from "btoa-lite";
 import { convertDate } from "../utils/convertDate";
 import { validateTraning } from "../utils/validateUser";
+import { FormHelperText } from "@mui/material";
 export default function NewTrainings() {
   const navigate = useNavigate();
   const style = {
@@ -38,6 +39,7 @@ export default function NewTrainings() {
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
+  
 
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type, message, description) => {
@@ -183,9 +185,7 @@ export default function NewTrainings() {
 
     setError(errorNotfication);
 
-    // setTimeout(() => {
-    //   navigate(`/MesTrainings`);
-    // }, 20000);
+   
 
     setUserData((prev) => {
       const data = {
@@ -272,6 +272,9 @@ export default function NewTrainings() {
         }
       });
       setLoading(false)
+       setTimeout(() => {
+      navigate(`/MesTrainings`);
+    }, 20000);
     }
     
   }
@@ -283,7 +286,7 @@ export default function NewTrainings() {
   return (
     <>
       {contextHolder}
-      {isLoading && <div className="loader">Yüklənir...</div>}
+      {/* {isLoading && <div className="loader">Yüklənir...</div>} */}
       {error && (
         <Modal
           aria-labelledby="transition-modal-title"
@@ -322,6 +325,7 @@ export default function NewTrainings() {
             flexDirection: "row",
             gap: "60px",
             padding: "1%",
+          
           }}
           
         >
@@ -336,7 +340,7 @@ export default function NewTrainings() {
               },
             }}
           >
-            {" "}
+            <FormControl variant="outlined" fullWidth error={!!error?.mesTrainingNameId}>
             <InputLabel id="321">Təlimin adı</InputLabel>
             <Select
               labelId="321"
@@ -356,6 +360,8 @@ export default function NewTrainings() {
                 return <MenuItem value={training.id}>{training.name}</MenuItem>;
               })}
             </Select>
+            <FormHelperText>{error?.mesTrainingNameId || ""}</FormHelperText>
+            </FormControl>
             <TextField
               label="Təlimin adı keçirən qurum*"
               id="Name"
@@ -457,6 +463,8 @@ export default function NewTrainings() {
               }}
             >
               {" "}
+            <FormControl variant="outlined" fullWidth error={!!error?.trainingResultId}>
+
               <InputLabel id="arestrdytfy">Təlimin neticesi</InputLabel>
               <Select
                 sx={{
@@ -468,11 +476,12 @@ export default function NewTrainings() {
                   console.log(userData);
                   setUserData((prev) => {
                     const data = { ...prev, trainingResultId: e.target.value };
-
                     return data;
                   });
                 }}
                 variant="outlined"
+                error={!!error?.trainingResultId}
+                helperText={error?.trainingResultId || ""}
               >
                 {trainingResult.map((training) => {
                   return (
@@ -480,6 +489,8 @@ export default function NewTrainings() {
                   );
                 })}
               </Select>
+              <FormHelperText>{error?.trainingResultId || ""}</FormHelperText>
+            </FormControl>
               <TextField
                 id="filled-basic"
                 name="militaryReward"
@@ -533,6 +544,7 @@ export default function NewTrainings() {
                 name="priority"
                 label="Prioritet "
                 variant="outlined"
+                type="number"
                 value={userData?.priority}
                 onChange={(e) => {
                   console.log(userData);
