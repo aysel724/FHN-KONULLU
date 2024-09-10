@@ -27,8 +27,7 @@ import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateLanguageLevel } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-import EditIcon from "../assets/editIcon";
-import { useDeleteUser } from "../api/tabComponentsDelete/DeleteUser";
+import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
@@ -42,8 +41,11 @@ const Example = () => {
   }
   
   useEffect(() => {
-    TypesData(setTypes,"LanguageNames");
+    TypesData(setTypes1,"LanguageNames");
+  }, []);
+  useEffect(() => {
     TypesData(setTypes,"LanguageProficiencyLevels");
+
   }, []);
 
   function getTypesNames(arr) {
@@ -425,37 +427,37 @@ function useUpdateUser(types, types1) {
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
-// function useDeleteUser() {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: async (userId) => {
-//       console.log(userId);
-//       try {
-//         const response = await axios.delete(
-//           `${BASE_URL}/Languages/${userId}`,
-//           {
-//             headers: { accept: "*/*" },
-//           }
-//         );
-//         console.log(response.data);
+function useDeleteUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId) => {
+      console.log(userId);
+      try {
+        const response = await axios.delete(
+          `${BASE_URL}/Languages/${userId}`,
+          {
+            headers: { accept: "*/*" },
+          }
+        );
+        console.log(response.data);
 
-//         // Assuming your API returns data in response.data
-//         return response.data.data;
-//       } catch (error) {
-//         // Handle errors here if needed
-//         console.error("Error fetching users:", error);
-//         throw error;
-//       }
-//     },
-//     //client side optimistic update
-//     onMutate: (userId) => {
-//       queryClient.setQueryData(["users"], (prevUsers) =>
-//         prevUsers?.filter((user) => user.id !== userId)
-//       );
-//     },
-//     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
-//   });
-// }
+        // Assuming your API returns data in response.data
+        return response.data.data;
+      } catch (error) {
+        // Handle errors here if needed
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    },
+    //client side optimistic update
+    onMutate: (userId) => {
+      queryClient.setQueryData(["users"], (prevUsers) =>
+        prevUsers?.filter((user) => user.id !== userId)
+      );
+    },
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+  });
+}
 
 const queryClient = new QueryClient();
 

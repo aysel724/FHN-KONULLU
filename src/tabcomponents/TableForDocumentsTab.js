@@ -28,7 +28,7 @@ import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateElectronDocument } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-import EditIcon from "../assets/editIcon";
+import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {

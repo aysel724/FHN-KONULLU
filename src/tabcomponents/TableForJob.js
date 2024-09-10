@@ -28,7 +28,7 @@ import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateFields, validateLaborActivity } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-import EditIcon from "../assets/editIcon";
+import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 import formatDateTİme from "../utils/convertDate";
 

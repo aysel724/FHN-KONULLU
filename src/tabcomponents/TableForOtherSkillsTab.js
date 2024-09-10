@@ -27,7 +27,7 @@ import { useParams } from "react-router-dom";
 import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-import EditIcon from "../assets/editIcon";
+import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
@@ -56,13 +56,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.name,
           helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               name: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
@@ -73,13 +71,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.note,
           helperText: validationErrors?.note,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               note: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
     ],
@@ -137,18 +133,14 @@ const Example = () => {
   const table = useMaterialReactTable({
     localization: {
       cancel: "İmtina",
-
       clearFilter: "Filteri təmizlə",
       clearSearch: "Axtarışı təmizlə",
-
       clearSort: "Sıralamani təmizlə",
       clickToCopy: "Kopyalamaq üçün klik edin",
       copy: "Kopyala",
       collapse: "Collapse",
-
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
-
       edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",
@@ -185,12 +177,11 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal", 
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -215,7 +206,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -229,7 +220,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -254,13 +245,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true); 
         }}
       >
         Əlavə edin

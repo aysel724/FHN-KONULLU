@@ -28,7 +28,7 @@ import {
 import { useParams } from "react-router-dom";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "../assets/editIcon";
+import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {

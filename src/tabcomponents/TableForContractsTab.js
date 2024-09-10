@@ -28,8 +28,9 @@ import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateContract } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-import EditIcon from "../assets/editIcon";
-import formatDateTİme, { convertDate } from "../utils/convertDate";
+import EditIcon from "../assets/icons/editIcon";
+import formatDateTİme from "../utils/convertDate";
+import convertDate  from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {

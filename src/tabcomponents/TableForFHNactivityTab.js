@@ -27,10 +27,10 @@ import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import  { validateFHNVolunterActivity } from '.././utils/validateUser'
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-import convertDate from "../utils/convertDate";
+// import convertDate from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
-import EditIcon from "../assets/editIcon";
-import formatDateTİme from "../utils/convertDate";
+import EditIcon from "../assets/icons/editIcon";
+import formatDateTİme, { convertDate } from "../utils/convertDate";
 // import { useDeleteUser } from "../api/tabComponentsDelete/DeleteUser";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -39,7 +39,7 @@ const Example = () => {
 
   useEffect(() => {
     TypesData(setTypes,"MesVoluntaryActivityEndReasons");
-    console.log(types);
+    console.log(types,'types');
   }, []);
 
   const getTypesNames = (types) => {
@@ -146,17 +146,16 @@ const Example = () => {
   } = useGetUsers();
   //call UPDATE hook
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser(types);
+    useUpdateUser();
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
-    useDeleteUser('VoluntaryOfMeses');
+    useDeleteUser();
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
     // setEndDate(values)
     const newValidationErrors = validateFHNVolunterActivity(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
-      console.log("Validation errors present:", newValidationErrors);  
       setValidationErrors(newValidationErrors);
       return;
     }
@@ -174,6 +173,8 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);//exit editing mode
+    table.setEditingRow(null); //exit editing mode
+
   };
 
   //DELETE action
@@ -429,7 +430,7 @@ function useUpdateUser(types) {
           }).id;
         }
       }
-      const url = "${BASE_URL}/VoluntaryOfMeses";
+      const url = `${BASE_URL}/VoluntaryOfMeses`;
 
       const headers = {
         Accept: "*/*",

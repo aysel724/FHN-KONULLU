@@ -26,7 +26,7 @@ import {
 import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-import EditIcon from "../assets/editIcon";
+import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
@@ -35,8 +35,7 @@ const Example = () => {
   const [degrees, setDegrees] = useState([]);
   useEffect(() => {
     TypesData(setTypes,"ComputerSkillNames");
-    TypesData(setTypes,"SkillLevels");
-
+    TypesData(setDegrees,"SkillLevels");
   }, []);
 
   function getTypesNames(arr) {
@@ -85,13 +84,12 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.note,
           helperText: validationErrors?.note,
-          //remove any previous validation errors when user focuses on the input
+
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               note: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
@@ -137,23 +135,15 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
+
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
+ 
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode

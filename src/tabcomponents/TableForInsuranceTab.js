@@ -28,8 +28,9 @@ import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateInsurance } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-import EditIcon from "../assets/editIcon";
-import formatDateTİme, { convertDate } from "../utils/convertDate";
+import EditIcon from "../assets/icons/editIcon";
+import  convertDate  from "../utils/convertDate";
+import formatDateTİme from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
@@ -83,7 +84,6 @@ const Example = () => {
           },
         },
       },
-
       {
         accessorKey: "endDate",
         header: "Bitmə tarixi",
@@ -111,7 +111,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.note,
           helperText: validationErrors?.note,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -340,27 +339,7 @@ function useCreateUser(types) {
         }).id;
       }
 
-      function convertDate(date) {
-        const dateObject = new Date(date);
 
-        // Get UTC time string
-        const utcYear = dateObject.getUTCFullYear();
-        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-        const utcDay = dateObject.getUTCDate();
-        const utcHours = dateObject.getUTCHours();
-        const utcMinutes = dateObject.getUTCMinutes();
-        const utcSeconds = dateObject.getUTCSeconds();
-
-        // Construct the UTC date string in ISO 8601 format
-        const utcDateTimeString = `${utcYear}-${utcMonth
-          .toString()
-          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-          .toString()
-          .padStart(2, "0")}:${utcMinutes
-          .toString()
-          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-        return utcDateTimeString;
-      }
 
       const newUser = {
         startDate: convertDate(user.startDate),

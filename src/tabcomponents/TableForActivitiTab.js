@@ -26,8 +26,9 @@ import {
 } from "@tanstack/react-query";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateVolunterActivity } from "../utils/validateUser";
-import EditIcon from "../assets/editIcon";
-import formatDateTİme, { convertDate } from "../utils/convertDate";
+import EditIcon from "../assets/icons/editIcon";
+import formatDateTİme  from "../utils/convertDate";
+import  convertDate  from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});

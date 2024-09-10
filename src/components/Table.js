@@ -34,6 +34,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
 import { useVolunteers } from "../context/VolunterContext";
+import EditIcon from "../assets/icons/editIcon";
 
 const Example = () => {
   const [securityTypes, setSecurityTypes] = useState([]);
@@ -494,26 +495,8 @@ const Example = () => {
         </DialogActions>
       </>
     ),
-    // renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
-    //   <>
-    //     <DialogTitle variant="h3"></DialogTitle>
-    //     <DialogContent
-    //       sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-    //     >
-    //       {internalEditComponents} {/* or render custom edit components here */}
-    //     </DialogContent>
-    //     <DialogActions>
-    //       <MRT_EditActionButtons variant="text" table={table} row={row} />
-    //     </DialogActions>
-    //   </>
-    // ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
-        {/* {role === "Volunteers" && (
-          <Button variant="contained" onClick={() => table.setEditingRow(row)}>
-            status
-          </Button>
-        )} */}
         <Tooltip title="Ətraflı">
           <VisibilityIcon
             style={{ marginTop: "8px" }}
@@ -525,32 +508,7 @@ const Example = () => {
         </Tooltip>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
-                stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
-                fill="#4B7D83"
-              />
-              <path
-                d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
-                stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <EditIcon/>
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -570,10 +528,6 @@ const Example = () => {
         >
           Yeni könüllü əlavə edin
         </Button>
-
-        {/* <Button variant="contained" onClick={handleDownload}>
-          Excelə export
-        </Button> */}
         <Button variant="contained" onClick={() => handleExportToExcel(table)}>
           Excelə export
         </Button>
@@ -600,7 +554,6 @@ function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here\\\https://10.70.3.176/api/v1/Volunteers?page=1&pageSize=0
       await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
       return Promise.resolve();
     },
@@ -614,7 +567,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -627,12 +579,6 @@ function useGetUsers() {
         const response = await axios.get(
           "https://api-volunteers.fhn.gov.az/api/v1/Volunteers"
         );
-        // console.log(response.data.data);
-        // const names = response.data.data.map(
-        //   (e) => e.name + "  " + e.surname + " " + e.fatherName
-        // );
-        // console.log(names);
-        // return response.data.data;
 
         const users = response.data.data.map((user) => ({
           ...user,
