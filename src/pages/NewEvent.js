@@ -124,16 +124,15 @@ export default function NewTrainings() {
   const [userData, setUserData] = useState({
     name: "",
     departmentInCharge: "",
-    description: "",
+    note: "",
     startDate: "",
     finishDate: "",
-    trainingDuration: "",
-    trainingPlace: "",
-    trainingMaster: "",
-    trainingResultId: "",
-    priority: "",
+    eventDuration: "",
+    eventPlace: "",
+    personInCharge: "",
+
     volunteerIds: [],
-    mesTrainingAttachmentFiles: [],
+    eventAttachments: [],
   });
 
   const [value, setValue] = useState([]);
@@ -194,10 +193,11 @@ export default function NewTrainings() {
     formData.append("StartDate", convertDate(userData.startDate));
     formData.append("Name", userData.name);
     formData.append("DepartmentInCharge", userData.departmentInCharge);
-    formData.append("Description", userData.description);
-    formData.append("EventDuration", userData.eventDuration);
 
+    formData.append("EventDuration", userData.eventDuration);
+    formData.append("Note", userData.note);
     formData.append("EventPlace", userData.eventPlace);
+    formData.append("PersonInCharge", userData.personInCharge);
     formData.append("FinishDate", convertDate(userData.finishDate));
     [...userData.volunteerIds].forEach((id) => {
       formData.append("VolunteerIds", id);
@@ -272,7 +272,7 @@ export default function NewTrainings() {
   return (
     <>
       {contextHolder}
-      {isLoading && <div className="loader">Loading...</div>}
+      {/* {isLoading && <div className="loader">Loading...</div>} */}
       {error && (
         <Modal
           aria-labelledby="transition-modal-title"
@@ -416,7 +416,7 @@ export default function NewTrainings() {
             <TextField
               id="filled-basic"
               name="militaryReward"
-              label="Təlimin müddəti "
+              label="Tədbirin müddəti"
               variant="outlined"
               value={userData?.eventDuration}
               onChange={(e) => {
@@ -430,7 +430,7 @@ export default function NewTrainings() {
             />
             <TextField
               id="Height"
-              label="Təlimin keçirilmə yeri "
+              label="Tədbirin keçirilmə yeri* "
               name="height"
               variant="outlined"
               value={userData?.eventPlace}
@@ -446,13 +446,28 @@ export default function NewTrainings() {
             <TextField
               id="vj"
               name="birthDate"
-              label="Təlimçi "
+              label="Tədbir üzrə məsul şəxs"
               variant="outlined"
               value={userData?.personInCharge}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, personInCharge: e.target.value };
+
+                  return data;
+                });
+              }}
+            />
+            <TextField
+              id="vj"
+              name="birthDate"
+              label="Qeyd"
+              variant="outlined"
+              value={userData?.note}
+              onChange={(e) => {
+                console.log(userData);
+                setUserData((prev) => {
+                  const data = { ...prev, note: e.target.value };
 
                   return data;
                 });
@@ -482,7 +497,10 @@ export default function NewTrainings() {
               options={volonteerNames}
               sx={{ width: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Konulluler" />
+                <TextField
+                  {...params}
+                  label="Tədbirdə iştirak edən könüllülər"
+                />
               )}
             />
             <Button variant="contained" onClick={() => handleSubmit()}>

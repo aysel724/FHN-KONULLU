@@ -113,23 +113,22 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "note",
+        accessorKey: "comments",
         header: "Qeyd",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.note,
-          helperText: validationErrors?.note,
+          error: !!validationErrors?.comments,
+          helperText: validationErrors?.comments,
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              note: undefined,
+              comments: undefined,
             }),
         },
       },
       {
         accessorKey: "evaluationResult",
         header: "Nəticə",
-        header: "Qeyd",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.evaluationResult,
@@ -329,22 +328,47 @@ function useGetUsers() {
 
 //UPDATE hook (put user in api)
 function useUpdateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Events/EvaluateVolunteer`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+
+      const newUser = {
+        volunteerId: user.id,
+        eventId: userId,
+        evaluationResult: user.evaluationResult,
+        comments: user.comments,
+      };
+      console.log(newUser);
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        window.location.reload();
+        console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 

@@ -1,0 +1,40 @@
+.user-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+.username-container {
+  display: inline-block;
+  position: relative;
+}
+
+.logout-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 70%; /* Adjust as needed */
+  right: -15%;
+  border: none;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.logout-modal button {
+  background-color: #feffff; /* Red color for the button */
+  color: #4b7d83;
+  border: none;
+  padding: 8px 46px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.logout-modal button:hover {
+  padding: 8px 46px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4b7d83;
+  color: white; /* Darker red on hover */
+}

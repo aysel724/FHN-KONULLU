@@ -79,9 +79,10 @@ const Example = () => {
         accessorKey: "startDate",
         header: "Başlama tarixi",
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate,
+          helperText: "Başlama tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -90,7 +91,8 @@ const Example = () => {
             }),
           InputProps: {
             inputProps: {
-              type: "date", // Set the input type to 'date'
+              type: "date",
+              helperText: "", // Set the input type to 'date'
             },
           },
         },
@@ -99,9 +101,10 @@ const Example = () => {
         accessorKey: "endDate",
         header: "Bitmə tarixi",
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.endDate,
-          helperText: validationErrors?.endDate,
+          helperText: "Bitmə tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -113,25 +116,9 @@ const Example = () => {
               type: "date", // Set the input type to 'date'
             },
           },
-          //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "mesVoluntaryActivityEndReasons",
-      //   header: "Fəaliyyətin bitmə səbəbi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.mesVoluntaryActivityEndReasons,
-      //     helperText: validationErrors?.mesVoluntaryActivityEndReasons,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         mesVoluntaryActivityEndReasons: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
+
       {
         accessorKey: "mesVoluntaryActivityEndReason.name",
         header: "Fəaliyyətin bitmə səbəbi",

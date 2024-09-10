@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
-import "../App.css";
-import { useLocation } from "react-router-dom";
 import axios from "axios";
+import "../App.css";
+import { useLocation, useParams } from "react-router-dom";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -23,14 +23,20 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-
+import { fakeData6, results } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
+  const [file, setFile] = useState(null);
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFile(file);
+    }
+  };
   useEffect(() => {
     const TypesData = async () => {
       try {
@@ -64,6 +70,21 @@ const Example = () => {
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
   }
+  const downloadFile = async (fileUrl) => {
+    try {
+      const response = await axios.get(fileUrl, {
+        responseType: "blob", // Important for binary data
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "filename.pdf"); // Specify a default filename or extract from the response
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Error fetching file:", error);
+    }
+  };
   const columns = useMemo(
     () => [
       {
@@ -72,94 +93,51 @@ const Example = () => {
         enableEditing: false,
         size: 80,
       },
-      {
-        accessorKey: "name",
-        header: "Sənədin adı",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              name: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
 
       {
-        accessorKey: "electronicDocumentType",
+        accessorKey: "electronicDocumentType.name",
         header: "Sənədin növü",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.electronicDocumentType,
-          helperText: validationErrors?.electronicDocumentType,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
         },
       },
-      // {
-      //   accessorKey: "documentUrl",
-      //   header: "Fayl",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.documentUrl,
-      //     helperText: validationErrors?.documentUrl,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         documentUrl: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
+
       {
-        accessorKey: "fileName",
-        header: "Fayl",
+        accessorKey: "name",
+        header: "Sənədin adı",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.fileName,
-          helperText: validationErrors?.fileName,
+          error: !!validationErrors?.receivingDate,
+
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              fileName: undefined,
+              receivingDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "educationDegree",
-      //   header: "Təhsil dərəcəsi",
-      //   editVariant: "select",
-      //   editSelectOptions: edudegree,
-      //   muiEditTextFieldProps: {
-      //     select: true,
-      //     error: !!validationErrors?.educationDegree,
-      //     helperText: validationErrors?.educationDegree,
-      //   },
-      // },
 
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Təhsil aldığı müəssəsinin adı",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
+      {
+        accessorKey: "file",
+        header: "Fayl",
+        muiEditTextFieldProps: {
+          required: true,
+          type: "file",
+          error: !!validationErrors?.file,
+          helperText: validationErrors?.file,
+          onChange: (event) => handleFileChange(event),
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              file: undefined,
+            }),
+        },
+      },
       {
         accessorKey: "note",
         header: "Qeyd",
@@ -167,103 +145,21 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.note,
           helperText: validationErrors?.note,
-          //remove any previous validation errors when user focuses on the input
+
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               note: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
-      // {
-      //   accessorKey: "qualification",
-      //   header: "İxtisas",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.qualification,
-      //     helperText: validationErrors?.qualification,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         qualification: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "educationEnterprise",
-      //   header: "Diplomun seriya və nömrəsi ",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.educationEnterprise,
-      //     helperText: validationErrors?.educationEnterprise,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         educationEnterprise: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-
-      // {
-      //   accessorKey: "diplomaGivenDate",
-      //   header: "Diplomun verilmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.diplomaGivenDate,
-      //     helperText: validationErrors?.diplomaGivenDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         diplomaGivenDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "startDate",
-      //   header: "Təhsilə başlama tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.startDate,
-      //     helperText: validationErrors?.startDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         startDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
-      // {
-      //   accessorKey: "endDate",
-      //   header: "Təhsilin bitmə tarixi",
-      //   muiEditTextFieldProps: {
-      //     required: true,
-      //     error: !!validationErrors?.endDate,
-      //     helperText: validationErrors?.endDate,
-      //     //remove any previous validation errors when user focuses on the input
-      //     onFocus: () =>
-      //       setValidationErrors({
-      //         ...validationErrors,
-      //         endDate: undefined,
-      //       }),
-      //     //optionally add validation checking for onBlur or onChange
-      //   },
-      // },
     ],
     [validationErrors, types]
   );
 
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
+    useCreateUser(types);
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -273,7 +169,7 @@ const Example = () => {
   } = useGetUsers();
   //call UPDATE hook
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
+    useUpdateUser(types);
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
@@ -425,9 +321,9 @@ const Example = () => {
               <path
                 d="M3.55594 12L2.84473 15L5.68957 14.25L13.9297 5.5605C14.1963 5.27921 14.3461 4.89775 14.3461 4.5C14.3461 4.10226 14.1963 3.72079 13.9297 3.4395L13.8073 3.3105C13.5406 3.0293 13.1789 2.87132 12.8017 2.87132C12.4245 2.87132 12.0628 3.0293 11.796 3.3105L3.55594 12Z"
                 stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
               />
               <path
                 d="M3.55594 12L2.84473 15L5.68957 14.25L12.8017 6.75L10.668 4.5L3.55594 12Z"
@@ -436,9 +332,9 @@ const Example = () => {
               <path
                 d="M10.668 4.5L12.8017 6.75M9.24561 15H14.9353"
                 stroke="#4B7D83"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
               />
             </svg>
           </IconButton>
@@ -478,51 +374,71 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
-function useCreateUser() {
+function useCreateUser(types) {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments`;
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "multipart/form-data",
+      };
+
+      function findArrayElementByTitle(array, title) {
+        console.log(
+          array.find((element) => {
+            return element.name === title;
+          })
+        );
+        return array.find((element) => {
+          return element.name === title;
+        }).id;
+      }
+
+      const formData = new FormData();
+      formData.append(
+        "ElectronicDocumentTypeId",
+        findArrayElementByTitle(types, user["electronicDocumentType.name"])
+      );
+      formData.append("Note", user.note);
+      formData.append("Name", user.name);
+      formData.append("VolunteerId", userId);
+      // formData.append("File", file); // Append file to FormData
+      function base64ToBlob(base64String, contentType) {
+        const byteCharacters = atob(base64String); // Decode base64
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        return new Blob([byteArray], { type: contentType });
+      }
+
+      const contentType = "*/*";
+      const base64String = `${user.file}`; // Example base64 string
+      const blob = base64ToBlob(base64String, contentType);
+
+      formData.append("File", blob, "filename");
+
+      try {
+        const response = await axios.post(url, formData, { headers });
+        window.location.reload();
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
-        {
-          ...newUserInfo,
-          id: Math.random(),
-        },
+        { ...newUserInfo },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
-
-// function useGetUsers() {
-//   let params = useParams();
-//   let userId = params.id;
-//   return useQuery({
-//     queryKey: ["users"],
-//     queryFn: async () => {
-//       try {
-//         const response = await axios.get(
-//           `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
-//         );
-
-//         console.log(response.data.data);
-//         return response.data.data.electronicDocuments;
-//       } catch (error) {
-//         // Handle errors here if needed
-//         console.error("Xəta:", error);
-//         throw error;
-//       }
-//     },
-//     refetchOnWindowFocus: false,
-//   });
-// }
 function useGetUsers() {
   let params = useParams();
   let userId = params.id;
@@ -534,6 +450,7 @@ function useGetUsers() {
           `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments/GetAll/${userId}`
         );
 
+        console.log(response.data.data);
         return response.data.data;
       } catch (error) {
         // Handle errors here if needed
@@ -545,23 +462,19 @@ function useGetUsers() {
   });
 }
 
-//UPDATE hook (put user in api)
 function useUpdateUser(types) {
-  const location = useLocation().pathname.substring(1);
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
-
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
-
+      const url = `https://api-voluocuments`;
       const headers = {
         Accept: "*/*",
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       };
+
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -570,40 +483,51 @@ function useUpdateUser(types) {
         );
         return array.find((element) => {
           return element.name === title;
-        });
+        }).id;
+      }
+      const formData = new FormData();
+      formData.append("Id", user.id);
+      formData.append("Name", user.name);
+      formData.append(
+        "ElectronicDocumentTypeId",
+        findArrayElementByTitle(types, user["electronicDocumentType.name"])
+      );
+      formData.append("Note", user.note);
+      formData.append("volunteerId", userId);
+
+      function base64ToBlob(base64String, contentType) {
+        const byteCharacters = atob(base64String); // Decode base64
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        return new Blob([byteArray], { type: contentType });
       }
 
-      const newUser = {
-        name: user.name,
-        priority: user.priority,
-        educationTypeId: findArrayElementByTitle(
-          types,
-          user["educationType.name"]
-        ).id,
-      };
-      // axios
-      //   .put(url, data, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
+      const contentType = "*/*";
+      const base64String = `${user.file}`; // Example base64 string
+      const blob = base64ToBlob(base64String, contentType);
+
+      formData.append("File", blob, "filename");
+
+      try {
+        const response = await axios.put(url, formData, { headers });
+        window.location.reload();
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        { ...newUserInfo },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
-//DELETE hook (delete user in api)
 function useDeleteUser() {
   const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();

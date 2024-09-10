@@ -74,7 +74,7 @@ const Example = () => {
       },
 
       {
-        accessorKey: "insuranceCompanyId",
+        accessorKey: "insuranceCompany.name",
         header: "Sığorta şirkətinin adı",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
@@ -84,34 +84,37 @@ const Example = () => {
           helperText: validationErrors?.insuranceCompanyId,
         },
       },
+
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate,
+          helperText: "Başlama tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              name: undefined,
+              startDate: undefined,
             }),
           InputProps: {
             inputProps: {
-              type: "date", // Set the input type to 'date'
+              type: "date",
+              helperText: "", // Set the input type to 'date'
             },
           },
         },
       },
-
       {
         accessorKey: "endDate",
         header: "Bitmə tarixi",
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.endDate,
-          helperText: validationErrors?.endDate,
+          helperText: "Bitmə tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -420,7 +423,7 @@ function useCreateUser(types) {
         volunteerId: userId,
         insuranceCompanyId: findArrayElementByTitle(
           types,
-          user["insuranceCompanyId"]
+          user["insuranceCompany.name"]
         ),
       };
       console.log(newUser);
@@ -454,11 +457,11 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
+          `https://api-volunteers.fhn.gov.az/api/v1/Insurances/GetAll/${userId}`
         );
 
         console.log(response.data.data);
-        return response.data.data.insurances;
+        return response.data.data;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);
@@ -517,14 +520,26 @@ function useUpdateUser(types) {
           .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
         return utcDateTimeString;
       }
-
+      function findArrayElementByTitle(array, title) {
+        console.log(
+          array.find((element) => {
+            return element.name === title;
+          })
+        );
+        return array.find((element) => {
+          return element.name === title;
+        }).id;
+      }
       const newUser = {
         id: user.id,
         startDate: convertDate(user.startDate),
         endDate: convertDate(user.endDate),
         note: user.note,
         volunteerId: userId,
-        insuranceCompanyId: user.insuranceCompanyId,
+        insuranceCompanyId: findArrayElementByTitle(
+          types,
+          user["insuranceCompany.name"]
+        ),
       };
       // console.log(newUser);
 

@@ -55,11 +55,12 @@ const Example = () => {
 
       {
         accessorKey: "startDate",
-        header: "Başlalma tarixi",
+        header: "Başlama tarixi",
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate,
+          helperText: "Başlama tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -68,31 +69,31 @@ const Example = () => {
             }),
           InputProps: {
             inputProps: {
-              type: "date", // Set the input type to 'date'
+              type: "date",
+              helperText: "", // Set the input type to 'date'
             },
           },
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
         accessorKey: "finishDate",
         header: "Bitmə tarixi",
         muiEditTextFieldProps: {
+          label: "",
           required: true,
-          error: !!validationErrors?.finishDate,
-          helperText: validationErrors?.finishDate,
+          error: !!validationErrors?.finishDateDate,
+          helperText: "Bitmə tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              finishDate: undefined,
+              endDate: undefined,
             }),
           InputProps: {
             inputProps: {
               type: "date", // Set the input type to 'date'
             },
           },
-          //optionally add validation checking for onBlur or onChange
         },
       },
     ],

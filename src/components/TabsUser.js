@@ -62,29 +62,26 @@ function a11yProps(index) {
 }
 
 function refreshUser(user) {
-  const formData = new FormData();
-  formData.append("Id", user.id);
-  formData.append("Email", user.email);
-  formData.append("PhoneNumber1", user.phoneNumber1);
-  formData.append("PhoneNumber2", user.phoneNumber2);
-  formData.append("CheckFromIamas", true);
-  formData.append("QueryParams", {
-    additionalProp1: "string",
-    additionalProp2: "string",
-    additionalProp3: "string",
-  });
-
-  // console.log(data);
+  const newUser = {
+    id: user.id,
+    email: user.email,
+    phoneNumber1: user.phoneNumber1,
+    checkFromIamas: true,
+    phoneNumber2: user.phoneNumber2,
+    queryParams: { documentNumber: user.idCardNumber, fin: user.pinCode },
+  };
+  console.log(newUser);
   //send api update request here
 
   const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`;
 
   const headers = {
     Accept: "*/*",
+    "Content-Type": "application/json",
   };
 
   axios
-    .put(url, formData, { headers })
+    .put(url, newUser, { headers })
     .then((response) => {
       console.log("Response:", response.data);
     })
@@ -234,7 +231,7 @@ export default function TabsUser() {
           </p>
           <p>
             <strong>Şəxsiyyət vəsiqəsinin seriya və nömrəsi: </strong>
-            {userData.pinCode}
+            {userData.idCardNumber}
           </p>
           <p>
             <strong>
