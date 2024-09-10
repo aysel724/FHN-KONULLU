@@ -30,6 +30,7 @@ import { validateFields, validateLaborActivity } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/editIcon";
 import { BASE_URL } from "../api/baseURL";
+import formatDateTİme from "../utils/convertDate";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -84,6 +85,7 @@ const Example = () => {
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -103,6 +105,7 @@ const Example = () => {
       {
         accessorKey: "endDate",
         header: "Bitmə tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.endDate,

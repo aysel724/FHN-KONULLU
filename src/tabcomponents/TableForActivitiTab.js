@@ -27,7 +27,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateVolunterActivity } from "../utils/validateUser";
 import EditIcon from "../assets/editIcon";
-import { convertDate } from "../utils/convertDate";
+import formatDateTİme, { convertDate } from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -53,6 +53,7 @@ const Example = () => {
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -72,6 +73,7 @@ const Example = () => {
       {
         accessorKey: "endDate",
         header: "Bitmə tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.endDate,

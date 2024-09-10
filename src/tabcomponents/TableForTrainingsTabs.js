@@ -28,7 +28,7 @@ import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/editIcon";
-import { convertDate } from "../utils/convertDate";
+import formatDateTİme, { convertDate } from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
@@ -69,6 +69,7 @@ const Example = () => {
       {
         accessorKey: "startDate",
         header: "Başlalma tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -90,6 +91,7 @@ const Example = () => {
       {
         accessorKey: "finishDate",
         header: "Bitmə tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,

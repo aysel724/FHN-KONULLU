@@ -30,6 +30,7 @@ import { TypesData } from "../api/tabComponentsGet/TypesData";
 import convertDate from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 import EditIcon from "../assets/editIcon";
+import formatDateTİme from "../utils/convertDate";
 // import { useDeleteUser } from "../api/tabComponentsDelete/DeleteUser";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -65,6 +66,7 @@ const Example = () => {
     {
       accessorKey: "startDate",
       header: "Başlama tarixi",
+      Cell: ({ cell }) => formatDateTİme(cell.getValue()),
       muiEditTextFieldProps: {
         required: true,
         error: !!validationErrors?.startDate,
@@ -84,6 +86,7 @@ const Example = () => {
     {
       accessorKey: "endDate",
       header: "Bitmə tarixi",
+      Cell: ({ cell }) => formatDateTİme(cell.getValue()),
       muiEditTextFieldProps: {
         required: true,
         error: !!validationErrors?.endDate,
@@ -159,7 +162,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
 
   //UPDATE action
@@ -170,8 +173,7 @@ const Example = () => {
       return;
     }
     setValidationErrors({});
-    await updateUser(values);
-    table.setEditingRow(null); //exit editing mode
+    await updateUser(values);//exit editing mode
   };
 
   //DELETE action

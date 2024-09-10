@@ -6,6 +6,7 @@ import { Routes, Route, useParams } from "react-router-dom";
 import axios from "axios";
 
 import { useEffect, useState } from "react";
+import formatDateTİme from "../utils/convertDate";
 
 export default function UserInfo() {
   let params = useParams();
@@ -77,7 +78,7 @@ export default function UserInfo() {
           </p>
           <p>
             <strong>Doğulduğu tarix (gün, ay, il): </strong>
-            {userData.birthDate}
+            {formatDateTİme(userData.birthDate)}
           </p>
 
           <p>

@@ -20,7 +20,7 @@ export function convertDate(date) {
     return utcDateTimeString;
   }
 
-  export default function formatDate(isoDate) {
+  export default function formatDateTİme(isoDate) {
     const date = new Date(isoDate);
     
     const day = String(date.getDate()).padStart(2, '0');

@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { H1 } from "@blueprintjs/core";
 import { BASE_URL } from "../api/baseURL";
+import formatDateTİme from "../utils/convertDate";
 const Example = () => {
   let params = useParams();
   let userId = params.id;
@@ -116,6 +117,7 @@ const Example = () => {
       {
         accessorKey: "startDate",
         header: "Tədbirin başlama tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -132,6 +134,7 @@ const Example = () => {
       {
         accessorKey: "finishDate",
         header: "Tədbirin bitmə tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,
@@ -442,9 +445,7 @@ function useUpdateUser() {
       const data = { ...user };
       console.log(data);
       //send api update request here
-
       const url = `${BASE_URL}/Events`;
-
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",

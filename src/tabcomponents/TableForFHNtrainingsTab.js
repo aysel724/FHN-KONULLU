@@ -20,6 +20,7 @@ import { edudegree, edutype } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import { BASE_URL } from "../api/baseURL";
+import formatDateTİme from "../utils/convertDate";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -72,6 +73,7 @@ const Example = () => {
       {
         accessorKey: "startDate",
         header: "Təlimin başlama tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -88,6 +90,7 @@ const Example = () => {
       {
         accessorKey: "finishDate",
         header: "Təlimin bitmə tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,

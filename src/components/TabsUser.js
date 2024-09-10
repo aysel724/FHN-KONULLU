@@ -28,6 +28,7 @@ import { Routes, Route, useParams } from "react-router-dom";
 import axios from "axios";
 
 import { useEffect, useState } from "react";
+import formatDateTİme from "../utils/convertDate";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -240,7 +241,7 @@ export default function TabsUser() {
             <strong>
               Şəxsiyyət vəsiqəsinin verildiyi tarix (gün, ay, il):{" "}
             </strong>{" "}
-            {userData.identityCardReceivingDate}
+            {formatDateTİme(userData.identityCardReceivingDate)}
           </p>
           <p>
             <strong>Şəxsiyyət vəsiqəsini verən orqanın adı: </strong>
