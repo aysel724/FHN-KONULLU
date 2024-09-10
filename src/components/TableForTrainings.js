@@ -31,6 +31,7 @@ import { saveAs } from "file-saver";
 import axios from "axios";
 import { useEffect } from "react";
 import EditIcon from "../assets/icons/editIcon";
+import formatDateTİme from "../utils/convertDate";
 const Example = () => {
   const handleExportToExcel = async (table) => {
     const workbook = new ExcelJS.Workbook();
@@ -95,7 +96,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.name,
           helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -123,6 +123,7 @@ const Example = () => {
       {
         accessorKey: "startDate",
         header: "Təlimin başlama tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -139,6 +140,7 @@ const Example = () => {
       {
         accessorKey: "finishDate",
         header: "Təlimin bitmə tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,

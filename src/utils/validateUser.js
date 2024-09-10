@@ -118,7 +118,6 @@ export function validateContract(values) {
 export function validateVolunterActivity(values) {
   const errors = {};
 
-  // Gerekli alanları kontrol et
   errors.name = !validateRequired(values.name || "")
     ? "Könüllük fəaliyyətin adı tələb olunur"
     : "";
@@ -203,3 +202,44 @@ export function validateEducation(values){
   }
   return errors 
 }
+
+export function validateTraning(userData) {
+  const newErrors = {};
+  if (!userData.departmentInCharge) newErrors.departmentInCharge = "Bu xana boş qala bilmez";
+  if (!userData.description) newErrors.description = "Bu xana boş qala bilmez";
+  if (!userData.startDate) newErrors.startDate = "Bu xana boş qala bilmez";
+  if (!userData.finishDate) newErrors.finishDate = "Bu xana boş qala bilmez";
+  if(userData.finishDate){
+    if(new Date (userData.finishDate) < new Date (userData.startDate)){
+      newErrors.finishDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz"
+    }
+  }
+  if (!userData.trainingDuration) newErrors.trainingDuration = "Bu xana boş qala bilmez";
+  if (!userData.trainingPlace) newErrors.trainingPlace = "Bu xana boş qala bilmez";
+  if (!userData.trainingMaster) newErrors.trainingMaster = "Bu xana boş qala bilmez";
+  if (!userData.mesTrainingNameId) newErrors.mesTrainingNameId = "Bu xana boş qala bilmez";
+  if (!userData.trainingResultId) newErrors.trainingResultId = "Bu xana boş qala bilmez";
+  if (!userData.priority) newErrors.priority = "Bu xana boş qala bilmez";
+
+  return newErrors;
+}
+export function validateEvent(userData) {
+  const newErrors = {};
+  if (!userData.name) newErrors.name = "Bu xana boş qala bilmez";
+  if (!userData.startDate) newErrors.startDate = "Bu xana boş qala bilmez";
+  if (!userData.finishDate) newErrors.finishDate = "Bu xana boş qala bilmez";
+  if(userData.finishDate){
+    if(new Date (userData.finishDate) < new Date (userData.startDate)){
+      newErrors.finishDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz"
+    }
+  }
+  if (!userData.trainingDuration) newErrors.trainingDuration = "Bu xana boş qala bilmez";
+  if (!userData.trainingPlace) newErrors.trainingPlace = "Bu xana boş qala bilmez";
+  if (!userData.trainingMaster) newErrors.trainingMaster = "Bu xana boş qala bilmez";
+  if (!userData.mesTrainingNameId) newErrors.mesTrainingNameId = "Bu xana boş qala bilmez";
+  if (!userData.trainingResultId) newErrors.trainingResultId = "Bu xana boş qala bilmez";
+  if (!userData.priority) newErrors.priority = "Bu xana boş qala bilmez";
+
+  return newErrors;
+}
+

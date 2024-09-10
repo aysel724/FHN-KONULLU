@@ -17,6 +17,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 import btoa from "btoa-lite";
+import { convertDate } from "../utils/convertDate";
+import { validateTraning } from "../utils/validateUser";
 export default function NewTrainings() {
   const navigate = useNavigate();
   const style = {
@@ -142,9 +144,11 @@ export default function NewTrainings() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [validation, setValidation] = useState({})
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const handleOpen = () => setModalIsOpen(true);
   const handleClose = () => setModalIsOpen(false);
+  
   const [userData, setUserData] = useState({
     mesTrainingNameId: "",
     departmentInCharge: "",
@@ -161,10 +165,8 @@ export default function NewTrainings() {
   });
 
   const [value, setValue] = useState([]);
-
   function testSubmit() {
     console.log(value);
-
     console.log(userData);
   }
 
@@ -176,32 +178,14 @@ export default function NewTrainings() {
 
   function handleSubmit() {
     setLoading(true);
+    const errorNotfication = validateTraning(userData)
+   
+
+    setError(errorNotfication);
 
     // setTimeout(() => {
     //   navigate(`/MesTrainings`);
     // }, 20000);
-
-    function convertDate(date) {
-      const dateObject = new Date(date);
-
-      // Get UTC time string
-      const utcYear = dateObject.getUTCFullYear();
-      const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-      const utcDay = dateObject.getUTCDate();
-      const utcHours = dateObject.getUTCHours();
-      const utcMinutes = dateObject.getUTCMinutes();
-      const utcSeconds = dateObject.getUTCSeconds();
-
-      // Construct the UTC date string in ISO 8601 format
-      const utcDateTimeString = `${utcYear}-${utcMonth
-        .toString()
-        .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-        .toString()
-        .padStart(2, "0")}:${utcMinutes
-        .toString()
-        .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-      return utcDateTimeString;
-    }
 
     setUserData((prev) => {
       const data = {
@@ -236,7 +220,10 @@ export default function NewTrainings() {
     // Now you can use formData to send the blob to a server using fetch or XMLHttpRequest
 
     console.log(formData);
-    axios
+    if (Object.keys(errorNotfication).length === 0) {
+      // Əgər heç bir səhv yoxdursa, məlumatları göndərin
+      console.log("Form məlumatları göndərilir:", userData);
+      axios
       .post(`https://api-volunteers.fhn.gov.az/api/v1/MesTrainings`, formData)
       .then((response) => {
         setLoading(false);
@@ -284,6 +271,9 @@ export default function NewTrainings() {
           setModalIsOpen(true); // Open modal to show error message
         }
       });
+      setLoading(false)
+    }
+    
   }
 
   const closeModal = () => {
@@ -333,6 +323,7 @@ export default function NewTrainings() {
             gap: "60px",
             padding: "1%",
           }}
+          
         >
           <Box
             component="form"
@@ -354,11 +345,12 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, mesTrainingNameId: e.target.value };
-
                   return data;
                 });
               }}
               variant="outlined"
+              error={!!error?.mesTrainingNameId}
+              helperText={error?.mesTrainingNameId || ""}
             >
               {trainingNames.map((training) => {
                 return <MenuItem value={training.id}>{training.name}</MenuItem>;
@@ -370,11 +362,12 @@ export default function NewTrainings() {
               name="name"
               variant="outlined"
               value={userData.departmentInCharge}
+              error={!!error?.departmentInCharge}
+              helperText={error?.departmentInCharge || ""}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, departmentInCharge: e.target.value };
-
                   return data;
                 });
               }}
@@ -385,11 +378,12 @@ export default function NewTrainings() {
               id="Surname"
               variant="outlined"
               value={userData.description}
+              error={!!error?.description}
+              helperText={error?.description || ""}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, description: e.target.value };
-
                   return data;
                 });
               }}
@@ -401,11 +395,12 @@ export default function NewTrainings() {
               id="FatherName"
               variant="outlined"
               value={userData.startDate}
+              error={!!error?.startDate}
+              helperText={error?.startDate || ""}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, startDate: e.target.value };
-
                   return data;
                 });
               }}
@@ -416,7 +411,9 @@ export default function NewTrainings() {
               name="finishDate"
               id="FinishDate"
               variant="outlined"
-              value={userData.finishDate || ""} // Ensure it's either a valid date or an empty string
+              value={userData.finishDate || ""} 
+              error={!!error?.finishDate}
+              helperText={error?.finishDate || ""}
               onChange={(e) => {
                 console.log(e.target.value); // Log the new value
                 setUserData((prev) => ({
@@ -504,6 +501,8 @@ export default function NewTrainings() {
                 name="height"
                 variant="outlined"
                 value={userData?.trainingPlace}
+                error={!!error?.trainingPlace}
+                helperText={error?.trainingPlace || ""}
                 onChange={(e) => {
                   console.log(userData);
                   setUserData((prev) => {
@@ -519,11 +518,12 @@ export default function NewTrainings() {
                 label="Təlimçi "
                 variant="outlined"
                 value={userData?.trainingMaster}
+                error={!!error?.trainingMaster}
+                helperText={error?.trainingMaster || ""}
                 onChange={(e) => {
                   console.log(userData);
                   setUserData((prev) => {
                     const data = { ...prev, trainingMaster: e.target.value };
-
                     return data;
                   });
                 }}

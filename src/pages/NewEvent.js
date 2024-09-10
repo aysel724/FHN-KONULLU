@@ -196,7 +196,6 @@ export default function NewTrainings() {
     formData.append("DepartmentInCharge", userData.departmentInCharge);
     formData.append("Description", userData.description);
     formData.append("EventDuration", userData.eventDuration);
-
     formData.append("EventPlace", userData.eventPlace);
     formData.append("FinishDate", convertDate(userData.finishDate));
     [...userData.volunteerIds].forEach((id) => {
@@ -335,7 +334,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, name: e.target.value };
-
                   return data;
                 });
               }}
@@ -350,7 +348,6 @@ export default function NewTrainings() {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, departmentInCharge: e.target.value };
-
                   return data;
                 });
               }}
