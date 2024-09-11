@@ -517,7 +517,6 @@ export default function NewTrainings() {
                   console.log(userData);
                   setUserData((prev) => {
                     const data = { ...prev, trainingPlace: e.target.value };
-
                     return data;
                   });
                 }}
