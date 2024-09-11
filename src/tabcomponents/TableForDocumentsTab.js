@@ -128,22 +128,36 @@ const Example = () => {
             }),
         },
       },
-
       {
         accessorKey: "documentUrl",
         header: "Sənəd",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.documentUrl,
-
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              documentUrl: undefined,
-            }),
+        Cell: ({ cell }) => {
+          const url = cell.getValue();
+          return url ? (
+            <a href={url} rel="noopener noreferrer" download>
+              Yüklə
+            </a>
+          ) : (
+            "No Document"
+          );
         },
       },
+
+      // {
+      //   accessorKey: "documentUrl",
+      //   header: "Sənəd",
+      //   muiEditTextFieldProps: {
+      //     required: true,
+      //     error: !!validationErrors?.documentUrl,
+
+      //     //remove any previous validation errors when user focuses on the input
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         documentUrl: undefined,
+      //       }),
+      //   },
+      // },
 
       {
         accessorKey: "file",
@@ -445,7 +459,7 @@ function useCreateUser(types, file) {
         const base64String = file; // Убедитесь, что user.file содержит корректную base64 строку
         const blob = base64ToBlob(base64String, contentType);
 
-        formData.append("File", blob, "filename.png"); // Укажите правильное имя файла и тип, если необходимо
+        formData.append("File", blob, "filename"); // Укажите правильное имя файла и тип, если необходимо
       } catch (error) {
         console.error("Error converting base64 to Blob:", error);
         throw error; // Прекратить выполнение в случае ошибки преобразования

@@ -389,8 +389,6 @@ function useDeleteUser() {
           }
         );
         console.log(response.data);
-
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
         // Handle errors here if needed
@@ -398,13 +396,11 @@ function useDeleteUser() {
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 

@@ -59,7 +59,7 @@ export default function TabsUser() {
   };
 
   async function postVolonteers(array) {
-    const url = `https://api-volunteers.fhn.gov.az//api/v1/MesTrainings/AddVolunteerToMesTraining`;
+    const url = `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/AddVolunteerToMesTraining`;
 
     const headers = {
       Accept: "*/*",
@@ -73,7 +73,7 @@ export default function TabsUser() {
 
     try {
       const response = await axios.post(url, newUser, { headers });
-      // window.location.reload();
+      window.location.reload();
       // console.log(user);
       console.log(response.data);
     } catch (error) {
@@ -90,7 +90,7 @@ export default function TabsUser() {
     trainingPlace: "",
     trainingMaster: "",
     priority: "",
-    volunteers: "",
+    volunteers: [],
   });
 
   useEffect(() => {

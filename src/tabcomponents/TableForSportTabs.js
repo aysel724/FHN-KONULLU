@@ -297,11 +297,11 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`
+          `https://api-volunteers.fhn.gov.az/api/v1/SportAchievements/GetAll/${userId}`
         );
 
         console.log(response.data.data);
-        return response.data.data.sportAchievements;
+        return response.data.data;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);

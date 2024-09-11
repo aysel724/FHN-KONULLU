@@ -371,7 +371,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://10.70.3.176/api/v1/Trainings/GetAll/${userId}`
+          `https://api-volunteers.fhn.gov.az/api/v1/Trainings/GetAll/${userId}`
         );
 
         console.log(response.data.data);

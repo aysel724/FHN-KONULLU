@@ -584,7 +584,7 @@ function useGetUsers() {
         const users = response.data.data.map((user) => ({
           ...user,
 
-          degree: `${user.educationType.educationDegrees[0].name}`,
+          degree: `${user.educationType.educationDegrees}`,
         }));
         console.log(response.data.data, "users");
 
