@@ -182,9 +182,6 @@ export default function NewTrainings() {
    
 
     setError(errorNotfication);
-
-   
-
     setUserData((prev) => {
       const data = {
         ...prev,
@@ -192,10 +189,8 @@ export default function NewTrainings() {
           return e.id;
         }),
       };
-
       return data;
     });
-    
     console.log(userData);
     const formData = new FormData();
     formData.append("StartDate", convertDate(userData.startDate));
@@ -208,7 +203,6 @@ export default function NewTrainings() {
     formData.append("TrainingResultId", userData.trainingResultId);
     formData.append("FinishDate", convertDate(userData.finishDate));
     formData.append("Priority", userData.priority);
-    // formData.append("VolunteerIds", userData.volunteerIds);
     [...userData.volunteerIds].forEach((id) => {
       formData.append("VolunteerIds", id);
     });
@@ -216,11 +210,8 @@ export default function NewTrainings() {
       formData.append("MesTrainingAttachmentFiles", image);
     });
 
-    // Now you can use formData to send the blob to a server using fetch or XMLHttpRequest
-
     console.log(formData);
     if (Object.keys(errorNotfication).length === 0) {
-      // Əgər heç bir səhv yoxdursa, məlumatları göndərin
       console.log("Form məlumatları göndərilir:", userData);
       axios
       .post(`https://api-volunteers.fhn.gov.az/api/v1/MesTrainings`, formData)
@@ -463,7 +454,6 @@ export default function NewTrainings() {
             >
               {" "}
             <FormControl variant="outlined" fullWidth error={!!error?.trainingResultId}>
-
               <InputLabel id="arestrdytfy">Təlimin neticesi</InputLabel>
               <Select
                 sx={{
@@ -500,7 +490,6 @@ export default function NewTrainings() {
                   console.log(userData);
                   setUserData((prev) => {
                     const data = { ...prev, trainingDuration: e.target.value };
-
                     return data;
                   });
                 }}
@@ -548,61 +537,54 @@ export default function NewTrainings() {
                   console.log(userData);
                   setUserData((prev) => {
                     const data = { ...prev, priority: e.target.value };
-
                     return data;
                   });
                 }}
               />
-            {/* <FormControl variant="outlined" fullWidth error={!!error?.volunteerIds}> */}            
-
-<Autocomplete
-  multiple
-  disablePortal
-  value={value}
-  onBlur={() => {
-    if (value.length === 0) {
-      setError((prev) => ({
-        ...prev,
-        volunteerIds: "Bu xana boş qala bilmez",
-      }));
-    } else {
-      setError((prev) => ({
-        ...prev,
-        volunteerIds: "",
-      }));
-    }
-  }}
-  onChange={(e, newValue) => {
-    setValue(newValue);
-    setUserData((prev) => {
-      const data = {
-        ...prev,
-        volunteerIds: newValue.map((e) => e.id),
-      };
-      return data;
-    });
-    // Hata mesajını temizle
-    if (newValue.length > 0) {
-      setError((prev) => ({
-        ...prev,
-        volunteerIds: "",
-      }));
-    }
-  }}
-  options={volonteerNames}
-  sx={{ width: 300 }}
-  renderInput={(params) => (
-    <TextField
-      {...params}
-      label="Konulluler"
-      error={!!error?.volunteerIds} // Hata durumunu kontrol ediyoruz
-      helperText={error?.volunteerIds || ""} // Hata mesajını gösteriyoruz
-    />
-  )}
-/>
-
-               {/* <FormHelperText>{error?.volunteerIds || ""}</FormHelperText> */}
-            {/* </FormControl> */}
+              <Autocomplete
+                multiple
+                disablePortal
+                value={value}
+                onBlur={() => {
+                  if (value.length === 0) {
+                    setError((prev) => ({
+                      ...prev,
+                      volunteerIds: "Bu xana boş qala bilmez",
+                    }));
+                  } else {
+                    setError((prev) => ({
+                      ...prev,
+                      volunteerIds: "",
+                    }));
+                  }
+                }}
+                onChange={(e, newValue) => {
+                  setValue(newValue);
+                  setUserData((prev) => {
+                    const data = {
+                      ...prev,
+                      volunteerIds: newValue.map((e) => e.id),
+                    };
+                    return data;
+                  });
+                  if (newValue.length > 0) {
+                    setError((prev) => ({
+                      ...prev,
+                      volunteerIds: "",
+                    }));
+                  }
+                }}
+                options={volonteerNames}
+                sx={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Konulluler"
+                    error={!!error?.volunteerIds} 
+                    helperText={error?.volunteerIds || ""} 
+                  />
+                )}
+              />
               <Button variant="contained" onClick={() => handleSubmit()}>
                 Yadda saxla
               </Button>

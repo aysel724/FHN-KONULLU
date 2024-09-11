@@ -114,6 +114,18 @@ const Example = () => {
         },
       },
       {
+        accessorKey: "degree",
+        header: "Təhsilinin dərəcəsi",
+        editVariant: "select",
+        editSelectOptions: getdegreeNames(degrees),
+        muiEditTextFieldProps: {
+          select: true,
+          error: !!validationErrors?.degree,
+          helperText: validationErrors?.degree,
+        },
+      },
+
+      {
         accessorKey: "diplomaSerialNumber",
         header: "Diplomun seriya və nömrəsi",
         muiEditTextFieldProps: {
@@ -167,9 +179,11 @@ const Example = () => {
         header: "Diplomun verilmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.diplomaGivenDate,
-          helperText: validationErrors?.diplomaGivenDate,
+          helperText: "Diplomun verilmə tarixi",
+
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -178,16 +192,19 @@ const Example = () => {
             }),
           InputProps: {
             inputProps: {
-              type: "date",
+              type: "date", // Set the input type to 'date'
             },
           },
         },
+        //optionally add validation checking for onBlur or onChange
       },
+
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
           helperText: validationErrors?.startDate,
@@ -199,6 +216,7 @@ const Example = () => {
           InputProps: {
             inputProps: {
               type: "date",
+              helperText: "", // Set the input type to 'date'
             },
           },
         },
@@ -208,6 +226,7 @@ const Example = () => {
         header: "Bitmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.endDate,
           helperText: validationErrors?.endDate,
@@ -224,12 +243,12 @@ const Example = () => {
         },
       },
     ],
-    [validationErrors, types]
+    [validationErrors, types, degrees]
   );
 
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
+    useCreateUser(types);
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -239,7 +258,7 @@ const Example = () => {
   } = useGetUsers();
   //call UPDATE hook
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
+    useUpdateUser(types);
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
@@ -420,25 +439,89 @@ const Example = () => {
 };
 
 //CREATE hook (post new user to api)
-function useCreateUser() {
+
+function useCreateUser(types) {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      console.log(user);
+
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
+
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
+      function findArrayElementByTitle(array, title) {
+        console.log(
+          array.find((element) => {
+            return element.name === title;
+          })
+        );
+        return array.find((element) => {
+          return element.name === title;
+        }).id;
+      }
+
+      const newUser = {
+        volunteerId: userId,
+        faculty: user.faculty,
+        qualification: user.qualification,
+        diplomaSerialNumber: user.diplomaSerialNumber,
+        diplomaGivenDate: convertDate(user.diplomaGivenDate),
+        educationEnterprise: user.educationEnterprise,
+        startDate: convertDate(user.startDate),
+        endDate: convertDate(user.endDate),
+        educationTypeId: findArrayElementByTitle(
+          types,
+          user["educationType.name"]
+        ),
+      };
+      console.log(newUser);
+
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        // window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
         {
           ...newUserInfo,
-          id: Math.random(),
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useGetUsers() {
@@ -455,7 +538,7 @@ function useGetUsers() {
         const users = response.data.data.map((user) => ({
           ...user,
 
-          degree: `${user.educationType.name}`,
+          degree: `${user.educationType.educationDegrees[0].name}`,
         }));
         console.log(response.data.data, "users");
 
@@ -472,21 +555,42 @@ function useGetUsers() {
 
 //UPDATE hook (put user in api)
 function useUpdateUser(types) {
-  const location = useLocation().pathname.substring(1);
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-      //send api update request here
+      console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
+
+      function convertDate(date) {
+        const dateObject = new Date(date);
+
+        // Get UTC time string
+        const utcYear = dateObject.getUTCFullYear();
+        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+        const utcDay = dateObject.getUTCDate();
+        const utcHours = dateObject.getUTCHours();
+        const utcMinutes = dateObject.getUTCMinutes();
+        const utcSeconds = dateObject.getUTCSeconds();
+
+        // Construct the UTC date string in ISO 8601 format
+        const utcDateTimeString = `${utcYear}-${utcMonth
+          .toString()
+          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+          .toString()
+          .padStart(2, "0")}:${utcMinutes
+          .toString()
+          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+        return utcDateTimeString;
+      }
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -495,36 +599,44 @@ function useUpdateUser(types) {
         );
         return array.find((element) => {
           return element.name === title;
-        });
+        }).id;
       }
 
       const newUser = {
-        name: user.name,
-        priority: user.priority,
+        id: user.id,
+        volunteerId: userId,
+        faculty: user.faculty,
+        qualification: user.qualification,
+        diplomaSerialNumber: user.diplomaSerialNumber,
+        diplomaGivenDate: convertDate(user.diplomaGivenDate),
+        educationEnterprise: user.educationEnterprise,
+        startDate: convertDate(user.startDate),
+        endDate: convertDate(user.endDate),
         educationTypeId: findArrayElementByTitle(
           types,
           user["educationType.name"]
-        ).id,
+        ),
       };
-      // axios
-      //   .put(url, data, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
+      console.log(newUser);
+
+      try {
+        const response = await axios.put(url, newUser, { headers });
+        // window.location.reload();
+        // console.log(user);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 

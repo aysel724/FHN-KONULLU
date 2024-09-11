@@ -24,22 +24,19 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import formatDateTİme from "../utils/convertDate";
 import  convertDate  from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
-
+import { validateTraningTab } from "../utils/validateUser";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
-
   useEffect(() => {
     TypesData(setTypes,"EducationTypes");
   }, []);
-
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
   }
@@ -66,15 +63,15 @@ const Example = () => {
             }),
         },
       },
-
       {
         accessorKey: "startDate",
         header: "Başlalma tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate,
+          helperText:validationErrors?.startDate? validationErrors?.startDate : "Başlama tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -83,10 +80,10 @@ const Example = () => {
             }),
           InputProps: {
             inputProps: {
-              type: "date", // Set the input type to 'date'
+              type: "date",
+              helperText: "", // Set the input type to 'date'
             },
           },
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -94,21 +91,21 @@ const Example = () => {
         header: "Bitmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.finishDate,
-          helperText: validationErrors?.finishDate,
+          helperText:validationErrors?.finishDate? validationErrors?.finishDate : "Başlama tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              finishDate: undefined,
+              endDate: undefined,
             }),
           InputProps: {
             inputProps: {
               type: "date", // Set the input type to 'date'
             },
           },
-          //optionally add validation checking for onBlur or onChange
         },
       },
     ],
@@ -133,6 +130,11 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
+     const newValidationErrors = validateTraningTab(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
@@ -140,6 +142,11 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
+    const newValidationErrors = validateTraningTab(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -302,6 +309,7 @@ function useCreateUser() {
         "Content-Type": "application/json",
       };
 
+      
 
       const newUser = {
         name: user.name,
@@ -340,7 +348,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://10.70.3.176/api/v1/Trainings/GetAll/${userId}`
+          `${BASE_URL}/Trainings/GetAll/${userId}`
         );
 
         console.log(response.data.data);

@@ -114,21 +114,28 @@ const Example = () => {
           //optionally add validation checking for onBlur or onChange
         },
       },
+
       {
         accessorKey: "startDate",
         header: "Tədbirin başlama tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate,
+          helperText: "Başlama tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               startDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date",
+              helperText: "", // Set the input type to 'date'
+            },
+          },
         },
       },
       {
@@ -136,16 +143,21 @@ const Example = () => {
         header: "Tədbirin bitmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.finishDate,
-          helperText: validationErrors?.finishDate,
+          helperText: "Bitmə tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              finishDate: undefined,
+              endDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
+          InputProps: {
+            inputProps: {
+              type: "date", // Set the input type to 'date'
+            },
+          },
         },
       },
       {
@@ -208,6 +220,21 @@ const Example = () => {
             setValidationErrors({
               ...validationErrors,
               note: undefined,
+            }),
+        },
+      },
+      {
+        accessorKey: "evaluationResult",
+        header: "Könüllünun nəticəsi",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.evaluationResult,
+          helperText: validationErrors?.evaluationResult,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              evaluationResult: undefined,
             }),
         },
       },

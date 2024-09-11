@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
-import "../App.css";
-import { useLocation } from "react-router-dom";
 import axios from "axios";
+import "../App.css";
+import { useLocation, useParams } from "react-router-dom";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -23,8 +23,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-
+import { fakeData6, results } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateElectronDocument } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
@@ -34,7 +33,21 @@ import { BASE_URL } from "../api/baseURL";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
+  const [file, setFile] = useState(null);
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]; // Получите первый выбранный файл
+
+    if (file) {
+      // Преобразуйте файл в base64, если это нужно
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result.split(",")[1]; // Удалите префикс 'data:[<mediatype>];base64,'
+        setFile(base64String); // Сохраните base64 строку в состоянии или другой переменной
+      };
+      reader.readAsDataURL(file); // Прочитайте файл как Data URL
+    }
+  };
   useEffect(() => {
     TypesData(setTypes,"ElectronicDocumentTypes");
   }, []);
@@ -42,6 +55,26 @@ const Example = () => {
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
   }
+  const handleDownload = (documentUrl) => {
+    const proxyUrl = "https://cors-anywhere.herokuapp.com/"; // Proxy URL'si
+    const targetUrl = documentUrl; // İndirilmek istenen dosya URL'si
+  
+    fetch(proxyUrl + targetUrl)
+      .then(response => response.blob())
+      .then(blob => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+  
+        // Burada indirilmek istenen dosya adını alabiliriz, örneğin:
+        const fileName = documentUrl.split("/").pop(); // URL'den dosya adını almak
+        link.download = fileName; // Dosya adı buradan ayarlanır
+  
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(err => console.error("CORS hatası:", err));
+  };
   const columns = useMemo(
     () => [
       {
@@ -51,31 +84,63 @@ const Example = () => {
         size: 80,
       },
       {
-        accessorKey: "name",
-        header: "Sənədin adı",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              name: undefined,
-            }),
-          //optionally add validation checking for onBlur or onChange
-        },
-      },
-
-      {
-        accessorKey: "electronicDocumentType",
+        accessorKey: "electronicDocumentType.name",
         header: "Sənədin növü",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.electronicDocumentType,
-          helperText: validationErrors?.electronicDocumentType,
+          error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
+        },
+      },
+      {
+        accessorKey: "name",
+        header: "Sənədin adı",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.name,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              name: undefined,
+            }),
+        },
+      },
+      {
+        accessorKey: "documentUrl",
+        header: "Sənəd",
+        Cell: ({ row }) => (
+          <button
+            onClick={() => handleDownload(row.original.documentUrl)}
+          >
+            Yüklə
+          </button>
+        ),
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.documentUrl,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              documentUrl: undefined,
+            }),
+        },
+      },
+      {
+        accessorKey: "file",
+        header: "Fayl",
+        muiEditTextFieldProps: {
+          required: true,
+          type: "file",
+          error: !!validationErrors?.file,
+          helperText: validationErrors?.file,
+          onChange: handleFileChange,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              file: undefined,
+            }),
         },
       },
       {
@@ -95,10 +160,14 @@ const Example = () => {
     ],
     [validationErrors, types]
   );
+  
+  
 
   //call CREATE hook
-  const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser();
+  const { mutateAsync: createUser, isPending: isCreatingUser } = useCreateUser(
+    types,
+    file
+  );
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -108,7 +177,7 @@ const Example = () => {
   } = useGetUsers();
   //call UPDATE hook
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
+    useUpdateUser(types);
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
@@ -288,28 +357,75 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
-function useCreateUser() {
+function base64ToBlob(base64String, contentType) {
+  const base64Data = base64String.replace(/^data:[a-zA-Z0-9+\/]+;base64,/, ""); // Удаление префикса
+  const byteCharacters = atob(base64Data); // Декодирование base64
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  return new Blob([byteArray], { type: contentType });
+}
+
+function useCreateUser(types, file) {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      const url =
+        "https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments"; // Замените на реальный URL
+      const headers = {
+        Accept: "*/*",
+        // "Content-Type" не нужен для multipart/form-data, браузер установит это автоматически
+      };
+
+      // Функция для нахождения элемента массива по названию
+      function findArrayElementByTitle(array, title) {
+        const element = array.find((element) => element.name === title);
+        return element ? element.id : null;
+      }
+
+      const formData = new FormData();
+      formData.append(
+        "ElectronicDocumentTypeId",
+        findArrayElementByTitle(types, user["electronicDocumentType.name"])
+      );
+      formData.append("Note", user.note);
+      formData.append("Name", user.name);
+      formData.append("VolunteerId", userId);
+      console.log();
+      try {
+        // Преобразование base64 строки в Blob
+        const contentType = "application/octet-stream"; // Убедитесь, что это правильный contentType
+        const base64String = file; // Убедитесь, что user.file содержит корректную base64 строку
+        const blob = base64ToBlob(base64String, contentType);
+
+        formData.append("File", blob, "filename.png"); // Укажите правильное имя файла и тип, если необходимо
+      } catch (error) {
+        console.error("Error converting base64 to Blob:", error);
+        throw error; // Прекратить выполнение в случае ошибки преобразования
+      }
+
+      try {
+        const response = await axios.post(url, formData, { headers });
+        window.location.reload();
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error during request:", error);
+        throw error; // Прекратить выполнение в случае ошибки запроса
+      }
     },
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) => [
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
-        {
-          ...newUserInfo,
-          id: Math.random(),
-        },
+        { ...newUserInfo },
       ]);
     },
   });
 }
-
 function useGetUsers() {
   let params = useParams();
   let userId = params.id;
@@ -318,9 +434,10 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/ElectronicDocuments/GetAll/${userId}`
+          `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments/GetAll/${userId}`
         );
 
+        console.log(response.data.data);
         return response.data.data;
       } catch (error) {
         // Handle errors here if needed
@@ -332,22 +449,19 @@ function useGetUsers() {
   });
 }
 
-//UPDATE hook (put user in api)
 function useUpdateUser(types) {
-  const location = useLocation().pathname.substring(1);
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const data = { ...user };
-      console.log(data);
-
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
-
+      const url = `https://api-voluocuments`;
       const headers = {
         Accept: "*/*",
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       };
+
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -356,30 +470,51 @@ function useUpdateUser(types) {
         );
         return array.find((element) => {
           return element.name === title;
-        });
+        }).id;
+      }
+      const formData = new FormData();
+      formData.append("Id", user.id);
+      formData.append("Name", user.name);
+      formData.append(
+        "ElectronicDocumentTypeId",
+        findArrayElementByTitle(types, user["electronicDocumentType.name"])
+      );
+      formData.append("Note", user.note);
+      formData.append("volunteerId", userId);
+
+      function base64ToBlob(base64String, contentType) {
+        const byteCharacters = atob(base64String); // Decode base64
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        return new Blob([byteArray], { type: contentType });
       }
 
-      const newUser = {
-        name: user.name,
-        priority: user.priority,
-        educationTypeId: findArrayElementByTitle(
-          types,
-          user["educationType.name"]
-        ).id,
-      };
-    },
+      const contentType = "*/*";
+      const base64String = `${user.file}`; // Example base64 string
+      const blob = base64ToBlob(base64String, contentType);
 
+      formData.append("File", blob, "filename");
+
+      try {
+        const response = await axios.put(url, formData, { headers });
+        window.location.reload();
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        { ...newUserInfo },
+      ]);
     },
   });
 }
 
-//DELETE hook (delete user in api)
 function useDeleteUser() {
   const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
@@ -388,7 +523,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `${BASE_URL}/ElectronicDocuments/${userId}`,
+          `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments/${userId}`,
           {
             headers: { accept: "*/*" },
           }

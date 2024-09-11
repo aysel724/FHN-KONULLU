@@ -56,6 +56,7 @@ const Example = () => {
         header: "Başlama tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
           helperText: validationErrors?.startDate,
@@ -76,6 +77,7 @@ const Example = () => {
         header: "Bitmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.endDate,
           helperText: validationErrors?.endDate,

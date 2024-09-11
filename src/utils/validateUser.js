@@ -151,27 +151,54 @@ export function validateVolunterActivity(values) {
 
 export function validateStaff(values){
   const errors = {};
-  errors.staff = !validateRequired(values.staff || "")
-  ? "Əşya və ya ləvazimatların növü   tələb olunur"
+  errors["supplyType.name"] = !validateRequired(values["supplyType.name"] || "")
+  ? "Əşya və ya ləvazimatların növü tələb olunur"
+  : "";
+  errors.receivingDate = !validateRequired(values.receivingDate || "")
+  ? "Başlama tarixi tələb olunur"
+  : "";
+  if (validateRequired(values.handOverDate)) {
+    if (new Date(values.handOverDate) < new Date(values.receivingDate)) {
+      errors.handOverDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz";
+    } else {
+      errors.handOverDate = "";
+    }
+  } else {
+    errors.handOverDate = "";
+  }
+  return errors 
+}
+export function validateSport(values){
+  const errors = {};
+  errors.name = !validateRequired(values.name || "")
+  ? "idman növünün adı tələb olunur"
+  : "";
+  return errors 
+}
+export function validateTraningTab(values){
+  const errors = {};
+
+  errors.name = !validateRequired(values.name || "")
+  ? "Təlimin adı tələb olunur"
   : "";
   errors.startDate = !validateRequired(values.startDate || "")
   ? "Başlama tarixi tələb olunur"
   : "";
-  if (validateRequired(values.endDate)) {
-    if (new Date(values.endDate) < new Date(values.startDate)) {
-      errors.endDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz";
+  if (validateRequired(values.finishDate)) {
+    if (new Date(values.finishDate) < new Date(values.startDate)) {
+      errors.finishDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz";
     } else {
-      errors.endDate = "";
+      errors.finishDate = "";
     }
   } else {
-    errors.endDate = "";
+    errors.finishDate = "";
   }
   return errors 
 }
 export function validateElectronDocument(values){
   const errors = {};
   errors.name = !validateRequired(values.name || "")
-  ? "Sənədin adı tələb olunur"
+  ? "Sənədin adı tələb olunur"
   : "";
   errors.electronicDocumentType = !validateRequired(values.electronicDocumentType || "")
   ? "Sənədin növü tələb olunur"
@@ -203,6 +230,30 @@ export function validateEducation(values){
   return errors 
 }
 
+export function validateOtherSkillls(values){
+  const errors = {};
+  errors.name = !validateRequired(values.name || "")
+  ? "Biliyin adı tələb olunur"
+  : "";
+ 
+  return errors 
+}
+export function validateComputerSkills(values){
+  const errors = {};
+  errors["computerSkillName.name"] = !validateRequired(values["computerSkillName.name"] || "")
+  ? "Bilik boş qala bilməz"
+  : "";
+  errors["skillLevel.name"] = !validateRequired(values["skillLevel.name"] || "")
+  ? "Bilik dərəcəsi boş qala bilməz"
+  : "";
+  errors.priority = !validateRequired(values.priority || "")
+  ? "Prioritet tələb olunur"
+  : "";
+
+ return errors
+}
+
+
 export function validateTraning(userData) {
   const newErrors = {};
   if (!userData.departmentInCharge) newErrors.departmentInCharge = "Bu xana boş qala bilmez";
@@ -214,33 +265,29 @@ export function validateTraning(userData) {
       newErrors.finishDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz"
     }
   }
-  if (!userData.trainingDuration) newErrors.trainingDuration = "Bu xana boş qala bilmez";
+  if (!userData.trainingResultId) newErrors.trainingResultId = "Bu xana boş qala bilmez";
   if (!userData.trainingPlace) newErrors.trainingPlace = "Bu xana boş qala bilmez";
   if (!userData.trainingMaster) newErrors.trainingMaster = "Bu xana boş qala bilmez";
   if (!userData.mesTrainingNameId) newErrors.mesTrainingNameId = "Bu xana boş qala bilmez";
-  if (!userData.trainingResultId) newErrors.trainingResultId = "Bu xana boş qala bilmez";
   if (!userData.volunteerIds || userData.volunteerIds.length === 0)
     newErrors.volunteerIds = "Bu xana boş qala bilmez";
-  if (!userData.priority) newErrors.priority = "Bu xana boş qala bilmez";
+
 
   return newErrors;
 }
 export function validateEvent(userData) {
   const newErrors = {};
   if (!userData.name) newErrors.name = "Bu xana boş qala bilmez";
+  if (!userData.departmentInCharge) newErrors.departmentInCharge = "Bu xana boş qala bilmez";
   if (!userData.startDate) newErrors.startDate = "Bu xana boş qala bilmez";
-  if (!userData.finishDate) newErrors.finishDate = "Bu xana boş qala bilmez";
   if(userData.finishDate){
     if(new Date (userData.finishDate) < new Date (userData.startDate)){
       newErrors.finishDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz"
     }
   }
-  if (!userData.trainingDuration) newErrors.trainingDuration = "Bu xana boş qala bilmez";
-  if (!userData.trainingPlace) newErrors.trainingPlace = "Bu xana boş qala bilmez";
-  if (!userData.trainingMaster) newErrors.trainingMaster = "Bu xana boş qala bilmez";
-  if (!userData.mesTrainingNameId) newErrors.mesTrainingNameId = "Bu xana boş qala bilmez";
-  if (!userData.trainingResultId) newErrors.trainingResultId = "Bu xana boş qala bilmez";
-  if (!userData.priority) newErrors.priority = "Bu xana boş qala bilmez";
+  if (!userData.eventPlace) newErrors.eventPlace = "Bu xana boş qala bilmez";
+  if (!userData.volunteerIds || userData.volunteerIds.length === 0)
+    newErrors.volunteerIds = "Bu xana boş qala bilmez";
 
   return newErrors;
 }

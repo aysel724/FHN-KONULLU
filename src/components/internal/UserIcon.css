@@ -1,0 +1,107 @@
+/* .user-icon-container {
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
+  align-items: center;
+  position: relative;
+} */
+
+/* .username-container {
+  position: relative;
+} */
+.user-icon-container {
+  position: relative;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-info .MuiSvgIcon-root {
+  cursor: pointer;
+  margin-right: 0; /* Adjust spacing between icon and text */
+}
+
+.username-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.logout-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 75%; /* Adjust as needed */
+  right: -15%;
+  border: none;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* .logout-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 70%; /* Adjust as needed */
+/* right: -15%; */
+/* border: none;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+} */
+
+.logout-modal button {
+  background-color: #feffff; /* Red color for the button */
+  color: #4b7d83;
+  border: none;
+  padding: 8px 46px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.logout-modal button:hover {
+  padding: 8px 46px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4b7d83;
+  color: white; /* Darker red on hover */
+}
+
+/* .user-icon-container {
+  position: relative;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 8px; /* Adjust spacing as needed */
+/* } */
+
+/* .logout-modal {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1; /* Ensure it appears above other elements */
+/* display: flex;
+  justify-content: center;
+}
+
+.logout-modal button {
+  cursor: pointer;
+} */

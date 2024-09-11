@@ -28,6 +28,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
+import { validateComputerSkills } from "../utils/validateUser";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -61,8 +62,8 @@ const Example = () => {
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
+          error: !!validationErrors?.["computerSkillName.name"],
+          helperText: validationErrors?.["computerSkillName.name"],
         },
       },
 
@@ -73,8 +74,8 @@ const Example = () => {
         editSelectOptions: getDegreesNames(degrees),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
+          error: !!validationErrors?.["skillLevel.name"],
+          helperText: validationErrors?.["skillLevel.name"],
         },
       },
       {
@@ -135,7 +136,11 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-
+    const newValidationErrors = validateComputerSkills(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); 
@@ -143,7 +148,11 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
- 
+    const newValidationErrors = validateComputerSkills(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -361,7 +370,6 @@ function useCreateUser(types, degrees) {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -445,7 +453,6 @@ function useUpdateUser(types, degrees) {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 

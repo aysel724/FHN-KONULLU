@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
+import { useParams } from "react-router-dom";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -556,88 +557,83 @@ function useGetUsers() {
   });
 }
 
-// function useGetUsers() {
-//   return useQuery({
-//     queryKey: ["users"],
-//     queryFn: async () => {
-//       try {
-//         const response = await axios.get(
-//           "https://api-volunteers.fhn.gov.az/api/v1/MesTrainings"
-//         );
-//         const user = response.data.data;
-//         return user;
-//       } catch (error) {
-//         console.error("Error fetching users:", error);
-//         throw error;
-//       }
-//     },
-//     refetchOnWindowFocus: false,
-//   });
-// }
-
 function useUpdateUser() {
+  let params = useParams();
+  let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      // const data = { ...user };
-      const data = {
-        // mesTrainingNameId: 1,
-        // departmentInCharge: user.departmentInCharge,
-        // description: user.description,
-        // startDate: user.startDate,
-        // finishDate: user.finishDate,
-        // trainingDuration: user.trainingDuration,
-        // trainingPlace: user.trainingPlace,
-        // trainingMaster: user.trainingMaster,
-        // trainingResultId: 1,
-
-        // mesTrainingAttachmentFiles: [],
-        // id: user.id,
-        // priority: user.priority,
-        id: 53,
-        description: "123",
-        startDate: "2024-09-08T00:00:00Z",
-        finishDate: "2024-09-15T00:00:00Z",
-        departmentInCharge: "123",
-        trainingDuration: "123",
-        trainingPlace: "123",
-        trainingMaster: "123",
-        priority: 1,
-        mesTrainingNameId: 2,
-        trainingResultId: 2,
-        mesTrainingAttachmentFiles: [],
-      };
-      console.log(data);
-      //send api update request here
+      console.log(user);
 
       const url = `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings`;
 
       const headers = {
         Accept: "*/*",
-        "Content-Type": "multipart/form-data",
+        // "Content-Type": "application/json",
       };
-      axios
-        .put(url, data, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      // function convertDate(date) {
+      //   const dateObject = new Date(date);
+
+      //   // Get UTC time string
+      //   const utcYear = dateObject.getUTCFullYear();
+      //   const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+      //   const utcDay = dateObject.getUTCDate();
+      //   const utcHours = dateObject.getUTCHours();
+      //   const utcMinutes = dateObject.getUTCMinutes();
+      //   const utcSeconds = dateObject.getUTCSeconds();
+
+      //   // Construct the UTC date string in ISO 8601 format
+      //   const utcDateTimeString = `${utcYear}-${utcMonth
+      //     .toString()
+      //     .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+      //     .toString()
+      //     .padStart(2, "0")}:${utcMinutes
+      //     .toString()
+      //     .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+      //   return utcDateTimeString;
+      // }
+
+      const formData = new FormData();
+      formData.append("MesTrainingNameId", "1");
+      formData.append("DepartmentInCharge", user.departmentInCharge);
+      formData.append("Description", user.description);
+      formData.append("StartDate", user.startDate);
+      formData.append("FinishDate", user.finishDate);
+
+      formData.append("TrainingDuration", user.trainingDuration);
+
+      formData.append("TrainingPlace", user.trainingPlace);
+      formData.append("TrainingMaster", user.trainingMaster);
+      formData.append("TrainingResultId", "1");
+      formData.append("Id", user.id);
+      formData.append("Priority", user.priority);
+      formData.append("MesTrainingAttachmentFiles", []);
+      // [...user.mesTrainingAttachmentFiles].forEach((file) => {
+      //   formData.append("MesTrainingAttachmentFiles", file);
+      // });
+
+      try {
+        const response = await axios.put(url, formData, { headers });
+        // window.location.reload();
+        // console.log(newUser);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+      queryClient.setQueryData(["users"], (prevUsers = []) => [
+        ...prevUsers,
+        {
+          ...newUserInfo,
+        },
+      ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
+
 //DELETE hook (delete user in api)
 function useDeleteUser() {
   const queryClient = useQueryClient();

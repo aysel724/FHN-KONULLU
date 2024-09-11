@@ -54,7 +54,7 @@ const Example = () => {
       },
 
       {
-        accessorKey: "insuranceCompanyId",
+        accessorKey: "insuranceCompany.name",
         header: "Sığorta şirkətinin adı",
         editVariant: "select",
         editSelectOptions: getTypesNames(types),
@@ -64,11 +64,13 @@ const Example = () => {
           helperText: validationErrors?.insuranceCompanyId,
         },
       },
+
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
           helperText: validationErrors?.startDate,
@@ -80,6 +82,7 @@ const Example = () => {
           InputProps: {
             inputProps: {
               type: "date",
+              helperText: "", // Set the input type to 'date'
             },
           },
         },
@@ -89,6 +92,7 @@ const Example = () => {
         header: "Bitmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.endDate,
           helperText: validationErrors?.endDate,
@@ -348,7 +352,7 @@ function useCreateUser(types) {
         volunteerId: userId,
         insuranceCompanyId: findArrayElementByTitle(
           types,
-          user["insuranceCompanyId"]
+          user["insuranceCompany.name"]
         ),
       };
       console.log(newUser);
@@ -382,11 +386,11 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/Volunteers/${userId}`
+          `https://api-volunteers.fhn.gov.az/api/v1/Insurances/GetAll/${userId}`
         );
 
         console.log(response.data.data);
-        return response.data.data.insurances;
+        return response.data.data;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);
@@ -425,6 +429,27 @@ function useUpdateUser(types) {
       }
 
 
+      // export function convertDate(date) {
+      //   const dateObject = new Date(date);
+    
+      //   // Get UTC time string
+      //   const utcYear = dateObject.getUTCFullYear();
+      //   const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+      //   const utcDay = dateObject.getUTCDate();
+      //   const utcHours = dateObject.getUTCHours();
+      //   const utcMinutes = dateObject.getUTCMinutes();
+      //   const utcSeconds = dateObject.getUTCSeconds();
+    
+      //   // Construct the UTC date string in ISO 8601 format
+      //   const utcDateTimeString = `${utcYear}-${utcMonth
+      //     .toString()
+      //     .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+      //     .toString()
+      //     .padStart(2, "0")}:${utcMinutes
+      //     .toString()
+      //     .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
+      //   return utcDateTimeString;
+      // }
 
       const newUser = {
         id: user.id,
@@ -432,7 +457,10 @@ function useUpdateUser(types) {
         endDate: convertDate(user.endDate),
         note: user.note,
         volunteerId: userId,
-        insuranceCompanyId: user.insuranceCompanyId,
+        insuranceCompanyId: findArrayElementByTitle(
+          types,
+          user["insuranceCompany.name"]
+        ),
       };
       // console.log(newUser);
 

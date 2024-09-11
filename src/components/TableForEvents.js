@@ -30,6 +30,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import EditIcon from "../assets/icons/editIcon";
+import formatDateTİme from "../utils/convertDate";
 
 const Example = () => {
   const [imageData, setImageData] = useState(null);
@@ -162,6 +163,7 @@ const Example = () => {
       {
         accessorKey: "startDate",
         header: "Tədbirin başlama tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.startDate,
@@ -178,6 +180,7 @@ const Example = () => {
       {
         accessorKey: "finishDate",
         header: "Tədbirin bitmə tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.finishDate,

@@ -74,6 +74,7 @@ const Example = () => {
         header: "Başlama tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
           helperText: validationErrors?.startDate,
@@ -94,6 +95,7 @@ const Example = () => {
         header: "Bitmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
+          label: "",
           required: true,
           error: !!validationErrors?.endDate,
           helperText: validationErrors?.endDate,
@@ -336,7 +338,7 @@ function useCreateUser() {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-
+     
 
       const newUser = {
         number: user.number,
@@ -407,6 +409,8 @@ function useUpdateUser() {
         "Content-Type": "application/json",
       };
 
+     
+
       const newUser = {
         id: user.id,
         number: user.number,
@@ -441,7 +445,6 @@ function useUpdateUser() {
 
 //DELETE hook (delete user in api)
 function useDeleteUser() {
-  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {

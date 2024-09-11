@@ -17,6 +17,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 import btoa from "btoa-lite";
+import { convertDate } from "../utils/convertDate";
+import { validateEvent } from "../utils/validateUser";
 export default function NewTrainings() {
   const navigate = useNavigate();
   const style = {
@@ -124,16 +126,14 @@ export default function NewTrainings() {
   const [userData, setUserData] = useState({
     name: "",
     departmentInCharge: "",
-    description: "",
+    note: "",
     startDate: "",
     finishDate: "",
-    trainingDuration: "",
-    trainingPlace: "",
-    trainingMaster: "",
-    trainingResultId: "",
-    priority: "",
+    eventDuration: "",
+    eventPlace: "",
+    personInCharge: "",
     volunteerIds: [],
-    mesTrainingAttachmentFiles: [],
+    eventAttachments: [],
   });
 
   const [value, setValue] = useState([]);
@@ -152,33 +152,8 @@ export default function NewTrainings() {
 
   function handleSubmit() {
     setLoading(true);
-
-    // setTimeout(() => {
-    //   navigate(`/MesTrainings`);
-    // }, 20000);
-
-    function convertDate(date) {
-      const dateObject = new Date(date);
-
-      // Get UTC time string
-      const utcYear = dateObject.getUTCFullYear();
-      const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-      const utcDay = dateObject.getUTCDate();
-      const utcHours = dateObject.getUTCHours();
-      const utcMinutes = dateObject.getUTCMinutes();
-      const utcSeconds = dateObject.getUTCSeconds();
-
-      // Construct the UTC date string in ISO 8601 format
-      const utcDateTimeString = `${utcYear}-${utcMonth
-        .toString()
-        .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-        .toString()
-        .padStart(2, "0")}:${utcMinutes
-        .toString()
-        .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-      return utcDateTimeString;
-    }
-
+    const errorNotfication = validateEvent(userData)
+    setError(errorNotfication);
     setUserData((prev) => {
       const data = {
         ...prev,
@@ -197,72 +172,74 @@ export default function NewTrainings() {
     formData.append("Description", userData.description);
     formData.append("EventDuration", userData.eventDuration);
     formData.append("EventPlace", userData.eventPlace);
+    formData.append("PersonInCharge", userData.personInCharge);
     formData.append("FinishDate", convertDate(userData.finishDate));
     [...userData.volunteerIds].forEach((id) => {
       formData.append("VolunteerIds", id);
     });
-
-    // formData.append(
-    //   "MesTrainingAttachmentFiles",
-    //   userData.mesTrainingAttachmentFiles
-    // );
 
     [...userData.eventAttachments].forEach((file) => {
       formData.append("EventAttachmentFiles", file);
     });
 
     // Now you can use formData to send the blob to a server using fetch or XMLHttpRequest
-
-    console.log(formData);
-    axios
-      .post(`https://api-volunteers.fhn.gov.az/api/v1/Events`, formData)
-      .then((response) => {
-        setLoading(false);
-        openNotificationWithIcon(
-          "success",
-          "Success Message",
-          "This is a success notification."
-        );
-        console.log(response);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.error("Error:", err.response); // Log the detailed error response
-        if (err.response) {
-          if (err.response.status === 400) {
-            openNotificationWithIcon(
-              "error",
-              "Error Message",
-              "This is an error notification."
-            );
-            setError("xeta 400");
-          } else if (err.response.status === 404) {
-            openNotificationWithIcon(
-              "error",
-              "Error Message",
-              "This is an error notification."
-            );
-            setError("xeta 404");
-          } else {
-            openNotificationWithIcon(
-              "error",
-              "Error Message",
-              "This is an error notification."
-            );
-            setError("Something went wrong. Please try again later.");
-          }
-          setModalIsOpen(true); // Open modal to show error message
-        } else {
-          setError("xeta 500.");
+    if (Object.keys(errorNotfication).length === 0) {
+      console.log(formData);
+      axios
+        .post(`https://api-volunteers.fhn.gov.az/api/v1/Events`, formData)
+        .then((response) => {
+          setLoading(false);
           openNotificationWithIcon(
-            "error",
-            "Error Message",
-            "This is an error notification."
+            "success",
+            "Success Message",
+            "This is a success notification."
           );
-          setModalIsOpen(true); // Open modal to show error message
-        }
-      });
-  }
+          console.log(response);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.error("Error:", err.response); // Log the detailed error response
+          if (err.response) {
+            if (err.response.status === 400) {
+              openNotificationWithIcon(
+                "error",
+                "Error Message",
+                "This is an error notification."
+              );
+              setError("xeta 400");
+            } else if (err.response.status === 404) {
+              openNotificationWithIcon(
+                "error",
+                "Error Message",
+                "This is an error notification."
+              );
+              setError("xeta 404");
+            } else {
+              openNotificationWithIcon(
+                "error",
+                "Error Message",
+                "This is an error notification."
+              );
+              setError("Something went wrong. Please try again later.");
+            }
+            setModalIsOpen(true); // Open modal to show error message
+          } else {
+            setError("xeta 500.");
+            openNotificationWithIcon(
+              "error",
+              "Error Message",
+              "This is an error notification."
+            );
+            setModalIsOpen(true); // Open modal to show error message
+          }
+        });
+        setLoading(false)
+         setTimeout(() => {
+        navigate(`/events`);
+      }, 20000);
+      }
+      
+    }
 
   const closeModal = () => {
     setModalIsOpen(false);
@@ -271,7 +248,7 @@ export default function NewTrainings() {
   return (
     <>
       {contextHolder}
-      {isLoading && <div className="loader">Loading...</div>}
+      {/* {isLoading && <div className="loader">Loading...</div>} */}
       {error && (
         <Modal
           aria-labelledby="transition-modal-title"
@@ -330,6 +307,8 @@ export default function NewTrainings() {
               name="name"
               variant="outlined"
               value={userData.name}
+              error={!!error?.name}
+              helperText={error?.name || ""}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
@@ -344,6 +323,8 @@ export default function NewTrainings() {
               name="name"
               variant="outlined"
               value={userData.departmentInCharge}
+              error={!!error?.departmentInCharge}
+              helperText={error?.departmentInCharge || ""}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
@@ -359,11 +340,12 @@ export default function NewTrainings() {
               id="FatherName"
               variant="outlined"
               value={userData.startDate}
+              error={!!error?.startDate}
+              helperText={error?.startDate || ""}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
                   const data = { ...prev, startDate: e.target.value };
-
                   return data;
                 });
               }}
@@ -374,7 +356,9 @@ export default function NewTrainings() {
               name="finishDate"
               id="FinishDate"
               variant="outlined"
-              value={userData.finishDate || ""} // Ensure it's either a valid date or an empty string
+              value={userData.finishDate || ""}
+              error={!!error?.finishDate}
+              helperText={error?.finishDate || ""}
               onChange={(e) => {
                 console.log(e.target.value); // Log the new value
                 setUserData((prev) => ({
@@ -413,7 +397,7 @@ export default function NewTrainings() {
             <TextField
               id="filled-basic"
               name="militaryReward"
-              label="Təlimin müddəti "
+              label="Tədbirin müddəti"
               variant="outlined"
               value={userData?.eventDuration}
               onChange={(e) => {
@@ -427,10 +411,12 @@ export default function NewTrainings() {
             />
             <TextField
               id="Height"
-              label="Təlimin keçirilmə yeri "
+              label="Tədbirin keçirilmə yeri* "
               name="height"
               variant="outlined"
               value={userData?.eventPlace}
+              error={!!error?.eventPlace}
+              helperText={error?.eventPlace || ""}
               onChange={(e) => {
                 console.log(userData);
                 setUserData((prev) => {
@@ -443,7 +429,7 @@ export default function NewTrainings() {
             <TextField
               id="vj"
               name="birthDate"
-              label="Təlimçi "
+              label="Tədbir üzrə məsul şəxs"
               variant="outlined"
               value={userData?.personInCharge}
               onChange={(e) => {
@@ -455,11 +441,38 @@ export default function NewTrainings() {
                 });
               }}
             />
+            <TextField
+              id="vj"
+              name="birthDate"
+              label="Qeyd"
+              variant="outlined"
+              value={userData?.note}
+              onChange={(e) => {
+                console.log(userData);
+                setUserData((prev) => {
+                  const data = { ...prev, note: e.target.value };
+                  return data;
+                });
+              }}
+            />
 
             <Autocomplete
               multiple
               disablePortal
               value={value}
+              onBlur={() => {
+                if (value.length === 0) {
+                  setError((prev) => ({
+                    ...prev,
+                    volunteerIds: "Bu xana boş qala bilmez",
+                  }));
+                } else {
+                  setError((prev) => ({
+                    ...prev,
+                    volunteerIds: "",
+                  }));
+                }
+              }}
               onChange={(e, newValue) => {
                 e.preventDefault();
                 setValue(newValue);
@@ -470,16 +483,19 @@ export default function NewTrainings() {
                       return e.id;
                     }),
                   };
-
                   return data;
                 });
               }}
-              // value={userData.volunteerIds}
               id="combo-box-demo"
               options={volonteerNames}
               sx={{ width: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Konulluler" />
+                <TextField
+                  {...params}
+                  label="Tədbirdə iştirak edən könüllülər"
+                  error={!!error?.volunteerIds} 
+                  helperText={error?.volunteerIds || ""} 
+                />
               )}
             />
             <Button variant="contained" onClick={() => handleSubmit()}>

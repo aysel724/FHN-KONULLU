@@ -30,6 +30,7 @@ import { MRT_Localization_AZ } from "material-react-table/locales/az";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
+import { validateSport } from "../utils/validateUser";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -114,6 +115,11 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
+    const newValidationErrors = validateSport(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
@@ -121,6 +127,11 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
+    const newValidationErrors = validateSport(values);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -273,11 +284,11 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/Volunteers/${userId}`
+          `${BASE_URL}/SportAchievements/GetAll/${userId}`
         );
 
         console.log(response.data.data);
-        return response.data.data.sportAchievements;
+        return response.data.data;
       } catch (error) {
         // Handle errors here if needed
         console.error("Xəta:", error);
@@ -299,7 +310,6 @@ function useUpdateUser() {
       console.log(user);
 
       const url = `${BASE_URL}/SportAchievements`;
-
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
