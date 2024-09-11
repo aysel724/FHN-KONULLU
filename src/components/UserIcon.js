@@ -62,7 +62,7 @@
 
 // export default UserIcon;
 import React, { useState, useEffect } from "react";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { jwtDecode } from "jwt-decode"; // Ensure this is installed and correctly imported
 import { useNavigate } from "react-router-dom";
 import "../components/internal/UserIcon.css"; // Import the CSS file for styling
@@ -89,20 +89,25 @@ function UserIcon() {
     navigate("/login"); // Redirect to the login page
   };
 
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
   return (
     <div className="user-icon-container">
-      <AccountCircleIcon />
-      <div
-        className="username-container"
-        onMouseEnter={() => setIsModalVisible(true)}
-        onMouseLeave={() => setIsModalVisible(false)}
-      >
+      <div className="user-info">
         <p>{name}</p>
-        {isModalVisible && (
-          <div className="logout-modal">
-            <button onClick={handleLogout}>Hesabdan çıxış </button>
-          </div>
-        )}
+        <div className="icon-container">
+          <LogoutIcon
+            style={{ marginLeft: "10px", marginTop: "20px" }}
+            onClick={toggleModal}
+          />
+          {isModalVisible && (
+            <div className="logout-modal">
+              <button onClick={handleLogout}>Hesabdan çıxış</button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
