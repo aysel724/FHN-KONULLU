@@ -64,33 +64,40 @@ export default function ModalForDailedFiltration() {
   const handleSubmit = () => {
     const filters = [];
 
-    const addFilters = (field, values) => {
-      if (values.length > 0) {
-        values.forEach((value) => {
-          filters.push({
-            field: field,
-            operator: "eq",
-            value: value,
-          });
+  const addFilters = (field, values, logic = "or") => {
+    if (values.length > 0) {
+      if (values.length > 1) {
+        const orFilters = values.map((value) => ({
+          field: field,
+          operator: "eq",
+          value: value,
+        }));
+        filters.push({ filters: orFilters, logic: "or" });
+      } else {
+        filters.push({
+          field: field,
+          operator: "eq",
+          value: values[0],
         });
       }
-    };
-
-    addFilters("Educations.EducationType.Name", education);
-    addFilters("SecurityCheckResults.SecurityCheckResultName.Name", security);
-    addFilters(
-      "ComputerSkillToVolunteers.ComputerSkill.ComputerSkillName.Name",
-      knowledge
-    );
-    addFilters("VoluntaryOfMesStatus.Name", status);
-    addFilters("LanguageToVolunteers.Language.LanguageName.Name", language);
-    addFilters("MaritalStatus", marriage);
-    addFilters("Gender", gender);
-    const queryString = JSON.stringify({ filters, logic: "and" });
-
-    // Sadece queryString'i ayarla
-    setQueryString(queryString);
+    }
   };
+
+  addFilters("Educations.EducationType.Name", education);
+  addFilters("SecurityCheckResults.SecurityCheckResultName.Name", security);
+  addFilters(
+    "ComputerSkillToVolunteers.ComputerSkill.ComputerSkillName.Name",
+    knowledge
+  );
+  addFilters("VoluntaryOfMesStatus.Name", status);
+  addFilters("LanguageToVolunteers.Language.LanguageName.Name", language);
+  addFilters("MaritalStatus", marriage);
+  addFilters("Gender", gender); 
+
+  const queryString = JSON.stringify({ filters, logic: "and" });
+
+  setQueryString(queryString);
+};
 
   return (
     <div>

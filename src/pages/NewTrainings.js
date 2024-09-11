@@ -68,10 +68,8 @@ export default function NewTrainings() {
             name: e.name,
             id: e.id,
           };
-
           return user;
         });
-
         console.log(newData);
         setTrainingNames(newData);
       } catch (error) {
@@ -197,6 +195,7 @@ export default function NewTrainings() {
 
       return data;
     });
+    
     console.log(userData);
     const formData = new FormData();
     formData.append("StartDate", convertDate(userData.startDate));
@@ -555,31 +554,56 @@ export default function NewTrainings() {
                   });
                 }}
               />
-              <Autocomplete
-                multiple
-                disablePortal
-                value={value}
-                onChange={(e, newValue) => {
-                  setValue(newValue);
-                  setUserData((prev) => {
-                    const data = {
-                      ...prev,
-                      volunteerIds: newValue.map((e) => {
-                        return e.id;
-                      }),
-                    };
+            {/* <FormControl variant="outlined" fullWidth error={!!error?.volunteerIds}> */}            
 
-                    return data;
-                  });
-                }}
-                // value={userData.volunteerIds}
-                id="combo-box-demo"
-                options={volonteerNames}
-                sx={{ width: 300 }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Konulluler" />
-                )}
-              />
+<Autocomplete
+  multiple
+  disablePortal
+  value={value}
+  onBlur={() => {
+    if (value.length === 0) {
+      setError((prev) => ({
+        ...prev,
+        volunteerIds: "Bu xana boş qala bilmez",
+      }));
+    } else {
+      setError((prev) => ({
+        ...prev,
+        volunteerIds: "",
+      }));
+    }
+  }}
+  onChange={(e, newValue) => {
+    setValue(newValue);
+    setUserData((prev) => {
+      const data = {
+        ...prev,
+        volunteerIds: newValue.map((e) => e.id),
+      };
+      return data;
+    });
+    // Hata mesajını temizle
+    if (newValue.length > 0) {
+      setError((prev) => ({
+        ...prev,
+        volunteerIds: "",
+      }));
+    }
+  }}
+  options={volonteerNames}
+  sx={{ width: 300 }}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      label="Konulluler"
+      error={!!error?.volunteerIds} // Hata durumunu kontrol ediyoruz
+      helperText={error?.volunteerIds || ""} // Hata mesajını gösteriyoruz
+    />
+  )}
+/>
+
+               {/* <FormHelperText>{error?.volunteerIds || ""}</FormHelperText> */}
+            {/* </FormControl> */}
               <Button variant="contained" onClick={() => handleSubmit()}>
                 Yadda saxla
               </Button>

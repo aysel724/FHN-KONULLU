@@ -219,6 +219,8 @@ export function validateTraning(userData) {
   if (!userData.trainingMaster) newErrors.trainingMaster = "Bu xana boş qala bilmez";
   if (!userData.mesTrainingNameId) newErrors.mesTrainingNameId = "Bu xana boş qala bilmez";
   if (!userData.trainingResultId) newErrors.trainingResultId = "Bu xana boş qala bilmez";
+  if (!userData.volunteerIds || userData.volunteerIds.length === 0)
+    newErrors.volunteerIds = "Bu xana boş qala bilmez";
   if (!userData.priority) newErrors.priority = "Bu xana boş qala bilmez";
 
   return newErrors;
