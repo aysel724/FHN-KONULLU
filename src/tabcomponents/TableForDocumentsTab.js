@@ -32,9 +32,16 @@ const Example = () => {
   const [file, setFile] = useState(null);
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files[0]; // Получите первый выбранный файл
+
     if (file) {
-      setFile(file);
+      // Преобразуйте файл в base64, если это нужно
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result.split(",")[1]; // Удалите префикс 'data:[<mediatype>];base64,'
+        setFile(base64String); // Сохраните base64 строку в состоянии или другой переменной
+      };
+      reader.readAsDataURL(file); // Прочитайте файл как Data URL
     }
   };
   useEffect(() => {
@@ -111,13 +118,29 @@ const Example = () => {
         header: "Sənədin adı",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.receivingDate,
+          error: !!validationErrors?.name,
 
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
-              receivingDate: undefined,
+              name: undefined,
+            }),
+        },
+      },
+
+      {
+        accessorKey: "documentUrl",
+        header: "Sənəd",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.documentUrl,
+
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              documentUrl: undefined,
             }),
         },
       },
@@ -130,7 +153,7 @@ const Example = () => {
           type: "file",
           error: !!validationErrors?.file,
           helperText: validationErrors?.file,
-          onChange: (event) => handleFileChange(event),
+          onChange: handleFileChange, // Обработчик изменения файла
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -158,8 +181,10 @@ const Example = () => {
   );
 
   //call CREATE hook
-  const { mutateAsync: createUser, isPending: isCreatingUser } =
-    useCreateUser(types);
+  const { mutateAsync: createUser, isPending: isCreatingUser } = useCreateUser(
+    types,
+    file
+  );
   //call READ hook
   const {
     data: fetchedUsers = [],
@@ -374,28 +399,35 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-function useCreateUser(types) {
+function base64ToBlob(base64String, contentType) {
+  const base64Data = base64String.replace(/^data:[a-zA-Z0-9+\/]+;base64,/, ""); // Удаление префикса
+  const byteCharacters = atob(base64Data); // Декодирование base64
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  return new Blob([byteArray], { type: contentType });
+}
+
+function useCreateUser(types, file) {
   let params = useParams();
   let userId = params.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments`;
+      const url =
+        "https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments"; // Замените на реальный URL
       const headers = {
         Accept: "*/*",
-        "Content-Type": "multipart/form-data",
+        // "Content-Type" не нужен для multipart/form-data, браузер установит это автоматически
       };
 
+      // Функция для нахождения элемента массива по названию
       function findArrayElementByTitle(array, title) {
-        console.log(
-          array.find((element) => {
-            return element.name === title;
-          })
-        );
-        return array.find((element) => {
-          return element.name === title;
-        }).id;
+        const element = array.find((element) => element.name === title);
+        return element ? element.id : null;
       }
 
       const formData = new FormData();
@@ -406,29 +438,26 @@ function useCreateUser(types) {
       formData.append("Note", user.note);
       formData.append("Name", user.name);
       formData.append("VolunteerId", userId);
-      // formData.append("File", file); // Append file to FormData
-      function base64ToBlob(base64String, contentType) {
-        const byteCharacters = atob(base64String); // Decode base64
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        return new Blob([byteArray], { type: contentType });
+      console.log();
+      try {
+        // Преобразование base64 строки в Blob
+        const contentType = "application/octet-stream"; // Убедитесь, что это правильный contentType
+        const base64String = file; // Убедитесь, что user.file содержит корректную base64 строку
+        const blob = base64ToBlob(base64String, contentType);
+
+        formData.append("File", blob, "filename.png"); // Укажите правильное имя файла и тип, если необходимо
+      } catch (error) {
+        console.error("Error converting base64 to Blob:", error);
+        throw error; // Прекратить выполнение в случае ошибки преобразования
       }
-
-      const contentType = "*/*";
-      const base64String = `${user.file}`; // Example base64 string
-      const blob = base64ToBlob(base64String, contentType);
-
-      formData.append("File", blob, "filename");
 
       try {
         const response = await axios.post(url, formData, { headers });
         window.location.reload();
         console.log(response.data);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error during request:", error);
+        throw error; // Прекратить выполнение в случае ошибки запроса
       }
     },
     onMutate: (newUserInfo) => {
