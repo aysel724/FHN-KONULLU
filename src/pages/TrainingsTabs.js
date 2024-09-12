@@ -207,6 +207,7 @@ export default function TabsUser() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <div>
+          <h2 style={{ textAlign: "left" }}> Təlimə yeni könüllü əlavə edin</h2>
           <Space
             style={{
               width: "100%",

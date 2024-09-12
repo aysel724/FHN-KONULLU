@@ -375,13 +375,13 @@ const Example = () => {
       clearSearch: "Axtarışı təmizlə",
 
       clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
+      clickToCopy: "Kopyalamaq üçün klik et",
       copy: "Kopyala",
       collapse: "Collapse",
 
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
-
+      of: "/",
       edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",

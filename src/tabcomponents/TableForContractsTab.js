@@ -159,18 +159,18 @@ const Example = () => {
   const table = useMaterialReactTable({
     localization: {
       cancel: "İmtina",
-      actions: "Əməlliyatlar",
+
       clearFilter: "Filteri təmizlə",
       clearSearch: "Axtarışı təmizlə",
 
       clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
+      clickToCopy: "Kopyalamaq üçün klik et",
       copy: "Kopyala",
       collapse: "Collapse",
 
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
-
+      of: "/",
       edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",
@@ -207,18 +207,30 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
-    columns,
+    positionActionsColumn: "last",
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    getRowId: (row) => row.id,
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -226,6 +238,10 @@ const Example = () => {
         minHeight: "500px",
       },
     },
+
+    columns,
+    data: fetchedUsers,
+
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),

@@ -223,7 +223,7 @@ export default function TabsUser() {
                 marginBottom: "30px",
                 width: "100%",
               }}
-              placeholder="Könüllüləri seçin"
+              placeholder="Tədbirə yeni könüllü əlavə edin"
               defaultValue={[]}
               onChange={handleChange1}
               options={options}
