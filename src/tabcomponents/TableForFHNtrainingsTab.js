@@ -282,13 +282,12 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
     columns,
     enableRowNumbers: true,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal",
     enableEditing: false,
     initialState: {
       columnVisibility: { id: false },
@@ -341,7 +340,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -370,7 +368,6 @@ function useGetUsers() {
 
 //UPDATE hook (put user in api////)
 function useUpdateUser(types) {
-  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -379,7 +376,7 @@ function useUpdateUser(types) {
       console.log(data);
       //send api update request here
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `${BASE_URL}/Education`;
 
       const headers = {
         Accept: "*/*",
@@ -404,16 +401,8 @@ function useUpdateUser(types) {
           user["educationType.name"]
         ).id,
       };
-      // axios
-      //   .put(url, data, { headers })
-      //   .then((response) => {
-      //     console.log("Response:", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
+
     },
-    //client side optimistic update
     //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
@@ -422,7 +411,6 @@ function useUpdateUser(types) {
         )
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -441,14 +429,12 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

@@ -29,7 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { validateInsurance } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
-import  convertDate  from "../utils/convertDate";
+import  convertDate  from "../utils/converTime";
 import formatDateTİme from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 
@@ -60,11 +60,10 @@ const Example = () => {
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.insuranceCompanyId,
-          helperText: validationErrors?.insuranceCompanyId,
+          error: !!validationErrors?.["insuranceCompany.name"],
+          helperText: validationErrors?.["insuranceCompany.name"],
         },
       },
-
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
@@ -153,7 +152,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
 
   //UPDATE action
@@ -165,7 +164,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); //exit editing mode
+    table.setEditingRow(null); 
   };
 
   //DELETE action
@@ -222,12 +221,11 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal", 
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -252,7 +250,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -266,7 +264,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -291,13 +289,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true); 
         }}
       >
         Əlavə edin
@@ -374,7 +366,6 @@ function useCreateUser(types) {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -386,7 +377,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Insurances/GetAll/${userId}`
+          `${BASE_URL}/Insurances/GetAll/${userId}`
         );
 
         console.log(response.data.data);
@@ -428,29 +419,6 @@ function useUpdateUser(types) {
         });
       }
 
-
-      // export function convertDate(date) {
-      //   const dateObject = new Date(date);
-    
-      //   // Get UTC time string
-      //   const utcYear = dateObject.getUTCFullYear();
-      //   const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-      //   const utcDay = dateObject.getUTCDate();
-      //   const utcHours = dateObject.getUTCHours();
-      //   const utcMinutes = dateObject.getUTCMinutes();
-      //   const utcSeconds = dateObject.getUTCSeconds();
-    
-      //   // Construct the UTC date string in ISO 8601 format
-      //   const utcDateTimeString = `${utcYear}-${utcMonth
-      //     .toString()
-      //     .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-      //     .toString()
-      //     .padStart(2, "0")}:${utcMinutes
-      //     .toString()
-      //     .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-      //   return utcDateTimeString;
-      // }
-
       const newUser = {
         id: user.id,
         startDate: convertDate(user.startDate),
@@ -481,7 +449,6 @@ function useUpdateUser(types) {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 //DELETE hook (delete user in api)
@@ -500,27 +467,22 @@ function useDeleteUser() {
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

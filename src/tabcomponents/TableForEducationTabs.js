@@ -31,6 +31,7 @@ import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 import formatDateTİme from "../utils/convertDate";
+import convertDate from "../utils/converTime";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -93,13 +94,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.educationEnterprise,
           helperText: validationErrors?.educationEnterprise,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               educationEnterprise: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -132,13 +131,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.diplomaSerialNumber,
           helperText: validationErrors?.diplomaSerialNumber,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               diplomaSerialNumber: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -148,13 +145,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.qualification,
           helperText: validationErrors?.qualification,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               qualification: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -164,13 +159,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.faculty,
           helperText: validationErrors?.faculty,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               faculty: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
@@ -184,7 +177,6 @@ const Example = () => {
           error: !!validationErrors?.diplomaGivenDate,
           helperText: "Diplomun verilmə tarixi",
 
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -196,7 +188,6 @@ const Example = () => {
             },
           },
         },
-        //optionally add validation checking for onBlur or onChange
       },
 
       {
@@ -272,7 +263,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null);
   };
 
   //UPDATE action
@@ -345,12 +336,11 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal",
+    editDisplayMode: "modal", 
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -375,7 +365,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -389,7 +379,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -414,13 +404,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true); 
         }}
       >
         Əlavə edin
@@ -532,13 +516,13 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/Education/GetAll/${userId}`
+          `https://api-volunteers.fhn.gov.az/api/v1/Education/GetAll/${userId}`
         );
 
         const users = response.data.data.map((user) => ({
           ...user,
 
-          degree: `${user.educationType.educationDegrees[0].name}`,
+          degree: `${user.educationType.educationDegrees[0]?.name}`,
         }));
         console.log(response.data.data, "users");
 
@@ -649,7 +633,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `${BASE_URL}/Education/${userId}`,
+          `https://api-volunteers.fhn.gov.az/api/v1/Education/${userId}`,
           {
             headers: { accept: "*/*" },
           }
@@ -676,7 +660,7 @@ function useDeleteUser() {
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
+
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

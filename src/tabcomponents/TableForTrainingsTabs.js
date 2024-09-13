@@ -28,7 +28,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import formatDateTİme from "../utils/convertDate";
-import  convertDate  from "../utils/convertDate";
+import  convertDate  from "../utils/converTime";
 import { BASE_URL } from "../api/baseURL";
 import { validateTraningTab } from "../utils/validateUser";
 const Example = () => {
@@ -317,7 +317,6 @@ function useCreateUser() {
         finishDate: convertDate(user.finishDate),
         volunteerId: userId,
       };
-      // console.log(newUser);
 
       try {
         const response = await axios.post(url, newUser, { headers });
@@ -336,7 +335,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -385,7 +383,6 @@ function useUpdateUser() {
         finishDate: user.finishDate,
         id: user.id,
       };
-      // console.log(newUser);
 
       try {
         const response = await axios.put(url, newUser, { headers });
@@ -404,7 +401,6 @@ function useUpdateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useDeleteUser() {
@@ -421,28 +417,23 @@ function useDeleteUser() {
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQusers'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

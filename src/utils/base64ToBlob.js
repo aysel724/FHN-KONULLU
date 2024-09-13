@@ -1,4 +1,4 @@
-export default function base64ToBlob(base64String, contentType) {
+export default function Base64ToBlob(base64String, contentType) {
     const byteCharacters = atob(base64String); // Decode base64
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {

@@ -65,7 +65,7 @@ const Example = () => {
     },
     {
       accessorKey: "startDate",
-      
+      header: "Bitmə tarixi",
       Cell: ({ cell }) => formatDateTİme(cell.getValue()),
       muiEditTextFieldProps: {
         required: true,
@@ -85,12 +85,12 @@ const Example = () => {
     },
     {
       accessorKey: "endDate",
-      // header: "Bitmə tarixi",
+      header: "Bitmə tarixi",
       Cell: ({ cell }) => formatDateTİme(cell.getValue()),
       muiEditTextFieldProps: {
+        label:'',
         required: true,
         error: !!validationErrors?.endDate,
-        // helperText: validationErrors?.endDate,
         helperText: validationErrors?.endDate  ? validationErrors?.endDate : "Bitmə tarixi",
         onFocus: () =>
           setValidationErrors({

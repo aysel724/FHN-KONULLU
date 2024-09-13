@@ -31,6 +31,7 @@ import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 import formatDateTİme from "../utils/convertDate";
+import convertDate from "../utils/converTime";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -72,13 +73,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.position,
           helperText: validationErrors?.position,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               position: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
@@ -99,7 +98,7 @@ const Example = () => {
           InputProps: {
             inputProps: {
               type: "date",
-              helperText: "", // Set the input type to 'date'
+              helperText: "", 
             },
           },
         },
@@ -120,7 +119,7 @@ const Example = () => {
             }),
           InputProps: {
             inputProps: {
-              type: "date", // Set the input type to 'date'
+              type: "date", 
             },
           },
         },
@@ -132,13 +131,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.note,
           helperText: validationErrors?.note,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               note: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
     ],
@@ -163,18 +160,8 @@ const Example = () => {
     useDeleteUser();
 
   //CREATE action
-  // const handleCreateUser = async ({ values, table }) => {
-  //   const newValidationErrors = validateFields(values);
-  //   if (Object.values(newValidationErrors).some((error) => error)) {
-  //     setValidationErrors(newValidationErrors);
-  //     return;
-  //   }
-  //   setValidationErrors({});
-  //   await createUser(values);
-  //   table.setCreatingRow(null); 
-  // };
+
   const handleCreateUser = async ({ values, table }) => {
-    // setEndDate(values)
     const newValidationErrors = validateLaborActivity(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
       console.log("Validation errors present:", newValidationErrors);  
@@ -196,7 +183,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); //exit editing mode
+    table.setEditingRow(null);
   };
 
   //DELETE action
@@ -257,12 +244,11 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal", 
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -287,7 +273,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -301,7 +287,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -326,13 +312,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true); 
         }}
       >
         Əlavə edin
@@ -360,33 +340,13 @@ function useCreateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/LaborActivities`;
+      const url = `${BASE_URL}/LaborActivities`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      function convertDate(date) {
-        const dateObject = new Date(date);
 
-        // Get UTC time string
-        const utcYear = dateObject.getUTCFullYear();
-        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-        const utcDay = dateObject.getUTCDate();
-        const utcHours = dateObject.getUTCHours();
-        const utcMinutes = dateObject.getUTCMinutes();
-        const utcSeconds = dateObject.getUTCSeconds();
-
-        // Construct the UTC date string in ISO 8601 format
-        const utcDateTimeString = `${utcYear}-${utcMonth
-          .toString()
-          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-          .toString()
-          .padStart(2, "0")}:${utcMinutes
-          .toString()
-          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-        return utcDateTimeString;
-      }
       const newUser = {
         workplace: user.workplace,
         position: user.position,
@@ -413,7 +373,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -449,33 +408,13 @@ function useUpdateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/LaborActivities`;
+      const url = `${BASE_URL}/LaborActivities`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      function convertDate(date) {
-        const dateObject = new Date(date);
-
-        // Get UTC time string
-        const utcYear = dateObject.getUTCFullYear();
-        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-        const utcDay = dateObject.getUTCDate();
-        const utcHours = dateObject.getUTCHours();
-        const utcMinutes = dateObject.getUTCMinutes();
-        const utcSeconds = dateObject.getUTCSeconds();
-
-        // Construct the UTC date string in ISO 8601 format
-        const utcDateTimeString = `${utcYear}-${utcMonth
-          .toString()
-          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-          .toString()
-          .padStart(2, "0")}:${utcMinutes
-          .toString()
-          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-        return utcDateTimeString;
-      }
+      
       const newUser = {
         id: user.id,
         workplace: user.workplace,
@@ -503,7 +442,6 @@ function useUpdateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useDeleteUser() {
@@ -521,27 +459,22 @@ function useDeleteUser() {
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

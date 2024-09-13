@@ -464,7 +464,7 @@ export default function NewTrainings() {
                 if (value.length === 0) {
                   setError((prev) => ({
                     ...prev,
-                    volunteerIds: "Bu xana boş qala bilmez",
+                    volunteerIds: "Bu xana boş qala bilməz",
                   }));
                 } else {
                   setError((prev) => ({

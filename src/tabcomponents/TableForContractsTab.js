@@ -30,7 +30,7 @@ import { validateContract } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import formatDateTİme from "../utils/convertDate";
-import convertDate  from "../utils/convertDate";
+import convertDate  from "../utils/converTime";
 import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
@@ -59,13 +59,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.number,
           helperText: validationErrors?.number,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               number: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
@@ -119,13 +117,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.note,
           helperText: validationErrors?.note,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               note: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
     ],
@@ -158,10 +154,9 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
 
-  //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
     const newValidationErrors = validateContract(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
@@ -170,10 +165,9 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); //exit editing mode
+    table.setEditingRow(null); 
   };
 
-  //DELETE action
   const openDeleteConfirmModal = (row) => {
     if (window.confirm("təsdiq edirsiz?")) {
       deleteUser(row.original.id);
@@ -231,12 +225,11 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal", 
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -254,14 +247,13 @@ const Example = () => {
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleSaveUser,
-    //optionally customize modal content
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
         <DialogTitle variant="h5"> əlavə edin</DialogTitle>
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -275,7 +267,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -300,13 +292,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true);
         }}
       >
         Əlavə edin
@@ -327,13 +313,10 @@ function useCreateUser() {
   let params = useParams();
   let userId = params.id;
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
-
       const url = `${BASE_URL}/Contracts`;
-
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
@@ -347,8 +330,6 @@ function useCreateUser() {
         note: user.note,
         volunteerId: userId,
       };
-
-      // console.log(newUser);
 
       try {
         const response = await axios.post(url, newUser, { headers });
@@ -367,7 +348,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useGetUsers() {
@@ -383,7 +363,6 @@ function useGetUsers() {
 
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Xəta:", error);
         throw error;
       }
@@ -392,7 +371,6 @@ function useGetUsers() {
   });
 }
 
-//UPDATE hook (put user in api)
 function useUpdateUser() {
   let params = useParams();
   let userId = params.id;
@@ -420,8 +398,6 @@ function useUpdateUser() {
         volunteerId: userId,
       };
 
-      // console.log(newUser);
-
       try {
         const response = await axios.put(url, newUser, { headers });
         window.location.reload();
@@ -439,11 +415,9 @@ function useUpdateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
-//DELETE hook (delete user in api)
 function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -458,28 +432,23 @@ function useDeleteUser() {
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

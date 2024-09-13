@@ -75,7 +75,7 @@ export function validateLanguageLevel(values){
 
 export function validateInsurance(values) {
   const errors = {};
-  errors.insuranceCompanyId = !validateRequired(values.insuranceCompanyId || "")
+  errors["insuranceCompany.name"] = !validateRequired(values["insuranceCompany.name"] || "")
   ? "Sığorta şirkətinin adı tələb olunur"
   : "";
   errors.startDate = !validateRequired(values.startDate || "")
@@ -195,20 +195,27 @@ export function validateTraningTab(values){
   }
   return errors 
 }
-export function validateElectronDocument(values){
+export function validateElectronDocument(values) {
   const errors = {};
   errors.name = !validateRequired(values.name || "")
-  ? "Sənədin adı tələb olunur"
-  : "";
-  errors.electronicDocumentType = !validateRequired(values.electronicDocumentType || "")
-  ? "Sənədin növü tələb olunur"
-  : "";
-  errors.fileName = !validateRequired(values.fileName || "")
-  ? "Sənədin növü tələb olunur"
-  : "";
-
-  return errors 
+    ? "Sənədin adı tələb olunur"
+    : "";
+  errors['electronicDocumentType.name'] = !validateRequired(values['electronicDocumentType.name'] || "")
+    ? "Sənədin növü tələb olunur"
+    : "";
+    if (!values.file) {
+      errors.file = "Fayl seçilməlidir.";
+    } else if (values.file && values.file.name) {
+      const validExtensions = ['docx', 'pdf'];
+      const fileExtension = values.file.name.split('.').pop().toLowerCase();
+      if (!validExtensions.includes(fileExtension)) {
+        errors.file = "Yalnız .docx və .pdf faylları seçə bilərsiniz.";
+      }
+    }
+    return errors;
 }
+
+
 
 export function validateEducation(values){
   const errors = {};
@@ -256,39 +263,55 @@ export function validateComputerSkills(values){
 
 export function validateTraning(userData) {
   const newErrors = {};
-  if (!userData.departmentInCharge) newErrors.departmentInCharge = "Bu xana boş qala bilmez";
-  if (!userData.description) newErrors.description = "Bu xana boş qala bilmez";
-  if (!userData.startDate) newErrors.startDate = "Bu xana boş qala bilmez";
-  if (!userData.finishDate) newErrors.finishDate = "Bu xana boş qala bilmez";
+  if (!userData.departmentInCharge) newErrors.departmentInCharge = "Bu xana boş qala bilməz";
+  if (!userData.description) newErrors.description = "Bu xana boş qala bilməz";
+  if (!userData.startDate) newErrors.startDate = "Bu xana boş qala bilməz";
+  if (!userData.finishDate) newErrors.finishDate = "Bu xana boş qala bilməz";
   if(userData.finishDate){
     if(new Date (userData.finishDate) < new Date (userData.startDate)){
       newErrors.finishDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz"
     }
   }
-  if (!userData.trainingResultId) newErrors.trainingResultId = "Bu xana boş qala bilmez";
-  if (!userData.trainingPlace) newErrors.trainingPlace = "Bu xana boş qala bilmez";
-  if (!userData.trainingMaster) newErrors.trainingMaster = "Bu xana boş qala bilmez";
-  if (!userData.mesTrainingNameId) newErrors.mesTrainingNameId = "Bu xana boş qala bilmez";
+  if (!userData.trainingResultId) newErrors.trainingResultId = "Bu xana boş qala bilməz";
+  if (!userData.trainingPlace) newErrors.trainingPlace = "Bu xana boş qala bilməz";
+  if (!userData.trainingMaster) newErrors.trainingMaster = "Bu xana boş qala bilməz";
+  if (!userData.mesTrainingNameId) newErrors.mesTrainingNameId = "Bu xana boş qala bilməz";
   if (!userData.volunteerIds || userData.volunteerIds.length === 0)
-    newErrors.volunteerIds = "Bu xana boş qala bilmez";
+    newErrors.volunteerIds = "Bu xana boş qala bilməz";
 
 
   return newErrors;
 }
 export function validateEvent(userData) {
   const newErrors = {};
-  if (!userData.name) newErrors.name = "Bu xana boş qala bilmez";
-  if (!userData.departmentInCharge) newErrors.departmentInCharge = "Bu xana boş qala bilmez";
-  if (!userData.startDate) newErrors.startDate = "Bu xana boş qala bilmez";
+  if (!userData.name) newErrors.name = "Bu xana boş qala bilməz";
+  if (!userData.departmentInCharge) newErrors.departmentInCharge = "Bu xana boş qala bilməz";
+  if (!userData.startDate) newErrors.startDate = "Bu xana boş qala bilməz";
   if(userData.finishDate){
     if(new Date (userData.finishDate) < new Date (userData.startDate)){
       newErrors.finishDate = "Bitmə tarixi başlama tarixindən əvvəl ola bilməz"
     }
   }
-  if (!userData.eventPlace) newErrors.eventPlace = "Bu xana boş qala bilmez";
+  if (!userData.eventPlace) newErrors.eventPlace = "Bu xana boş qala bilməz";
   if (!userData.volunteerIds || userData.volunteerIds.length === 0)
-    newErrors.volunteerIds = "Bu xana boş qala bilmez";
+    newErrors.volunteerIds = "Bu xana boş qala bilməz";
 
+  return newErrors;
+}
+export function validateVolunteerİAMAS(passportData) {
+  // console.log(passportData,'PassportDaata')
+  const newErrors = {};
+  if (!passportData?.fin) newErrors.fin = "Bu xana boş qala bilməz";
+  if (!passportData?.seriaNumber) newErrors.seriaNumber = "Bu xana boş qala bilməz";
+  if (!passportData?.docNumber) newErrors.docNumber = "Bu xana boş qala bilməz";
+  return newErrors;
+}
+export function validateVolunteerAdd(userData) {
+  console.log(userData,'PassportDaata')
+  const newErrors = {};
+  if (!userData?.phoneNumber1) newErrors.phoneNumber1 = "Bu xana boş qala bilməz";
+  if (!userData?.phoneNumber2) newErrors.phoneNumber2 = "Bu xana boş qala bilməz";
+  if (!userData?.email) newErrors.email = "Bu xana boş qala bilməz";
   return newErrors;
 }
 

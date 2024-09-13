@@ -260,7 +260,6 @@ const Example = () => {
   return <MaterialReactTable table={table} />;
 };
 
-//CREATE hook (post new user to api)
 function useCreateUser() {
   let params = useParams();
   let userId = params.id;
@@ -270,7 +269,7 @@ function useCreateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges`;
+      const url = `${BASE_URL}/AdditionalKnowledges`;
 
       const headers = {
         Accept: "*/*",
@@ -282,7 +281,6 @@ function useCreateUser() {
         note: user.note,
         volunteerId: userId,
       };
-      // console.log(newUser);
 
       try {
         const response = await axios.post(url, newUser, { headers });
@@ -301,7 +299,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -313,7 +310,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges/GetAll/${userId}`
+          `${BASE_URL}/AdditionalKnowledges/GetAll/${userId}`
         );
 
         console.log(response.data.data);
@@ -337,7 +334,7 @@ function useUpdateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges`;
+      const url = `${BASE_URL}/AdditionalKnowledges`;
 
       const headers = {
         Accept: "*/*",
@@ -349,7 +346,6 @@ function useUpdateUser() {
         note: user.note,
         id: user.id,
       };
-      // console.log(newUser);
 
       try {
         const response = await axios.put(url, newUser, { headers });
@@ -368,10 +364,8 @@ function useUpdateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({efw queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
-//DELETE hook (delete user in api)
 function useDeleteUser() {
   const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
@@ -380,14 +374,13 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/AdditionalKnowledges/${userId}`,
+          `${BASE_URL}/AdditionalKnowledges/${userId}`,
           {
             headers: { accept: "*/*" },
           }
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
         // Handle errors here if needed
@@ -395,20 +388,17 @@ function useDeleteUser() {
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

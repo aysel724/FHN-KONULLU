@@ -1,3 +1,5 @@
+
+
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
@@ -25,56 +27,84 @@ import {
 } from "@tanstack/react-query";
 import { fakeData6, results } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { validateElectronDocument } from "../utils/validateUser";
+import { BASE_URL } from "../api/baseURL";
+import { FaDownload } from "react-icons/fa6"
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
-import { BASE_URL } from "../api/baseURL";
-
+import Base64ToBlob from "../utils/base64ToBlob";
+import {validateElectronDocument} from '.././utils/validateUser'
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [file, setFile] = useState(null);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0]; // Получите первый выбранный файл
+ const handleFileChange = (event) => {
+  const file = event.target.files[0];
 
-    if (file) {
-      // Преобразуйте файл в base64, если это нужно
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result.split(",")[1]; // Удалите префикс 'data:[<mediatype>];base64,'
-        setFile(base64String); // Сохраните base64 строку в состоянии или другой переменной
-      };
-      reader.readAsDataURL(file); // Прочитайте файл как Data URL
+  if (file) {
+    // Dosya uzantısını kontrol et
+    const validExtensions = ['docx', 'pdf'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!validExtensions.includes(fileExtension)) {
+      setValidationErrors({
+        ...validationErrors,
+        file: "Yalnız .docx ve .pdf dosyaları seçebilirsiniz."
+      });
+      // Dosya türü geçerli değil, işlemi sonlandır
+      setFile(null); // Dosya state'ini temizle
+      return;
     }
-  };
+
+    // Dosya geçerli ise işlemi devam ettir
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result.split(",")[1];
+      setFile(base64String);
+      setValidationErrors({
+        ...validationErrors,
+        file: undefined // Dosya seçimi geçerli, hata mesajını kaldır
+      });
+    };
+    reader.readAsDataURL(file);
+  } else {
+    setValidationErrors({
+      ...validationErrors,
+      file: "Fayl seçilməlidir."
+    });
+    setFile(null); // Dosya seçilmediğinde state'i temizle
+  }
+};
+
+  
   useEffect(() => {
-    TypesData(setTypes,"ElectronicDocumentTypes");
-  }, []);
+        TypesData(setTypes,"ElectronicDocumentTypes");
+      }, []);
 
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
   }
-  const handleDownload = (documentUrl) => {
-    const proxyUrl = "https://cors-anywhere.herokuapp.com/"; // Proxy URL'si
-    const targetUrl = documentUrl; // İndirilmek istenen dosya URL'si
-  
-    fetch(proxyUrl + targetUrl)
-      .then(response => response.blob())
-      .then(blob => {
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-  
-        // Burada indirilmek istenen dosya adını alabiliriz, örneğin:
-        const fileName = documentUrl.split("/").pop(); // URL'den dosya adını almak
-        link.download = fileName; // Dosya adı buradan ayarlanır
-  
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      })
-      .catch(err => console.error("CORS hatası:", err));
+    const handleDownload = async (documentUrl) => {
+    try {
+      const response = await fetch(`${BASE_URL}/ElectronicDocuments/DownloadFile/${documentUrl}`, {
+        method: 'GET',
+      });
+      const jsonResponse = await response.json();
+      const { fileName, fileContent, contentType } = jsonResponse.data;
+      const blob = Base64ToBlob(fileContent, contentType || 'application/octet-stream');
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName || 'downloaded_file'; 
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
   };
+
   const columns = useMemo(
     () => [
       {
@@ -83,6 +113,7 @@ const Example = () => {
         enableEditing: false,
         size: 80,
       },
+
       {
         accessorKey: "electronicDocumentType.name",
         header: "Sənədin növü",
@@ -90,16 +121,19 @@ const Example = () => {
         editSelectOptions: getTypesNames(types),
         muiEditTextFieldProps: {
           select: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
+          error: !!validationErrors?.["electronicDocumentType.name"],
+          helperText: validationErrors?.["electronicDocumentType.name"],
         },
       },
+
       {
         accessorKey: "name",
         header: "Sənədin adı",
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.name,
+          helperText: validationErrors?.name,
+          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -108,25 +142,34 @@ const Example = () => {
         },
       },
       {
-        accessorKey: "documentUrl",
-        header: "Sənəd",
-        Cell: ({ row }) => (
-          <button
-            onClick={() => handleDownload(row.original.documentUrl)}
-          >
-            Yüklə
-          </button>
-        ),
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.documentUrl,
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              documentUrl: undefined,
-            }),
-        },
-      },
+                accessorKey: "documentUrl",
+                header: "Sənəd",
+                Cell: ({ row }) => (
+                  <button
+                  onClick={() => handleDownload(row.original.id)}
+                  style={{
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    color: '#4F75FF',
+                    display: 'flex',
+                    gap: '5px',
+                    cursor: 'pointer', 
+                  }}
+                >
+                  <FaDownload />
+                  Yüklə
+                </button>               
+                ),
+                muiEditTextFieldProps: {
+                  required: true,
+                  error: !!validationErrors?.documentUrl,
+                  onFocus: () =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      documentUrl: undefined,
+                    }),
+                },
+              },
       {
         accessorKey: "file",
         header: "Fayl",
@@ -135,7 +178,7 @@ const Example = () => {
           type: "file",
           error: !!validationErrors?.file,
           helperText: validationErrors?.file,
-          onChange: handleFileChange,
+          onChange: handleFileChange, 
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -160,8 +203,6 @@ const Example = () => {
     ],
     [validationErrors, types]
   );
-  
-  
 
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } = useCreateUser(
@@ -203,7 +244,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); //exit editing mode
+    table.setEditingRow(null); 
   };
 
   //DELETE action
@@ -214,6 +255,8 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
+    columns,
+    data: fetchedUsers,
     localization: {
       cancel: "İmtina",
 
@@ -221,13 +264,13 @@ const Example = () => {
       clearSearch: "Axtarışı təmizlə",
 
       clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
+      clickToCopy: "Kopyalamaq üçün klik et",
       copy: "Kopyala",
       collapse: "Collapse",
 
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
-
+      of: "/",
       edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",
@@ -264,18 +307,30 @@ const Example = () => {
       ungroupByColumn: "Ungroup by {column}",
       noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
       noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
     },
-    columns,
+    positionActionsColumn: "last",
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    getRowId: (row) => row.id,
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -283,6 +338,7 @@ const Example = () => {
         minHeight: "500px",
       },
     },
+
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
@@ -333,13 +389,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true);
         }}
       >
         Əlavə edin
@@ -356,18 +406,6 @@ const Example = () => {
 
   return <MaterialReactTable table={table} />;
 };
-
-function base64ToBlob(base64String, contentType) {
-  const base64Data = base64String.replace(/^data:[a-zA-Z0-9+\/]+;base64,/, ""); // Удаление префикса
-  const byteCharacters = atob(base64Data); // Декодирование base64
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  const byteArray = new Uint8Array(byteNumbers);
-  return new Blob([byteArray], { type: contentType });
-}
-
 function useCreateUser(types, file) {
   let params = useParams();
   let userId = params.id;
@@ -376,13 +414,11 @@ function useCreateUser(types, file) {
   return useMutation({
     mutationFn: async (user) => {
       const url =
-        "https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments"; // Замените на реальный URL
+        `${BASE_URL}/ElectronicDocuments`;
       const headers = {
         Accept: "*/*",
-        // "Content-Type" не нужен для multipart/form-data, браузер установит это автоматически
       };
 
-      // Функция для нахождения элемента массива по названию
       function findArrayElementByTitle(array, title) {
         const element = array.find((element) => element.name === title);
         return element ? element.id : null;
@@ -398,15 +434,14 @@ function useCreateUser(types, file) {
       formData.append("VolunteerId", userId);
       console.log();
       try {
-        // Преобразование base64 строки в Blob
-        const contentType = "application/octet-stream"; // Убедитесь, что это правильный contentType
-        const base64String = file; // Убедитесь, что user.file содержит корректную base64 строку
-        const blob = base64ToBlob(base64String, contentType);
+        const contentType = "application/octet-stream"; 
+        const base64String = file; 
+        const blob = Base64ToBlob(base64String, contentType);
 
-        formData.append("File", blob, "filename.png"); // Укажите правильное имя файла и тип, если необходимо
+        formData.append("File", blob, "filename"); 
       } catch (error) {
         console.error("Error converting base64 to Blob:", error);
-        throw error; // Прекратить выполнение в случае ошибки преобразования
+        throw error; 
       }
 
       try {
@@ -415,7 +450,7 @@ function useCreateUser(types, file) {
         console.log(response.data);
       } catch (error) {
         console.error("Error during request:", error);
-        throw error; // Прекратить выполнение в случае ошибки запроса
+        throw error;
       }
     },
     onMutate: (newUserInfo) => {
@@ -434,13 +469,12 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments/GetAll/${userId}`
+          `${BASE_URL}/ElectronicDocuments/GetAll/${userId}`
         );
 
         console.log(response.data.data);
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Xəta:", error);
         throw error;
       }
@@ -516,24 +550,21 @@ function useUpdateUser(types) {
 }
 
 function useDeleteUser() {
-  const location = useLocation().pathname.substring(1);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/ElectronicDocuments/${userId}`,
+          `${BASE_URL}/ElectronicDocuments/${userId}`,
           {
             headers: { accept: "*/*" },
           }
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
@@ -544,13 +575,11 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>
