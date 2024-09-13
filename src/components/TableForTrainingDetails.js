@@ -82,12 +82,12 @@ const Example = () => {
         size: 80,
       },
       {
-        accessorKey: "name",
+        accessorKey: "fullname",
         header: "Ad soyad",
         muiEditTextFieldProps: {
           required: true,
-          error: !!validationErrors?.name,
-          helperText: validationErrors?.name,
+          error: !!validationErrors?.fullname,
+          helperText: validationErrors?.fullname,
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -386,21 +386,21 @@ function useGetUsers() {
         const response = await axios.get(
           `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/${userId}`
         );
-        // console.log(response.data.data);
-        // const names = response.data.data.map(
-        //   (e) => e.name + "  " + e.surname + " " + e.fatherName
-        // );
-        // console.log(names);
-        // return response.data.data;
+        const users = response.data.data.volunteers; // Assuming it's an array of user objects
 
-        // const users = response.data.data.volunteers.map((user) => ({
-        //   ...user,
-        //   fullName: `${user.name} ${user.surname} ${user.fatherName}`.trim(),
-        // }));
-        const user = response.data.data.volunteers;
+        if (!users || !Array.isArray(users)) {
+          throw new Error("No users found");
+        }
 
-        console.log(user);
-        return user;
+        // Create a new array with full names included
+        const usersWithFullNames = users.map((user) => {
+          const fullname = `${user.name || ""} ${user.surname || ""} ${
+            user.fatherName || ""
+          }`.trim();
+          return { ...user, fullname };
+        });
+
+        return usersWithFullNames;
       } catch (error) {
         // Handle errors here if needed
         console.error("Error fetching users:", error);

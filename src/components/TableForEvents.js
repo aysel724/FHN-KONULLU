@@ -337,7 +337,7 @@ const Example = () => {
 
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
-
+      of: "/",
       edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",

@@ -23,7 +23,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { fakeData6, results } from "../makeData";
+import { notification } from "antd";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
@@ -470,11 +470,11 @@ function useCreateUser(types, file) {
       console.log();
       try {
         // Преобразование base64 строки в Blob
-        const contentType = "application/octet-stream"; // Убедитесь, что это правильный contentType
+        const contentType = "application/pdf"; // Убедитесь, что это правильный contentType
         const base64String = file; // Убедитесь, что user.file содержит корректную base64 строку
         const blob = base64ToBlob(base64String, contentType);
 
-        formData.append("File", blob, "filename"); // Укажите правильное имя файла и тип, если необходимо
+        formData.append("File", blob, "filename.pdf"); // Укажите правильное имя файла и тип, если необходимо
       } catch (error) {
         console.error("Error converting base64 to Blob:", error);
         throw error; // Прекратить выполнение в случае ошибки преобразования

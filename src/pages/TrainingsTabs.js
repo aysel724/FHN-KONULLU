@@ -207,7 +207,6 @@ export default function TabsUser() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <div>
-          <h2 style={{ textAlign: "left" }}> Təlimə yeni könüllü əlavə edin</h2>
           <Space
             style={{
               width: "100%",
@@ -221,7 +220,7 @@ export default function TabsUser() {
                 marginBottom: "30px",
                 width: "100%",
               }}
-              placeholder="Könüllüləri seçin"
+              placeholder="Təlimə yeni könüllü əlavə edin"
               defaultValue={[]}
               onChange={handleChange1}
               options={options}
@@ -237,6 +236,7 @@ export default function TabsUser() {
             }}
           >
             <Button
+              variant="contained"
               onClick={() => {
                 postVolonteers(volonteerIDs);
               }}

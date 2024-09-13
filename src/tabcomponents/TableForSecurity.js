@@ -134,7 +134,7 @@ const Example = () => {
       clickToCopy: "Kopyalamaq üçün klik edin",
       copy: "Kopyala",
       collapse: "Collapse",
-
+      of: "/",
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
 

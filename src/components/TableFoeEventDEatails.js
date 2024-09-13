@@ -83,7 +83,7 @@ const Example = () => {
         size: 80,
       },
       {
-        accessorKey: "name",
+        accessorKey: "fullname",
         header: "Ad soyad",
         muiEditTextFieldProps: {
           required: true,
@@ -234,6 +234,7 @@ const Example = () => {
       hideColumn: "{column} sütununu gizlədin",
       toggleDensity: "Sıxlığı dəyiş",
       filterByColumn: "{column} üzrə filtrləmə",
+      of: "/",
       filteringByColumn:
         " {column}  üzrə filtrləmə- {filterType} {filterValue}",
       toggleFullScreen: "Tam ekrana keçid",
@@ -373,10 +374,21 @@ function useGetUsers() {
           `https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}`
         );
 
-        const user = response.data.data.volunteers;
+        const users = response.data.data.volunteers; // Assuming it's an array of user objects
 
-        console.log(user);
-        return user;
+        if (!users || !Array.isArray(users)) {
+          throw new Error("No users found");
+        }
+
+        // Create a new array with full names included
+        const usersWithFullNames = users.map((user) => {
+          const fullname = `${user.name || ""} ${user.surname || ""} ${
+            user.fatherName || ""
+          }`.trim();
+          return { ...user, fullname };
+        });
+
+        return usersWithFullNames; // Return array of users with full names
       } catch (error) {
         // Handle errors here if needed
         console.error("Error fetching users:", error);

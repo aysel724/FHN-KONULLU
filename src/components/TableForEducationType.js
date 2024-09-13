@@ -1,7 +1,8 @@
 import { useId, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../App.css";
-import TableForEducationDegree from "../components/TableForEducationDegree";
+import { message } from "antd";
+import { notification } from "antd";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -127,12 +128,15 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
+    // if (!validateRequired(values)) {
+    //   // Handle the case when user object is invalid
+    //   notification.error({
+    //     message: "Xəta",
+    //     description: "Bütün sahələri doldurmalısınız.",
+    //   });
+    //   return; // Exit the mutation function early
     // }
-    // setValidationErrors({});
+    setValidationErrors({});
 
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -159,7 +163,7 @@ const Example = () => {
 
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
-
+      of: "/",
       edit: "Düzəliş et",
       expand: "Genişləndirin",
       expandAll: "Expand all",
@@ -322,27 +326,43 @@ function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
-      console.log(user);
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
-      const headers = {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      };
-      axios
-        .post(url, user, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
+      try {
+        const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
+        const headers = {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        };
+        const response = await axios.post(url, user, { headers });
+        notification.success({
+          message: "Əlavə olundu",
+          description: "Yeni məlumat uğurla əlavə olundu",
         });
+        return response.data;
+      } catch (error) {
+        // Check if the error is an Axios error and has a response
+        if (axios.isAxiosError(error) && error.response) {
+          const status = error.response.status;
+          const description =
+            status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
+
+          notification.error({
+            message: "Xəta",
+            description,
+          });
+        } else {
+          // For other errors or network errors
+          notification.error({
+            message: "Xəta",
+            description: "Xəta baş verdi",
+          });
+        }
+        // Rethrow error to trigger onError
+      }
     },
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+        ...(prevUsers || []),
+        newUserInfo,
       ]);
     },
   });
@@ -363,7 +383,10 @@ function useGetUsers() {
         console.log(response.data);
         return response.data.data;
       } catch (error) {
-        console.error("Error fetching users:", error);
+        notification.error({
+          message: "Xəta ",
+          description: "Xəta baş verdi",
+        });
         throw error;
       }
     },
@@ -378,9 +401,15 @@ function useUpdateUser() {
 
   return useMutation({
     mutationFn: async (user) => {
+      if (!validateUser(user)) {
+        notification.error({
+          message: "Xəta",
+          description: "Bütün sahələri doldurmalısınız.",
+        });
+        return; // Exit the mutation function early
+      }
       const data = { ...user };
       console.log(data);
-      //send api update request here
 
       const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
 
@@ -393,9 +422,16 @@ function useUpdateUser() {
         .put(url, data, { headers })
         .then((response) => {
           console.log("Response:", response.data);
+          notification.success({
+            message: "Yeniləndi",
+            description: "Yeni məlumat uğurla əlavə olundu",
+          });
         })
         .catch((error) => {
-          console.error("Error:", error);
+          notification.error({
+            message: "Xəta ",
+            description: "Xəta baş verdi",
+          });
         });
     },
     //client side optimistic update
@@ -425,7 +461,10 @@ function useDeleteUser() {
             headers: { accept: "*/*" },
           }
         );
-        console.log(response.data);
+        notification.success({
+          message: "Məlumat silindi",
+          description: "Məlumatlar uğurla silindi",
+        });
 
         // Assuming your API returns data in response.data
         return response.data.data;

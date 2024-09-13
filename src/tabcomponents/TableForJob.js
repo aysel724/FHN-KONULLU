@@ -7,6 +7,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import { notification } from "antd";
 import {
   Box,
   Button,
@@ -24,7 +25,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { edudegree, edutype } from "../makeData";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Example = () => {
@@ -450,22 +451,38 @@ function useCreateUser() {
 
       try {
         const response = await axios.post(url, newUser, { headers });
-        window.location.reload();
-        // console.log(user);
-        console.log(response.data);
+        notification.success({
+          message: "Əlavə olundu",
+          description: "Yeni məlumat uğurla əlavə olundu",
+        });
+        return response.data;
       } catch (error) {
-        console.error("Error:", error);
+        // Check if the error is an Axios error and has a response
+        if (axios.isAxiosError(error) && error.response) {
+          const status = error.response.status;
+          const description =
+            status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
+
+          notification.error({
+            message: "Xəta",
+            description,
+          });
+        } else {
+          // For other errors or network errors
+          notification.error({
+            message: "Xəta",
+            description: "Xəta baş verdi",
+          });
+        }
+        // Rethrow error to trigger onError
       }
     },
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+      queryClient.setQueryData(["users"], (prevUsers) => [
+        ...(prevUsers || []),
+        newUserInfo,
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 

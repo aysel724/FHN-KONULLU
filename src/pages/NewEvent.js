@@ -221,45 +221,36 @@ export default function NewTrainings() {
         setLoading(false);
         openNotificationWithIcon(
           "success",
-          "Success Message",
-          "This is a success notification."
+          "Uğurla əlavə olundu",
+          "Əlavə olundu"
         );
         console.log(response);
+        setTimeout(() => {
+          navigate(`/MesTrainings`);
+        }, 5000);
       })
       .catch((err) => {
         setLoading(false);
-        console.error("Error:", err.response); // Log the detailed error response
+
         if (err.response) {
           if (err.response.status === 400) {
             openNotificationWithIcon(
               "error",
-              "Error Message",
-              "This is an error notification."
+              "Xəta mesajı",
+              "Bütün sahələri doldurmalısınız."
             );
-            setError("xeta 400");
+            setError("Xəta 400");
           } else if (err.response.status === 404) {
-            openNotificationWithIcon(
-              "error",
-              "Error Message",
-              "This is an error notification."
-            );
-            setError("xeta 404");
-          } else {
-            openNotificationWithIcon(
-              "error",
-              "Error Message",
-              "This is an error notification."
-            );
-            setError("Something went wrong. Please try again later.");
+            openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
+            setError("Xəta 404. Məlumat tapılmadı");
+          } else if (err.response.status === 409) {
+            openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
+            setError("Məlumat artıq mövcuddur");
           }
           setModalIsOpen(true); // Open modal to show error message
         } else {
-          setError("xeta 500.");
-          openNotificationWithIcon(
-            "error",
-            "Error Message",
-            "This is an error notification."
-          );
+          setError("Xəta 500. Server xətası");
+          openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
           setModalIsOpen(true); // Open modal to show error message
         }
       });
@@ -272,7 +263,7 @@ export default function NewTrainings() {
   return (
     <>
       {contextHolder}
-      {/* {isLoading && <div className="loader">Loading...</div>} */}
+      {isLoading && <div className="loader">Yüklənir</div>}
       {error && (
         <Modal
           aria-labelledby="transition-modal-title"
