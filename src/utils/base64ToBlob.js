@@ -1,9 +1,16 @@
-export default function Base64ToBlob(base64String, contentType) {
-    const byteCharacters = atob(base64String); // Decode base64
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+export default function Base64ToBlob (base64, mime) {
+  const byteCharacters = atob(base64); // Base64 string'i binary karakterlere çevir
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+    const slice = byteCharacters.slice(offset, offset + 512);
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
     }
     const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray], { type: contentType });
+    byteArrays.push(byteArray);
   }
+
+  return new Blob(byteArrays, { type: mime });
+};

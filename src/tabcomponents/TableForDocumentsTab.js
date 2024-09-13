@@ -178,12 +178,14 @@ const Example = () => {
           type: "file",
           error: !!validationErrors?.file,
           helperText: validationErrors?.file,
-          onChange: handleFileChange, 
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              file: undefined,
-            }),
+          inputProps: {
+            accept: ".pdf,.docx",
+          },
+          onChange: handleFileChange,
+          onFocus: () => setValidationErrors({
+            ...validationErrors,
+            file: undefined,
+          }),
         },
       },
       {
@@ -586,5 +588,4 @@ const Uxtable = () => (
 );
 
 export default Uxtable;
-
 

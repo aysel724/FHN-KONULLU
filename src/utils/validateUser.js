@@ -197,23 +197,37 @@ export function validateTraningTab(values){
 }
 export function validateElectronDocument(values) {
   const errors = {};
+
+  // Diğer alanların validasyonu
   errors.name = !validateRequired(values.name || "")
     ? "Sənədin adı tələb olunur"
     : "";
   errors['electronicDocumentType.name'] = !validateRequired(values['electronicDocumentType.name'] || "")
     ? "Sənədin növü tələb olunur"
     : "";
-    if (!values.file) {
-      errors.file = "Fayl seçilməlidir.";
-    } else if (values.file && values.file.name) {
-      const validExtensions = ['docx', 'pdf'];
-      const fileExtension = values.file.name.split('.').pop().toLowerCase();
-      if (!validExtensions.includes(fileExtension)) {
-        errors.file = "Yalnız .docx və .pdf faylları seçə bilərsiniz.";
-      }
+
+  // 1. Fayl seçimi kontrolü
+  if (!values.file) {
+    errors.file = "Fayl seçilməlidir.";
+  } else if (values.file.name) { 
+    // Sadece file.name varsa işlemleri devam ettir
+    // 2. Dosya uzantısını kontrol et
+    const validExtensions = ['docx', 'pdf'];
+    const fileExtension = values.file.name.split('.').pop().toLowerCase();
+    if (!validExtensions.includes(fileExtension)) {
+      errors.file = "Yalnız .docx və .pdf faylları seçə bilərsiniz.";
     }
-    return errors;
+
+    // 3. Dosya boyutunu kontrol et (25 MB)
+    const maxSize = 25 * 1024 * 1024;
+    if (values.file.size > maxSize) {
+      errors.file = "Fayl 25 MB-dən böyük ola bilməz.";
+    }
+  }
+
+  return errors; // Hataları döndür
 }
+
 
 
 
