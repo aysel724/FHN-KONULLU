@@ -35,6 +35,9 @@ import { saveAs } from "file-saver";
 
 import { useVolunteers } from "../context/VolunterContext";
 import EditIcon from "../assets/icons/editIcon";
+import { BASE_URL } from "../api/baseURL";
+import { MRT_Localization_AZ } from "material-react-table/locales/az";
+import { validateEmail } from "../utils/validateEmail";
 
 const Example = () => {
   const [securityTypes, setSecurityTypes] = useState([]);
@@ -43,7 +46,7 @@ const Example = () => {
     const TypesData = async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/SecurityCheckResultName`,
+          `${BASE_URL}/SecurityCheckResultName`,
           {
             headers: { accept: "*/*" },
           }
@@ -344,16 +347,11 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null);
   };
 
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
-    // setValidationErrors({});
+
 
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -369,57 +367,7 @@ const Example = () => {
   let id = params.id;
 
   const table = useMaterialReactTable({
-    localization: {
-      cancel: "İmtina",
-
-      clearFilter: "Filteri təmizlə",
-      clearSearch: "Axtarışı təmizlə",
-
-      clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
-      copy: "Kopyala",
-      collapse: "Collapse",
-
-      columnActions: "Əməliyyatlar",
-      copiedToClipboard: "Buferə kopyalandı",
-
-      edit: "Düzəliş et",
-      expand: "Genişləndirin",
-      expandAll: "Expand all",
-      rowNumber: "No",
-      rowNumbers: "Sıra nömrələri",
-      rowsPerPage: "Hər səhifədə sətir sayı",
-      save: "Yadda saxla",
-      search: "Axtar",
-      selectedCountOfRowCountRowsSelected:
-        "{selectedCount} of {rowCount} row(s) selected",
-      select: "Seç",
-      showAll: "Hamısını göstər",
-      showAllColumns: "Bütün sütunları göstərin",
-      showHideColumns: "Sütunları göstər/gizlə",
-      showHideFilters: "Filterləri göstər/gizlə",
-      showHideSearch: "Axtarışı göstər/gizlə",
-      sortByColumnAsc: "Artma üzrə çeşidləyin",
-      sortByColumnDesc: "Azalma üzrə çeşidləyin",
-      sortedByColumnAsc: "Artma üzrə çeşidləyin",
-      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
-      thenBy: ", then by ",
-      groupByColumn: "{column} üzrə qruplaşdırın",
-      groupedBy: "Qruplaşdırın ",
-      hideAll: "Hamısını gizlədin",
-      hideColumn: "{column} sütununu gizlədin",
-      toggleDensity: "Sıxlığı dəyiş",
-      filterByColumn: "{column} üzrə filtrləmə",
-      filteringByColumn:
-        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
-      toggleFullScreen: "Tam ekrana keçid",
-      toggleSelectAll: "Toggle select all",
-      toggleSelectRow: "Toggle select row",
-      toggleVisibility: "Görünüşü dəyişdirin",
-      ungroupByColumn: "Ungroup by {column}",
-      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
-      noResultsFound: "Heç bir nəticə tapılmadı",
-    },
+    localization: MRT_Localization_AZ,
     positionActionsColumn: "last",
     enableClickToCopy: true,
     muiTableContainerProps: { sx: { maxHeight: "600px" } },
@@ -577,7 +525,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          "https://api-volunteers.fhn.gov.az/api/v1/Volunteers"
+          `${BASE_URL}/Volunteers`
         );
 
         const users = response.data.data.map((user) => ({
@@ -626,7 +574,7 @@ function useUpdateUser(role, securityTypes) {
         console.log("salam");
         //send api update request here
 
-        const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`;
+        const url = `${BASE_URL}/Volunteers`;
 
         const headers = {
           Accept: "*/*",
@@ -641,7 +589,7 @@ function useUpdateUser(role, securityTypes) {
             console.error("Error:", error);
           });
       } else {
-        const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/AddVolunteerCheckResult`;
+        const url = `${BASE_URL}/Volunteers/AddVolunteerCheckResult`;
 
         const headers = {
           Accept: "*/*",
@@ -677,8 +625,7 @@ function useUpdateUser(role, securityTypes) {
           });
       }
     },
-    //client side optimistic update
-    //client side optimistic update
+
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.map((prevUser) =>
@@ -686,7 +633,6 @@ function useUpdateUser(role, securityTypes) {
         )
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -698,7 +644,7 @@ function useDeleteUser() {
 
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`,
+          `${BASE_URL}/Volunteers/${userId}`,
           {
             headers: { accept: "*/*" },
           }
@@ -719,14 +665,12 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>
@@ -735,13 +679,7 @@ const Uxtable = () => (
 export default Uxtable;
 
 const validateRequired = (value) => !!value.length;
-const validateEmail = (mail) =>
-  !!mail.length &&
-  mail
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+
 
 function validateUser(user) {
   return {

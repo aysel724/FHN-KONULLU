@@ -24,6 +24,9 @@ import TableForJob from "../tabcomponents/TableForJob";
 import TableForStaff from "../tabcomponents/TableForStaff";
 import TableForDocumentsTab from "../tabcomponents/TableForDocumentsTab";
 import { Routes, Route, useParams } from "react-router-dom";
+import { createTheme, ThemeProvider, useTheme } from '@mui/material';
+import { azAZ } from '@mui/material/locale';
+
 
 import axios from "axios";
 
@@ -131,8 +134,10 @@ export default function TabsUser() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
+  const theme = useTheme();
+    
   return (
+    <ThemeProvider theme={createTheme(theme, azAZ)}>
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
@@ -311,5 +316,6 @@ export default function TabsUser() {
         <TableForSecurity />
       </CustomTabPanel>
     </Box>
+    </ThemeProvider>
   );
 }

@@ -21,6 +21,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import { BASE_URL } from "../api/baseURL";
 import formatDateTİme from "../utils/convertDate";
+import { MRT_Localization_AZ } from "material-react-table/locales/az";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -202,11 +203,6 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
     setValidationErrors({});
     await createUser(values);
     table.setCreatingRow(null); //exit creating mode
@@ -214,11 +210,6 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
     setValidationErrors({});
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -232,57 +223,7 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
-    localization: {
-      cancel: "İmtina",
-
-      clearFilter: "Filteri təmizlə",
-      clearSearch: "Axtarışı təmizlə",
-
-      clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
-      copy: "Kopyala",
-      collapse: "Collapse",
-
-      columnActions: "Əməliyyatlar",
-      copiedToClipboard: "Buferə kopyalandı",
-
-      edit: "Düzəliş et",
-      expand: "Genişləndirin",
-      expandAll: "Expand all",
-      rowNumber: "No",
-      rowNumbers: "Sıra nömrələri",
-      rowsPerPage: "Hər səhifədə sətir sayı",
-      save: "Yadda saxla",
-      search: "Axtar",
-      selectedCountOfRowCountRowsSelected:
-        "{selectedCount} of {rowCount} row(s) selected",
-      select: "Seç",
-      showAll: "Hamısını göstər",
-      showAllColumns: "Bütün sütunları göstərin",
-      showHideColumns: "Sütunları göstər/gizlə",
-      showHideFilters: "Filterləri göstər/gizlə",
-      showHideSearch: "Axtarışı göstər/gizlə",
-      sortByColumnAsc: "Artma üzrə çeşidləyin",
-      sortByColumnDesc: "Azalma üzrə çeşidləyin",
-      sortedByColumnAsc: "Artma üzrə çeşidləyin",
-      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
-      thenBy: ", then by ",
-      groupByColumn: "{column} üzrə qruplaşdırın",
-      groupedBy: "Qruplaşdırın ",
-      hideAll: "Hamısını gizlədin",
-      hideColumn: "{column} sütununu gizlədin",
-      toggleDensity: "Sıxlığı dəyiş",
-      filterByColumn: "{column} üzrə filtrləmə",
-      filteringByColumn:
-        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
-      toggleFullScreen: "Tam ekrana keçid",
-      toggleSelectAll: "Toggle select all",
-      toggleSelectRow: "Toggle select row",
-      toggleVisibility: "Görünüşü dəyişdirin",
-      ungroupByColumn: "Ungroup by {column}",
-      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
-      noResultsFound: "Heç bir nəticə tapılmadı",
-    },
+    localization:MRT_Localization_AZ,
     columns,
     enableRowNumbers: true,
     data: fetchedUsers,

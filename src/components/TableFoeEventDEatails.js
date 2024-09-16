@@ -24,43 +24,18 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { fakeData6, usStates } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { TypesData } from "../api/tabComponentsGet/TypesData";
+import { BASE_URL } from "../api/baseURL";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
-
   useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/TrainingResults`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
+  
+    TypesData(setTypes,'TrainingResults');
   }, []);
 
   function getTypesNames(arr) {
@@ -309,7 +284,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}`
+          `${BASE_URL}/Events/${userId}`
         );
 
         const user = response.data.data.volunteers;
@@ -336,7 +311,7 @@ function useUpdateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Events/EvaluateVolunteer`;
+      const url = `${BASE_URL}/Events/EvaluateVolunteer`;
 
       const headers = {
         Accept: "*/*",
@@ -383,7 +358,7 @@ function useDeleteUser() {
 
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}/${user}`,
+          `${BASE_URL}/Events/${userId}/${user}`,
           {
             headers: { accept: "*/*" },
           }
@@ -404,14 +379,12 @@ function useDeleteUser() {
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

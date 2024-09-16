@@ -31,6 +31,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import EditIcon from "../assets/icons/editIcon";
 import formatDateTİme from "../utils/convertDate";
+import { BASE_URL } from "../api/baseURL";
+import { MRT_Localization_AZ } from "material-react-table/locales/az";
 
 const Example = () => {
   const [imageData, setImageData] = useState(null);
@@ -83,7 +85,7 @@ const Example = () => {
     const TypesData = async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`,
+          `${BASE_URL}/Volunteers`,
           {
             headers: { accept: "*/*" },
           }
@@ -185,13 +187,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.finishDate,
           helperText: validationErrors?.finishDate,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               finishDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -201,13 +201,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.eventDuration,
           helperText: validationErrors?.eventDuration,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               eventDuration: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -217,7 +215,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.eventPlace,
           helperText: validationErrors?.eventPlace,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -249,7 +246,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.note,
           helperText: validationErrors?.note,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -328,58 +324,7 @@ const Example = () => {
 
   const table = useMaterialReactTable({
     positionActionsColumn: "last",
-    localization: {
-      cancel: "İmtina",
-
-      clearFilter: "Filteri təmizlə",
-      clearSearch: "Axtarışı təmizlə",
-
-      clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
-      copy: "Kopyala",
-      collapse: "Collapse",
-
-      columnActions: "Əməliyyatlar",
-      copiedToClipboard: "Buferə kopyalandı",
-
-      edit: "Düzəliş et",
-      expand: "Genişləndirin",
-      expandAll: "Expand all",
-      rowNumber: "No",
-      rowNumbers: "Sıra nömrələri",
-      rowsPerPage: "Hər səhifədə sətir sayı",
-      save: "Yadda saxla",
-      search: "Axtar",
-      selectedCountOfRowCountRowsSelected:
-        "{selectedCount} of {rowCount} row(s) selected",
-      select: "Seç",
-      showAll: "Hamısını göstər",
-      showAllColumns: "Bütün sütunları göstərin",
-      showHideColumns: "Sütunları göstər/gizlə",
-      showHideFilters: "Filterləri göstər/gizlə",
-      showHideSearch: "Axtarışı göstər/gizlə",
-      sortByColumnAsc: "Artma üzrə çeşidləyin",
-      sortByColumnDesc: "Azalma üzrə çeşidləyin",
-      sortedByColumnAsc: "Artma üzrə çeşidləyin",
-      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
-      thenBy: ", then by ",
-      groupByColumn: "{column} üzrə qruplaşdırın",
-      groupedBy: "Qruplaşdırın ",
-      hideAll: "Hamısını gizlədin",
-      hideColumn: "{column} sütununu gizlədin",
-      toggleDensity: "Sıxlığı dəyiş",
-      filterByColumn: "{column} üzrə filtrləmə",
-      filteringByColumn:
-        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
-      toggleFullScreen: "Tam ekrana keçid",
-      toggleSelectAll: "Toggle select all",
-      toggleSelectRow: "Toggle select row",
-      toggleVisibility: "Görünüşü dəyişdirin",
-      ungroupByColumn: "Ungroup by {column}",
-      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
-      noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
-    },
+    localization: MRT_Localization_AZ,
     muiTableContainerProps: { sx: { maxHeight: "600px" } },
 
     enableRowNumbers: true,
@@ -387,17 +332,16 @@ const Example = () => {
     rowNumberDisplayMode: "original",
     columns,
 
-    //optionally customize the row virtualizer
 
     data: fetchedUsers,
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
-        cursor: "pointer", //you might want to change the cursor too when adding an onClick
+        cursor: "pointer", 
       },
     }),
     MRT_EditActionButtons,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
     initialState: {
       columnVisibility: { id: false },
@@ -430,7 +374,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -444,7 +388,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -506,7 +450,7 @@ function useCreateUser() {
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Events`;
+      const url = `${BASE_URL}/Events`;
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
@@ -535,13 +479,12 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          "https://api-volunteers.fhn.gov.az/api/v1/Events"
+          `${BASE_URL}/Events`
         );
         const users = response.data.data.map((user) => ({
           ...user,
 
           sum: user.volunteers.length,
-          // files: user.eventAttachments.forEach((e) => e.id),
         }));
         console.log(users);
         return users;
@@ -564,7 +507,7 @@ function useUpdateUser() {
       console.log(data);
       //send api update request here
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Events`;
+      const url = `${BASE_URL}/Events`;
 
       const headers = {
         Accept: "*/*",
@@ -599,35 +542,30 @@ function useDeleteUser() {
 
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}`,
+          `${BASE_URL}/Events/${userId}`,
           {
             headers: { accept: "*/*" },
           }
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

@@ -27,15 +27,18 @@ import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import  { validateFHNVolunterActivity } from '.././utils/validateUser'
 import { TypesData } from "../api/tabComponentsGet/TypesData";
-// import convertDate from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 import EditIcon from "../assets/icons/editIcon";
 import formatDateTİme, { convertDate } from "../utils/convertDate";
-// import { useDeleteUser } from "../api/tabComponentsDelete/DeleteUser";
+
+import { MRT_Localization_AZ } from 'material-react-table/locales/az';
+
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [endDate, setEndDate] = useState(false)
+
+
 
   useEffect(() => {
     TypesData(setTypes,"MesVoluntaryActivityEndReasons");
@@ -65,9 +68,10 @@ const Example = () => {
     },
     {
       accessorKey: "startDate",
-      header: "Bitmə tarixi",
+      header: "Başlama tarixi",
       Cell: ({ cell }) => formatDateTİme(cell.getValue()),
       muiEditTextFieldProps: {
+        label:'',
         required: true,
         error: !!validationErrors?.startDate,
         helperText: validationErrors?.startDate  ? validationErrors?.startDate : "Başlama tarixi",
@@ -105,7 +109,6 @@ const Example = () => {
         },
       },
     },
-
       {
         accessorKey: "mesVoluntaryActivityEndReason.name",
         header: "Fəaliyyətin bitmə səbəbi",
@@ -188,62 +191,11 @@ const Example = () => {
     enableRowNumbers: true,
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
-    localization: {
-      cancel: "İmtina",
-
-      clearFilter: "Filteri təmizlə",
-      clearSearch: "Axtarışı təmizlə",
-      actions: "Əməliyyatlar",
-      clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
-      copy: "Kopyala",
-      collapse: "Collapse",
-
-      columnActions: "Əməliyyatlar",
-      copiedToClipboard: "Buferə kopyalandı",
-
-      edit: "Düzəliş et",
-      expand: "Genişləndirin",
-      expandAll: "Expand all",
-      rowNumber: "No",
-      rowNumbers: "Sıra nömrələri",
-      rowsPerPage: "Hər səhifədə sətir sayı",
-      save: "Yadda saxla",
-      search: "Axtar",
-      selectedCountOfRowCountRowsSelected:
-        "{selectedCount} of {rowCount} row(s) selected",
-      select: "Seç",
-      showAll: "Hamısını göstər",
-      showAllColumns: "Bütün sütunları göstərin",
-      showHideColumns: "Sütunları göstər/gizlə",
-      showHideFilters: "Filterləri göstər/gizlə",
-      showHideSearch: "Axtarışı göstər/gizlə",
-      sortByColumnAsc: "Artma üzrə çeşidləyin",
-      sortByColumnDesc: "Azalma üzrə çeşidləyin",
-      sortedByColumnAsc: "Artma üzrə çeşidləyin",
-      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
-      thenBy: ", then by ",
-      groupByColumn: "{column} üzrə qruplaşdırın",
-      groupedBy: "Qruplaşdırın ",
-      hideAll: "Hamısını gizlədin",
-      hideColumn: "{column} sütununu gizlədin",
-      toggleDensity: "Sıxlığı dəyiş",
-      filterByColumn: "{column} üzrə filtrləmə",
-      filteringByColumn:
-        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
-      toggleFullScreen: "Tam ekrana keçid",
-      toggleSelectAll: "Toggle select all",
-      toggleSelectRow: "Toggle select row",
-      toggleVisibility: "Görünüşü dəyişdirin",
-      ungroupByColumn: "Ungroup by {column}",
-      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
-      noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
-    },
+    localization:MRT_Localization_AZ,
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal", 
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -275,7 +227,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -289,7 +241,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -330,6 +282,7 @@ const Example = () => {
   });
 
   return <MaterialReactTable table={table} />;
+  
 };
 
 //CREATE hook (post new user to api)
@@ -357,7 +310,6 @@ function useCreateUser(types) {
             ? convertDate(user.endDate)
             : null,
         // mesVoluntaryActivityEndReasons:
-        //   user["mesVoluntaryActivityEndReason.name"],
         mesVoluntaryActivityEndReasonId: findArrayElementByTitle(
           types,
           user["mesVoluntaryActivityEndReason.name"]
@@ -405,7 +357,6 @@ function useGetUsers() {
         console.log(response.data.data);
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Xəta:", error);
         throw error;
       }
@@ -413,7 +364,6 @@ function useGetUsers() {
     refetchOnWindowFocus: false,
   });
 }
-//UPDATE hook (put user in api)
 function useUpdateUser(types) {
   let params = useParams();
   let userId = params.id;
@@ -421,7 +371,6 @@ function useUpdateUser(types) {
 
   return useMutation({
     mutationFn: async (user) => {
-      //send api update request here
       function findArrayElementByTitle(array, title) {
         if (title === undefined) {
           return null;
@@ -432,7 +381,6 @@ function useUpdateUser(types) {
         }
       }
       const url = `${BASE_URL}/VoluntaryOfMeses`;
-
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
@@ -463,8 +411,6 @@ function useUpdateUser(types) {
           console.error("Error:", error);
         });
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.map((prevUser) =>
@@ -472,7 +418,6 @@ function useUpdateUser(types) {
         )
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -491,34 +436,31 @@ function useDeleteUser() {
           }
         );
         console.log(response.data);
-
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettlenvalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
-const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
-  <QueryClientProvider client={queryClient}>
-    <Example />
-  </QueryClientProvider>
-);
 
+
+const Uxtable = () => {
+
+  return (
+  <QueryClientProvider client={queryClient}>
+      <Example />
+  </QueryClientProvider>)
+}
 export default Uxtable;
 
 

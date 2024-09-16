@@ -1,8 +1,6 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import "../App.css";
-import { useLocation } from "react-router-dom";
-import { createTheme, ThemeProvider, useTheme } from "@mui/material";
-import { azAZ } from "@mui/material/locale";
+
 import axios from "axios";
 import {
   MRT_EditActionButtons,
@@ -364,13 +362,10 @@ function useDeleteUser() {
 const queryClient = new QueryClient();
 
 const Uxtable = () => {
-  const theme = useTheme();
   return (
-    <ThemeProvider theme={createTheme(theme, azAZ)}>
       <QueryClientProvider client={queryClient}>
         <Example />
       </QueryClientProvider>
-    </ThemeProvider>
   );
 };
 

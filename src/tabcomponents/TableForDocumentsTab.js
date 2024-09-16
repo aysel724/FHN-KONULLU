@@ -1,9 +1,7 @@
-
-
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
-import { useLocation, useParams } from "react-router-dom";
+import {useParams } from "react-router-dom";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -25,7 +23,6 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { fakeData6, results } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { BASE_URL } from "../api/baseURL";
 import { FaDownload } from "react-icons/fa6"
@@ -33,6 +30,7 @@ import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import Base64ToBlob from "../utils/base64ToBlob";
 import {validateElectronDocument} from '.././utils/validateUser'
+import { MRT_Localization_AZ } from "material-react-table/locales/az";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
@@ -255,54 +253,7 @@ const Example = () => {
   const table = useMaterialReactTable({
     columns,
     data: fetchedUsers,
-    localization: {
-      cancel: "İmtina",
-      clearFilter: "Filteri təmizlə",
-      clearSearch: "Axtarışı təmizlə",
-      clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik et",
-      copy: "Kopyala",
-      collapse: "Collapse",
-      columnActions: "Əməliyyatlar",
-      copiedToClipboard: "Buferə kopyalandı",
-      of: "/",
-      edit: "Düzəliş et",
-      expand: "Genişləndirin",
-      expandAll: "Expand all",
-      rowNumber: "No",
-      rowNumbers: "Sıra nömrələri",
-      rowsPerPage: "Hər səhifədə sətir sayı",
-      save: "Yadda saxla",
-      search: "Axtar",
-      selectedCountOfRowCountRowsSelected:
-        "{selectedCount} of {rowCount} row(s) selected",
-      select: "Seç",
-      showAll: "Hamısını göstər",
-      showAllColumns: "Bütün sütunları göstərin",
-      showHideColumns: "Sütunları göstər/gizlə",
-      showHideFilters: "Filterləri göstər/gizlə",
-      showHideSearch: "Axtarışı göstər/gizlə",
-      sortByColumnAsc: "Artma üzrə çeşidləyin",
-      sortByColumnDesc: "Azalma üzrə çeşidləyin",
-      sortedByColumnAsc: "Artma üzrə çeşidləyin",
-      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
-      thenBy: ", then by ",
-      groupByColumn: "{column} üzrə qruplaşdırın",
-      groupedBy: "Qruplaşdırın ",
-      hideAll: "Hamısını gizlədin",
-      hideColumn: "{column} sütununu gizlədin",
-      toggleDensity: "Sıxlığı dəyiş",
-      filterByColumn: "{column} üzrə filtrləmə",
-      filteringByColumn:
-        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
-      toggleFullScreen: "Tam ekrana keçid",
-      toggleSelectAll: "Toggle select all",
-      toggleSelectRow: "Toggle select row",
-      toggleVisibility: "Görünüşü dəyişdirin",
-      ungroupByColumn: "Ungroup by {column}",
-      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
-      noResultsFound: "Heç bir nəticə tapılmadı",
-    },
+    localization: MRT_Localization_AZ,
     positionActionsColumn: "last",
     data: fetchedUsers,
 

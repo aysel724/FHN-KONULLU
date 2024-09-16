@@ -27,6 +27,8 @@ import axios from "axios";
 import { columnNames, headerNames } from "../makeData";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "../assets/icons/editIcon";
+import { MRT_Localization_AZ } from "material-react-table/locales/az";
+import { BASE_URL } from "../api/baseURL";
 
 const Example = () => {
   const location = useLocation().pathname.substring(1);
@@ -54,13 +56,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.name,
           helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               name: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -71,13 +71,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.priority,
           helperText: validationErrors?.priority,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               priority: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
     ],
@@ -123,20 +121,14 @@ const Example = () => {
 
     await createUser(values);
 
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
-    // setValidationErrors({});
 
     await updateUser(values);
-    table.setEditingRow(null); //exit editing mode
+    table.setEditingRow(null); 
   };
 
   //DELETE action
@@ -147,58 +139,7 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
-    localization: {
-      cancel: "İmtina",
-
-      clearFilter: "Filteri təmizlə",
-      clearSearch: "Axtarışı təmizlə",
-
-      clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
-      copy: "Kopyala",
-      collapse: "Collapse",
-
-      columnActions: "Əməliyyatlar",
-      copiedToClipboard: "Buferə kopyalandı",
-
-      edit: "Düzəliş et",
-      expand: "Genişləndirin",
-      expandAll: "Expand all",
-      rowNumber: "No",
-      rowNumbers: "Sıra nömrələri",
-      rowsPerPage: "Hər səhifədə sətir sayı",
-      save: "Yadda saxla",
-      search: "Axtar",
-      selectedCountOfRowCountRowsSelected:
-        "{selectedCount} of {rowCount} row(s) selected",
-      select: "Seç",
-      showAll: "Hamısını göstər",
-      showAllColumns: "Bütün sütunları göstərin",
-      showHideColumns: "Sütunları göstər/gizlə",
-      showHideFilters: "Filterləri göstər/gizlə",
-      showHideSearch: "Axtarışı göstər/gizlə",
-      sortByColumnAsc: "Artma üzrə çeşidləyin",
-      sortByColumnDesc: "Azalma üzrə çeşidləyin",
-      sortedByColumnAsc: "Artma üzrə çeşidləyin",
-      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
-      thenBy: ", then by ",
-      groupByColumn: "{column} üzrə qruplaşdırın",
-      groupedBy: "Qruplaşdırın ",
-      hideAll: "Hamısını gizlədin",
-      hideColumn: "{column} sütununu gizlədin",
-      toggleDensity: "Sıxlığı dəyiş",
-      filterByColumn: "{column} üzrə filtrləmə",
-      filteringByColumn:
-        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
-      toggleFullScreen: "Tam ekrana keçid",
-      toggleSelectAll: "Toggle select all",
-      toggleSelectRow: "Toggle select row",
-      toggleVisibility: "Görünüşü dəyişdirin",
-      ungroupByColumn: "Ungroup by {column}",
-      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
-      noResultsFound: "Heç bir nəticə tapılmadı",
-      // ... and many more - see link below for full list of translation keys
-    },
+    localization: MRT_Localization_AZ,
     positionActionsColumn: "last",
     columns,
     enableRowNumbers: true,
@@ -299,7 +240,7 @@ function useCreateUser() {
   return useMutation({
     mutationFn: async (user) => {
       console.log(user);
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
+      const url = `${BASE_URL}/${location}`;
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
@@ -331,7 +272,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/${location}`,
+          `${BASE_URL}/${location}`,
           {
             headers: { accept: "*/*" },
           }
@@ -356,9 +297,8 @@ function useUpdateUser() {
     mutationFn: async (user) => {
       const data = { ...user };
       console.log(data);
-      //send api update request here
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/${location}`;
+      const url = `${BASE_URL}/${location}`;
 
       const headers = {
         Accept: "*/*",
@@ -374,8 +314,6 @@ function useUpdateUser() {
           console.error("Error:", error);
         });
     },
-    //client side optimistic update
-    //client side optimistic update
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.map((prevUser) =>
@@ -383,7 +321,6 @@ function useUpdateUser() {
         )
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -396,28 +333,24 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/${location}/${userId}`,
+          `${BASE_URL}/${location}/${userId}`,
           {
             headers: { accept: "*/*" },
           }
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -426,7 +359,6 @@ const queryClient = new QueryClient();
 const Uxtable = () => {
   const location = useLocation().pathname.substring(1);
   return (
-    //Put this with your other react-query providers near root of your app
     <>
       <div>
         <h1>{headerNames[location].h1}</h1>
@@ -450,10 +382,3 @@ function validateUser(user) {
     priority: !validateRequired(user.priority) ? "Xana boş qala bilməz" : "",
   };
 }
-// return {
-//   firstName: !validateRequired(user.firstName)
-//     ? "First Name is Required"
-//     : "",
-//   lastName: !validateRequired(user.fin) ? "Last Name is Required" : "",
-//   email: !validateEmail(user.mail) ? "Incorrect Email Format" : "",
-// };

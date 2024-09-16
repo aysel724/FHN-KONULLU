@@ -28,38 +28,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { TypesData } from "../api/tabComponentsGet/TypesData";
+import { BASE_URL } from "../api/baseURL";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
 
   useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/TrainingResults`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
+    
+    TypesData(setTypes,'TrainingResults');
   }, []);
 
   function getTypesNames(arr) {
@@ -88,7 +65,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.name,
           helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -174,12 +150,7 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-    // const newValidationErrors = validateUser(values);
-    // if (Object.values(newValidationErrors).some((error) => error)) {
-    //   setValidationErrors(newValidationErrors);
-    //   return;
-    // }
-    // setValidationErrors({});
+
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
   };
@@ -262,22 +233,7 @@ const Example = () => {
         </Tooltip>
       </Box>
     ),
-    // renderTopToolbarCustomActions: ({ table }) => (
-    //   <Button
-    //     variant="contained"
-    //     onClick={() => {
-    //       table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-    //       //or you can pass in a row object to set default values with the `createRow` helper function
-    //       // table.setCreatingRow(
-    //       //   createRow(table, {
-    //       //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-    //       //   }),
-    //       // );
-    //     }}
-    //   >
-    //     Tədbirə yeni könüllü əlavə edin
-    //   </Button>
-    // ),
+   
 
     state: {
       isLoading: isLoadingUsers,
@@ -309,7 +265,6 @@ function useCreateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -322,7 +277,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/${userId}`
+          `${BASE_URL}/MesTrainings/${userId}`
         );
         // console.log(response.data.data);
         // const names = response.data.data.map(
@@ -359,7 +314,7 @@ function useUpdateUser() {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/EvaluateVolunteer`;
+      const url = `${BASE_URL}/MesTrainings/EvaluateVolunteer`;
 
       const headers = {
         Accept: "*/*",
@@ -376,8 +331,6 @@ function useUpdateUser() {
 
       try {
         const response = await axios.post(url, newUser, { headers });
-        // window.location.reload();
-        // console.log(user);
         console.log(response.data);
       } catch (error) {
         console.error("Error:", error);
@@ -391,7 +344,6 @@ function useUpdateUser() {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -406,35 +358,30 @@ function useDeleteUser() {
 
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/${userId}/${user}`,
+          `${BASE_URL}/MesTrainings/${userId}/${user}`,
           {
             headers: { accept: "*/*" },
           }
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

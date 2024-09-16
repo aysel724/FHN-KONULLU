@@ -40,12 +40,6 @@ const Example = () => {
   const columns = useMemo(
     () => [
     
-      // {
-      //   accessorKey: 'id',
-      //   header: 'Id',
-      //   enableEditing: false,
-      //   size: 80,
-      // },
       {
         accessorKey: 'reason',
         header: 'Fəaliyyətin  bitmə səbəbi',
@@ -53,13 +47,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.reason,
           helperText: validationErrors?.reason,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               reason: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
      
@@ -82,13 +74,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.prioritet,
           helperText: validationErrors?.prioritet,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               prioritet: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
     ],
@@ -177,7 +167,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons  variant="text" table={table} row={row} />
@@ -191,7 +181,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
         >
-          {internalEditComponents} {/* or render custom edit components here */}
+          {internalEditComponents} 
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons  
@@ -217,13 +207,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
+          table.setCreatingRow(true); 
         }}
       >
       Yeni dil biliyi səviyyəsi əlavə edin
@@ -261,7 +245,6 @@ function useCreateUser() {
         }, 
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -295,7 +278,6 @@ function useUpdateUser() {
         ),
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
@@ -304,24 +286,20 @@ function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId) => {
-      //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return Promise.resolve();
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(['users'], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId),
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

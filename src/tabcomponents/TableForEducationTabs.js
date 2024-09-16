@@ -32,6 +32,7 @@ import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 import formatDateTİme from "../utils/convertDate";
 import convertDate from "../utils/converTime";
+import { MRT_Localization_AZ } from "material-react-table/locales/az";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -68,7 +69,6 @@ const Example = () => {
         console.log(newData);
         setDegrees(newData);
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
@@ -123,7 +123,6 @@ const Example = () => {
           helperText: validationErrors?.degree,
         },
       },
-
       {
         accessorKey: "diplomaSerialNumber",
         header: "Diplomun seriya və nömrəsi",
@@ -166,7 +165,6 @@ const Example = () => {
             }),
         },
       },
-
       {
         accessorKey: "diplomaGivenDate",
         header: "Diplomun verilmə tarixi",
@@ -176,7 +174,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.diplomaGivenDate,
           helperText: "Diplomun verilmə tarixi",
-
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -184,12 +181,11 @@ const Example = () => {
             }),
           InputProps: {
             inputProps: {
-              type: "date", // Set the input type to 'date'
+              type: "date", 
             },
           },
         },
       },
-
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
@@ -207,7 +203,7 @@ const Example = () => {
           InputProps: {
             inputProps: {
               type: "date",
-              helperText: "", // Set the input type to 'date'
+              helperText: "", 
             },
           },
         },
@@ -286,57 +282,7 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
-    localization: {
-      cancel: "İmtina",
-
-      clearFilter: "Filteri təmizlə",
-      clearSearch: "Axtarışı təmizlə",
-
-      clearSort: "Sıralamani təmizlə",
-      clickToCopy: "Kopyalamaq üçün klik edin",
-      copy: "Kopyala",
-      collapse: "Collapse",
-
-      columnActions: "Əməliyyatlar",
-      copiedToClipboard: "Buferə kopyalandı",
-
-      edit: "Düzəliş et",
-      expand: "Genişləndirin",
-      expandAll: "Expand all",
-      rowNumber: "No",
-      rowNumbers: "Sıra nömrələri",
-      rowsPerPage: "Hər səhifədə sətir sayı",
-      save: "Yadda saxla",
-      search: "Axtar",
-      selectedCountOfRowCountRowsSelected:
-        "{selectedCount} of {rowCount} row(s) selected",
-      select: "Seç",
-      showAll: "Hamısını göstər",
-      showAllColumns: "Bütün sütunları göstərin",
-      showHideColumns: "Sütunları göstər/gizlə",
-      showHideFilters: "Filterləri göstər/gizlə",
-      showHideSearch: "Axtarışı göstər/gizlə",
-      sortByColumnAsc: "Artma üzrə çeşidləyin",
-      sortByColumnDesc: "Azalma üzrə çeşidləyin",
-      sortedByColumnAsc: "Artma üzrə çeşidləyin",
-      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
-      thenBy: ", then by ",
-      groupByColumn: "{column} üzrə qruplaşdırın",
-      groupedBy: "Qruplaşdırın ",
-      hideAll: "Hamısını gizlədin",
-      hideColumn: "{column} sütununu gizlədin",
-      toggleDensity: "Sıxlığı dəyiş",
-      filterByColumn: "{column} üzrə filtrləmə",
-      filteringByColumn:
-        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
-      toggleFullScreen: "Tam ekrana keçid",
-      toggleSelectAll: "Toggle select all",
-      toggleSelectRow: "Toggle select row",
-      toggleVisibility: "Görünüşü dəyişdirin",
-      ungroupByColumn: "Ungroup by {column}",
-      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
-      noResultsFound: "Heç bir nəticə tapılmadı",
-    },
+    localization: MRT_Localization_AZ,
     columns,
     data: fetchedUsers,
     createDisplayMode: "modal",
@@ -433,34 +379,14 @@ function useCreateUser(types) {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
+      const url = `${BASE_URL}/Education`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
 
-      function convertDate(date) {
-        const dateObject = new Date(date);
-
-        // Get UTC time string
-        const utcYear = dateObject.getUTCFullYear();
-        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-        const utcDay = dateObject.getUTCDate();
-        const utcHours = dateObject.getUTCHours();
-        const utcMinutes = dateObject.getUTCMinutes();
-        const utcSeconds = dateObject.getUTCSeconds();
-
-        // Construct the UTC date string in ISO 8601 format
-        const utcDateTimeString = `${utcYear}-${utcMonth
-          .toString()
-          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-          .toString()
-          .padStart(2, "0")}:${utcMinutes
-          .toString()
-          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-        return utcDateTimeString;
-      }
+      
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -486,7 +412,7 @@ function useCreateUser(types) {
           user["educationType.name"]
         ),
       };
-      console.log(newUser);
+      console.log(newUser,'newUSer');
 
       try {
         const response = await axios.post(url, newUser, { headers });
@@ -505,7 +431,6 @@ function useCreateUser(types) {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useGetUsers() {
@@ -516,7 +441,7 @@ function useGetUsers() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Education/GetAll/${userId}`
+          `${BASE_URL}/Education/GetAll/${userId}`
         );
 
         const users = response.data.data.map((user) => ({
@@ -547,34 +472,14 @@ function useUpdateUser(types) {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
+      const url = `${BASE_URL}/Education`;
 
       const headers = {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
 
-      function convertDate(date) {
-        const dateObject = new Date(date);
-
-        // Get UTC time string
-        const utcYear = dateObject.getUTCFullYear();
-        const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
-        const utcDay = dateObject.getUTCDate();
-        const utcHours = dateObject.getUTCHours();
-        const utcMinutes = dateObject.getUTCMinutes();
-        const utcSeconds = dateObject.getUTCSeconds();
-
-        // Construct the UTC date string in ISO 8601 format
-        const utcDateTimeString = `${utcYear}-${utcMonth
-          .toString()
-          .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
-          .toString()
-          .padStart(2, "0")}:${utcMinutes
-          .toString()
-          .padStart(2, "0")}:${utcSeconds.toString().padStart(2, "0")}Z`;
-        return utcDateTimeString;
-      }
+      
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -605,8 +510,6 @@ function useUpdateUser(types) {
 
       try {
         const response = await axios.put(url, newUser, { headers });
-        // window.location.reload();
-        // console.log(user);
         console.log(response.data);
       } catch (error) {
         console.error("Error:", error);
@@ -620,7 +523,6 @@ function useUpdateUser(types) {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -633,7 +535,7 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Education/${userId}`,
+          `${BASE_URL}/Education/${userId}`,
           {
             headers: { accept: "*/*" },
           }
