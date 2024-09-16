@@ -151,7 +151,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.fullName,
           helperText: validationErrors?.fullName,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -174,7 +173,6 @@ const Example = () => {
               ...validationErrors,
               pinCode: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
 
@@ -199,7 +197,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.description,
           helperText: validationErrors?.description,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,

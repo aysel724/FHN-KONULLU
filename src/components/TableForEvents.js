@@ -111,13 +111,12 @@ const Example = () => {
   }, []);
 
   function getTypesNames(arr) {
-    console.log(arr); // This logs the input array `arr`
+    console.log(arr);
 
-    // Mapping over the array to create objects with index as `key` and `name` from each element
     const mappedArray = arr.map((e) => e);
-    console.log(mappedArray); // This logs the mapped array with `key` and `name`
+    console.log(mappedArray); 
 
-    return mappedArray; // Returning the mapped array
+    return mappedArray;
   }
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -137,13 +136,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.name,
           helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               name: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -153,13 +150,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.departmentInCharge,
           helperText: validationErrors?.departmentInCharge,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               departmentInCharge: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -170,13 +165,11 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.startDate,
           helperText: validationErrors?.startDate,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
               startDate: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -220,7 +213,6 @@ const Example = () => {
               ...validationErrors,
               eventPlace: undefined,
             }),
-          //optionally add validation checking for onBlur or onChange
         },
       },
       {
@@ -230,7 +222,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.personInCharge,
           helperText: validationErrors?.personInCharge,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
