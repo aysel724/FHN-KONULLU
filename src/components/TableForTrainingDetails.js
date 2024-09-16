@@ -438,7 +438,7 @@ function useUpdateUser() {
 
       try {
         const response = await axios.post(url, newUser, { headers });
-        // window.location.reload();
+        window.location.reload();
         // console.log(user);
         console.log(response.data);
       } catch (error) {

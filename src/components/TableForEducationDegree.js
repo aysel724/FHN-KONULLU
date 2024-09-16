@@ -401,7 +401,7 @@ function useCreateUser(types) {
 
       try {
         const response = await axios.post(url, newUser, { headers });
-        window.location.reload();
+
         // console.log(user);
         console.log(response.data);
       } catch (error) {

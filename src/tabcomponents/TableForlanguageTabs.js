@@ -428,6 +428,9 @@ function useCreateUser(types, types1) {
         // Rethrow error to trigger onError
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+    },
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
         ...(prevUsers || []),
@@ -503,12 +506,15 @@ function useUpdateUser(types, types1) {
 
       try {
         const response = await axios.put(url, newUser, { headers });
-        window.location.reload();
+
         // console.log(user);
         console.log(response.data);
       } catch (error) {
         console.error("Error:", error);
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
     },
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers = []) => [
@@ -543,7 +549,9 @@ function useDeleteUser() {
         throw error;
       }
     },
-    //client side optimistic update
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+    },
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)

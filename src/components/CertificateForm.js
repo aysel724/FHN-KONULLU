@@ -283,10 +283,10 @@ const CertificateGenerator = () => {
             color: "#000",
           }}
         >
-          <p style={{ fontSize: "24px", marginTop: "170px" }}>
+          <p style={{ fontSize: "20px", marginTop: "170px" }}>
             AZƏRBAYCAN RESPUBLİKASININ FÖVQƏLADƏ HALLAR NAZİRLİYİ
           </p>
-          <p style={{ fontSize: "30px", marginTop: "100px" }}>{name || ""}</p>
+          <p style={{ fontSize: "30px", marginTop: "130px" }}>{name || ""}</p>
           <p style={{ fontSize: "24px", marginTop: "20px" }}>
             {date1} - {date2}-cü il tarixində
           </p>

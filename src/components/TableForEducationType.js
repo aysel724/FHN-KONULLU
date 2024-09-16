@@ -32,12 +32,6 @@ const Example = () => {
   const location = useLocation().pathname.substring(1);
   const [validationErrors, setValidationErrors] = useState({});
 
-  const pagBUTTON = document.querySelector(
-    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
-  );
-  if (pagBUTTON) {
-    pagBUTTON.textContent = "Göstərilən say";
-  }
   const columns = useMemo(
     () => [
       {
@@ -359,6 +353,10 @@ function useCreateUser() {
         // Rethrow error to trigger onError
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+    },
+
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
         ...(prevUsers || []),
@@ -434,8 +432,9 @@ function useUpdateUser() {
           });
         });
     },
-    //client side optimistic update
-    //client side optimistic update
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+    },
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.map((prevUser) =>
@@ -474,7 +473,9 @@ function useDeleteUser() {
         throw error;
       }
     },
-    //client side optimistic update
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+    },
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
