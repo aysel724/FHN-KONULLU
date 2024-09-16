@@ -42,7 +42,6 @@ const Example = () => {
   const file = event.target.files[0];
 
   if (file) {
-    // Dosya uzantısını kontrol et
     const validExtensions = ['docx', 'pdf'];
     const fileExtension = file.name.split('.').pop().toLowerCase();
 
@@ -51,19 +50,17 @@ const Example = () => {
         ...validationErrors,
         file: "Yalnız .docx ve .pdf dosyaları seçebilirsiniz."
       });
-      // Dosya türü geçerli değil, işlemi sonlandır
-      setFile(null); // Dosya state'ini temizle
+      setFile(null); 
       return;
     }
 
-    // Dosya geçerli ise işlemi devam ettir
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result.split(",")[1];
       setFile(base64String);
       setValidationErrors({
         ...validationErrors,
-        file: undefined // Dosya seçimi geçerli, hata mesajını kaldır
+        file: undefined 
       });
     };
     reader.readAsDataURL(file);
@@ -72,7 +69,7 @@ const Example = () => {
       ...validationErrors,
       file: "Fayl seçilməlidir."
     });
-    setFile(null); // Dosya seçilmediğinde state'i temizle
+    setFile(null); 
   }
 };
 
@@ -133,7 +130,6 @@ const Example = () => {
           required: true,
           error: !!validationErrors?.name,
           helperText: validationErrors?.name,
-          //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -234,7 +230,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
 
   //UPDATE action
@@ -261,15 +257,12 @@ const Example = () => {
     data: fetchedUsers,
     localization: {
       cancel: "İmtina",
-
       clearFilter: "Filteri təmizlə",
       clearSearch: "Axtarışı təmizlə",
-
       clearSort: "Sıralamani təmizlə",
       clickToCopy: "Kopyalamaq üçün klik et",
       copy: "Kopyala",
       collapse: "Collapse",
-
       columnActions: "Əməliyyatlar",
       copiedToClipboard: "Buferə kopyalandı",
       of: "/",
