@@ -49,29 +49,29 @@ const Example = () => {
       (group) =>
         group.headers
           .filter((header) => visibleColumns[header.id] !== false)
-          .map((header) => header.columnDef?.header || header.id) // Fallback to header.id if columnDef.header is undefined
+          .map((header) => header.columnDef?.header || header.id) 
     );
 
-    console.log("Headers:", headers); // Ensure headers are correctly populated
+    console.log("Headers:", headers); 
 
     const headerRow = worksheet.addRow(headers);
     headerRow.eachCell({ includeEmpty: true }, (cell) => {
       cell.font = { bold: true, size: 14 };
     });
 
-    worksheet.getColumn(1).width = 0; // Adjust width for Column 1
-    worksheet.getColumn(2).width = 30; // Adjust width for Column 2
-    worksheet.getColumn(3).width = 30; // Adjust width for Column 3
-    worksheet.getColumn(4).width = 30; // Adjust width for Column 1
-    worksheet.getColumn(5).width = 30; // Adjust width for Column 2
-    worksheet.getColumn(6).width = 30; // Adjust width for Column 3
-    worksheet.getColumn(7).width = 30; // Adjust width for Column 1
-    worksheet.getColumn(8).width = 30; // Adjust width for Column 2
-    worksheet.getColumn(9).width = 30; // Adjust width for Column 3
+    worksheet.getColumn(1).width = 0; 
+    worksheet.getColumn(2).width = 30; 
+    worksheet.getColumn(3).width = 30; 
+    worksheet.getColumn(4).width = 30; 
+    worksheet.getColumn(5).width = 30; 
+    worksheet.getColumn(6).width = 30; 
+    worksheet.getColumn(7).width = 30; 
+    worksheet.getColumn(8).width = 30; 
+    worksheet.getColumn(9).width = 30; 
     worksheet.getColumn(10).width = 0;
     // Add data rows
     table.getRowModel().rows.forEach((row) => {
-      const rowData = headers.map((header) => row.original[header] || ""); // Ensure you handle undefined values
+      const rowData = headers.map((header) => row.original[header] || ""); 
       worksheet.addRow(rowData);
     });
     // Save the Excel file
@@ -292,7 +292,7 @@ const Example = () => {
 
     await createUser(values);
 
-    table.setCreatingRow(null); //exit creating mode
+    table.setCreatingRow(null); 
   };
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
@@ -303,7 +303,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); //exit editing mode
+    table.setEditingRow(null); 
   };
 
   //DELETE action
@@ -358,7 +358,6 @@ const Example = () => {
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleSaveUser,
-    //optionally customize modal content
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
         <DialogTitle variant="h5">Yeni tədbir əlavə edin</DialogTitle>
@@ -372,7 +371,6 @@ const Example = () => {
         </DialogActions>
       </>
     ),
-    //optionally customize modal content
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
         <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
