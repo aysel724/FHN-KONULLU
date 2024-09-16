@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import "../App.css";
-import CachedIcon from "@mui/icons-material/Cached";
+import { notification } from "antd";
 import TableForlanguageTabs from "../tabcomponents/TableForlanguageTabs";
 import TableForEducationTabs from "../tabcomponents/TableForEducationTabs";
 import TableForLanguage from "./TableForTrainingDetails";
@@ -88,7 +88,10 @@ function refreshUser(user) {
   axios
     .put(url, newUser, { headers })
     .then((response) => {
-      console.log("Response:", response.data);
+      notification.success({
+        message: "Yeniləndi",
+        description: "Yeni məlumat uğurla əlavə olundu",
+      });
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -209,6 +212,7 @@ export default function TabsUser() {
             {" "}
             <button
               style={{
+                cursor: "pointer",
                 padding: "12px",
                 color: "white",
                 backgroundColor: "rgb(75, 125, 131)",

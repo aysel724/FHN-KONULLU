@@ -35,7 +35,6 @@ const Example = () => {
   const location = useLocation().pathname.substring(1);
   const [validationErrors, setValidationErrors] = useState({});
 
-
   const columns = useMemo(
     () => [
       {
@@ -270,6 +269,10 @@ function useCreateUser() {
         // Rethrow error to trigger onError
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+    },
+
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
         ...(prevUsers || []),
@@ -345,6 +348,9 @@ function useUpdateUser() {
           });
         });
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+    },
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.map((prevUser) =>
@@ -379,6 +385,9 @@ function useDeleteUser() {
         console.error("Error fetching users:", error);
         throw error;
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
     },
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>

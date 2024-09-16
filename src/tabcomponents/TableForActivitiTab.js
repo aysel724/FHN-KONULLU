@@ -311,10 +311,12 @@ function useCreateUser() {
 
       try {
         const response = await axios.post(url, newUser, { headers });
+
         notification.success({
           message: "Əlavə olundu",
           description: "Yeni məlumat uğurla əlavə olundu",
         });
+
         return response.data;
       } catch (error) {
         // Check if the error is an Axios error and has a response
