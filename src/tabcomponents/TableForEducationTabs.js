@@ -371,8 +371,6 @@ const Example = () => {
       noResultsFound: "Heç bir nəticə tapılmadı",
     },
     positionActionsColumn: "last",
-    data: fetchedUsers,
-
     enableRowNumbers: true,
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
@@ -602,9 +600,32 @@ function useCreateUser(types) {
     },
   });
 }
+
 function useGetUsers() {
   let params = useParams();
   let userId = params.id;
+
+  function convertDate(date) {
+    const dateObject = new Date(date);
+
+    // Get UTC time string
+    const utcYear = dateObject.getUTCFullYear();
+    const utcMonth = dateObject.getUTCMonth() + 1; // months are zero-indexed
+    const utcDay = dateObject.getUTCDate();
+    const utcHours = dateObject.getUTCHours();
+    const utcMinutes = dateObject.getUTCMinutes();
+    const utcSeconds = dateObject.getUTCSeconds();
+
+    // Construct the UTC date string in ISO 8601 format
+    const utcDateTimeString = `${utcYear}-${utcMonth
+      .toString()
+      .padStart(2, "0")}-${utcDay.toString().padStart(2, "0")}T${utcHours
+      .toString()
+      .padStart(2, "0")}:${utcMinutes.toString().padStart(2, "0")}:${utcSeconds
+      .toString()
+      .padStart(2, "0")}Z`;
+    return utcDateTimeString;
+  }
   return useQuery({
     queryKey: ["users"],
     queryFn: async () => {
@@ -615,7 +636,14 @@ function useGetUsers() {
 
         const users = response.data.data.map((user) => ({
           ...user,
-
+          diplomaGivenDate:
+            convertDate(user.diplomaGivenDate) !== "NaN-NaN-NaNTNaN:NaN:NaNZ"
+              ? convertDate(user.diplomaGivenDate)
+              : null,
+          endDate:
+            convertDate(user.endDate) !== "NaN-NaN-NaNTNaN:NaN:NaNZ"
+              ? convertDate(user.endDate)
+              : null,
           degree: `${user.educationType.educationDegrees[0]?.name}`,
         }));
         console.log(response.data.data, "users");
@@ -754,7 +782,6 @@ function useDeleteUser() {
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

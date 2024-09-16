@@ -4,11 +4,6 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, Upload, message } from "antd";
 import { useParams } from "react-router-dom";
 
-// const DELETE_FILE_ENDPOINT = `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/DeleteAttachmentFromMesTraining/${userId}`;
-// const API_ENDPOINT = `https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/${userId}`;
-// const UPLOAD_ENDPOINT =
-//   "https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/AddNewAttachmentsToMesTraining";
-
 const App = () => {
   let params = useParams();
   let userId = params.id;
@@ -26,7 +21,7 @@ const App = () => {
         const formattedFileList = response.data.data.mesTrainingAttachments.map(
           (file) => ({
             uid: file.uid || String(file.id),
-            name: file.name,
+            name: file.originalFileName,
             status: file.status || "Yüklənmə tamamlandı",
             url: file.url,
             thumbUrl: file.thumbUrl || file.url,
@@ -54,7 +49,7 @@ const App = () => {
 
       const newFile = {
         uid: file.uid,
-        name: file.name,
+        originalFileName: file.originalFileName,
         status: "Yüklənmə tamamlandı",
         url: response.data.url,
         thumbUrl: response.data.thumbUrl || response.data.url,
@@ -82,6 +77,21 @@ const App = () => {
       message.error("Xəta baş verdi");
     }
   };
+
+  // return (
+  //   <Upload
+  //     customRequest={handleFileUpload}
+  //     listType="picture"
+  //     fileList={fileList}
+  //     onChange={({ fileList }) => setFileList(fileList)}
+  //     showUploadList={true} // Hide default list
+  //   >
+  //     <CustomUploadList fileList={fileList} onRemove={handleRemove} />
+  //     <Button type="primary" icon={<UploadOutlined />}>
+  //       Yüklə
+  //     </Button>
+  //   </Upload>
+  // );
 
   return (
     <Upload

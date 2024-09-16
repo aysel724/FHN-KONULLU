@@ -6,7 +6,6 @@ import "../App.css";
 import React from "react";
 import axios from "axios";
 import {
-  createMRTColumnHelper,
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
@@ -19,7 +18,6 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
-  GridToolbar,
 } from "@mui/material";
 import {
   QueryClient,
@@ -73,8 +71,8 @@ const Example = () => {
   }
 
   const token = localStorage.getItem("authToken");
-  // const role = jwtDecode(token).unique_name;
-  const role = "atef";
+  const role = jwtDecode(token).unique_name;
+  // const role = "atef";
   console.log(role);
   const handleExportToExcel = async (table) => {
     const workbook = new ExcelJS.Workbook();
@@ -352,7 +350,7 @@ const Example = () => {
     //   setValidationErrors(newValidationErrors);
     //   return;
     // }
-    // setValidationErrors({});
+    setValidationErrors({});
 
     await updateUser(values);
     table.setEditingRow(null); //exit editing mode
@@ -665,17 +663,18 @@ function useUpdateUser(role, securityTypes) {
   return useMutation({
     mutationFn: async (user) => {
       if (role === "Volunteers") {
-        const formData = new FormData();
-        formData.append("Id", user.id);
-        formData.append("Email", user.email);
-        formData.append("PhoneNumber1", user.phoneNumber1);
-        formData.append("PhoneNumber2", user.phoneNumber2);
-        formData.append("CheckFromIamas", false);
-        formData.append("QueryParams", {
-          additionalProp1: "string",
-          additionalProp2: "string",
-          additionalProp3: "string",
-        });
+        const newUserInfo = {
+          id: user.id,
+          email: user.email,
+          phoneNumber1: user.phoneNumber1,
+          phoneNumber2: user.phoneNumber2,
+          checkFromIamas: false,
+          queryParams: {
+            additionalProp1: "string",
+            additionalProp2: "string",
+            additionalProp3: "string",
+          },
+        };
 
         console.log("salam");
         //send api update request here
@@ -684,10 +683,11 @@ function useUpdateUser(role, securityTypes) {
 
         const headers = {
           Accept: "*/*",
+          "Content-Type": "application/json",
         };
 
         axios
-          .put(url, formData, { headers })
+          .put(url, newUserInfo, { headers })
           .then((response) => {
             console.log("Response:", response.data);
           })
@@ -699,6 +699,7 @@ function useUpdateUser(role, securityTypes) {
 
         const headers = {
           Accept: "*/*",
+          "Content-Type": "application/json",
         };
 
         function findArrayElementByTitle(array, title) {

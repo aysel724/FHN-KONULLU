@@ -21,7 +21,7 @@ const App = () => {
         const formattedFileList = response.data.data.eventAttachments.map(
           (file) => ({
             uid: file.uid || String(file.id),
-            name: file.name,
+            name: file.originalFileName,
             status: file.status || "Yüklənmə tamamlandı",
             url: file.url,
             thumbUrl: file.thumbUrl || file.url,
@@ -49,7 +49,7 @@ const App = () => {
 
       const newFile = {
         uid: file.uid,
-        name: file.name,
+        originalFileName: file.originalFileName,
         status: "Yüklənmə tamamlandı",
         url: response.data.url,
         thumbUrl: response.data.thumbUrl || response.data.url,
