@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { notification } from "antd";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -182,14 +183,27 @@ const Example = () => {
     localization: MRT_Localization_AZ,
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    getRowId: (row) => row.id,
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -197,6 +211,7 @@ const Example = () => {
         minHeight: "500px",
       },
     },
+
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
@@ -274,7 +289,7 @@ function useCreateUser(types) {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Supplies`;
+      const url = `${BASE_URL}/Supplies`;
 
       const headers = {
         Accept: "*/*",
@@ -303,22 +318,38 @@ function useCreateUser(types) {
 
       try {
         const response = await axios.post(url, newUser, { headers });
-        window.location.reload();
-        // console.log(user);
-        console.log(response.data);
+        notification.success({
+          message: "Əlavə olundu",
+          description: "Yeni məlumat uğurla əlavə olundu",
+        });
+        return response.data;
       } catch (error) {
-        console.error("Error:", error);
+        // Check if the error is an Axios error and has a response
+        if (axios.isAxiosError(error) && error.response) {
+          const status = error.response.status;
+          const description =
+            status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
+
+          notification.error({
+            message: "Xəta",
+            description,
+          });
+        } else {
+          // For other errors or network errors
+          notification.error({
+            message: "Xəta",
+            description: "Xəta baş verdi",
+          });
+        }
+        // Rethrow error to trigger onError
       }
     },
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+      queryClient.setQueryData(["users"], (prevUsers) => [
+        ...(prevUsers || []),
+        newUserInfo,
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 
@@ -354,7 +385,7 @@ function useUpdateUser(types) {
     mutationFn: async (user) => {
       console.log(user);
 
-      const url = `https://api-volunteers.fhn.gov.az/api/v1/Supplies`;
+      const url = `${BASE_URL}/Supplies`;
 
       const headers = {
         Accept: "*/*",
@@ -396,7 +427,6 @@ function useUpdateUser(types) {
         },
       ]);
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), // Uncomment to refetch users after mutation
   });
 }
 function useDeleteUser() {
@@ -406,34 +436,29 @@ function useDeleteUser() {
       console.log(userId);
       try {
         const response = await axios.delete(
-          `https://api-volunteers.fhn.gov.az/api/v1/Supplies/${userId}`,
+          `${BASE_URL}/Supplies/${userId}`,
           {
             headers: { accept: "*/*" },
           }
         );
         console.log(response.data);
 
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
-        // Handle errors here if needed
         console.error("Error fetching users:", error);
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
   });
 }
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-  //Put this with your other react-query providers near root of your app
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

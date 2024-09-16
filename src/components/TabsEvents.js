@@ -8,13 +8,17 @@ import "../App.css";
 import TableFoeEventDEatails from "./TableFoeEventDEatails";
 
 import { Routes, Route, useParams } from "react-router-dom";
-import { Select, Space } from "antd";
+import { message, Select, Space } from "antd";
 import { Button } from "@mui/material";
 import axios from "axios";
 import UploadEvents from "../components/UpoadEvents";
 import { useEffect, useState } from "react";
+import convertDate from "../utils/converTime";
+import formatDateTİme from "../utils/convertDate";
+import { BASE_URL } from "../api/baseURL";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
+
 
   return (
     <div
@@ -51,14 +55,22 @@ export default function TabsUser() {
   let userId = params.id;
   console.log(userId);
   const [volonteerIDs, setVolonteerIDs] = useState([]);
+  const [validationError, setValidationError] = useState(false);
 
   const handleChange1 = (value) => {
     setVolonteerIDs(value);
+    setValidationError(false)
     console.log(`selected ${value}`);
   };
 
   async function postVolonteers(array) {
-    const url = `https://api-volunteers.fhn.gov.az/api/v1/Events/AddVolunteerToEvent`;
+
+    if(volonteerIDs.length === 0){
+    setValidationError(false)
+    message.error("Zəhmət olmasa ən azı bir könüllü seçin."); 
+    return;
+    }
+    const url = `${BASE_URL}/Events/AddVolunteerToEvent`;
 
     const headers = {
       Accept: "*/*",
@@ -78,6 +90,7 @@ export default function TabsUser() {
     } catch (error) {
       console.error("Error:", error);
     }
+
   }
 
   const [userData, setUserData] = useState({
@@ -95,7 +108,7 @@ export default function TabsUser() {
 
   useEffect(() => {
     axios
-      .get(`https://api-volunteers.fhn.gov.az/api/v1/Events/${userId}`)
+      .get(`${BASE_URL}/Events/${userId}`)
       .then((response) => {
         setUserData(response.data.data);
         return userData;
@@ -116,7 +129,7 @@ export default function TabsUser() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`,
+          `${BASE_URL}/Volunteers`,
           {
             headers: { accept: "*/*" },
           }
@@ -171,21 +184,17 @@ export default function TabsUser() {
             textAlign: "left",
           }}
         >
-          {/* {" "}
-          id: "", name: "", startDate: "", finishDate: "", eventDuration: "",
-          departmentInCharge: "", eventPlace: "", personInCharge: "", note: "",
-          volunteers: [], }); */}
           <p>
             <strong>Tədbirin adı :</strong> {userData.name}
           </p>
           <p></p>
           <p>
             <strong>Tədbirin başlama tarixi : </strong>
-            {userData.startDate}
+            {formatDateTİme(userData.startDate)}
           </p>
           <p>
             <strong>Tədbirin bitmə tarixi : </strong>
-            {userData.finishDate}
+            {formatDateTİme(userData.finishDate)}
           </p>
           <p>
             <strong>Tədbirin müddəti : </strong> {userData.eventDuration}
@@ -197,7 +206,6 @@ export default function TabsUser() {
           <p>
             <strong>Tədbir üzrə məsul şəxs: </strong> {userData.personInCharge}
           </p>
-
           <p>
             <strong>İştirak edən könüllü sayı: </strong>
             {userData.volunteers.length}
@@ -223,7 +231,7 @@ export default function TabsUser() {
                 marginBottom: "30px",
                 width: "100%",
               }}
-              placeholder="Könüllüləri seçin"
+              placeholder="Tədbirə yeni könüllü əlavə edin"
               defaultValue={[]}
               onChange={handleChange1}
               options={options}
@@ -238,7 +246,13 @@ export default function TabsUser() {
               width: "100%",
             }}
           >
+            {validationError && (
+        <div style={{ color: "red" }}>
+          Zəhmət olmasa ən azı bir könüllü seçin.
+        </div>
+      )}
             <Button
+              variant="contained"
               onClick={() => {
                 postVolonteers(volonteerIDs);
               }}

@@ -149,9 +149,7 @@ import jsPDF from "jspdf";
 import { Button } from "@mui/material";
 import html2canvas from "html2canvas";
 import back from "../components/images/certificationApproved.png";
-import logo from "../components/images/fhn-logo.png";
-import logo1 from "../components/images/2.png";
-import logo2 from "../components/images/4.png";
+
 const CertificateGenerator = () => {
   const [name, setName] = useState("");
   const [date1, setDate1] = useState("");

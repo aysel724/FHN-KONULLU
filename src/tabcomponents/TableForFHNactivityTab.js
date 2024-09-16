@@ -24,6 +24,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import axios from "axios";
+import { notification } from "antd";
 import DeleteIcon from "@mui/icons-material/Delete";
 import  { validateFHNVolunterActivity } from '.././utils/validateUser'
 import { TypesData } from "../api/tabComponentsGet/TypesData";
@@ -323,21 +324,38 @@ function useCreateUser(types) {
         "Content-Type": "application/json",
       };
       console.log(newUser);
-      axios
-        .post(url, newUser, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
+      try {
+        const response = await axios.post(url, newUser, { headers });
+        notification.success({
+          message: "Əlavə olundu",
+          description: "Yeni məlumat uğurla əlavə olundu",
         });
+        return response.data;
+      } catch (error) {
+        // Check if the error is an Axios error and has a response
+        if (axios.isAxiosError(error) && error.response) {
+          const status = error.response.status;
+          const description =
+            status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
+
+          notification.error({
+            message: "Xəta",
+            description,
+          });
+        } else {
+          // For other errors or network errors
+          notification.error({
+            message: "Xəta",
+            description: "Xəta baş verdi",
+          });
+        }
+        // Rethrow error to trigger onError
+      }
     },
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+        ...(prevUsers || []),
+        newUserInfo,
       ]);
     },
   });

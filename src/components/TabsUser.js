@@ -32,6 +32,7 @@ import axios from "axios";
 
 import { useEffect, useState } from "react";
 import formatDateTİme from "../utils/convertDate";
+import { BASE_URL } from "../api/baseURL";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -77,7 +78,7 @@ function refreshUser(user) {
   console.log(newUser);
   //send api update request here
 
-  const url = `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`;
+  const url = `${BASE_URL}/Volunteers`;
 
   const headers = {
     Accept: "*/*",
@@ -118,7 +119,7 @@ export default function TabsUser() {
 
   useEffect(() => {
     axios
-      .get(`https://api-volunteers.fhn.gov.az/api/v1/Volunteers/${userId}`)
+      .get(`${BASE_URL}/Volunteers/${userId}`)
       .then((response) => {
         setUserData(response.data.data);
 

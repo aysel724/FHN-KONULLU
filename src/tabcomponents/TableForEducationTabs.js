@@ -7,6 +7,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import { notification } from "antd";
 import {
   Box,
   Button,
@@ -24,7 +25,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { edudegree, edutype } from "../makeData";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateEducation } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
@@ -288,11 +289,20 @@ const Example = () => {
     createDisplayMode: "modal",
     editDisplayMode: "modal", 
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    getRowId: (row) => row.id,
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -300,6 +310,7 @@ const Example = () => {
         minHeight: "500px",
       },
     },
+
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
@@ -416,26 +427,46 @@ function useCreateUser(types) {
 
       try {
         const response = await axios.post(url, newUser, { headers });
-        // window.location.reload();
-        // console.log(user);
-        console.log(response.data);
+        notification.success({
+          message: "Əlavə olundu",
+          description: "Yeni məlumat uğurla əlavə olundu",
+        });
+        return response.data;
       } catch (error) {
-        console.error("Error:", error);
+        // Check if the error is an Axios error and has a response
+        if (axios.isAxiosError(error) && error.response) {
+          const status = error.response.status;
+          const description =
+            status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
+
+          notification.error({
+            message: "Xəta",
+            description,
+          });
+        } else {
+          // For other errors or network errors
+          notification.error({
+            message: "Xəta",
+            description: "Xəta baş verdi",
+          });
+        }
+        // Rethrow error to trigger onError
       }
     },
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+      queryClient.setQueryData(["users"], (prevUsers) => [
+        ...(prevUsers || []),
+        newUserInfo,
       ]);
     },
   });
 }
+
 function useGetUsers() {
   let params = useParams();
   let userId = params.id;
+
+  
   return useQuery({
     queryKey: ["users"],
     queryFn: async () => {
@@ -446,7 +477,14 @@ function useGetUsers() {
 
         const users = response.data.data.map((user) => ({
           ...user,
-
+          diplomaGivenDate:
+            convertDate(user.diplomaGivenDate) !== "NaN-NaN-NaNTNaN:NaN:NaNZ"
+              ? convertDate(user.diplomaGivenDate)
+              : null,
+          endDate:
+            convertDate(user.endDate) !== "NaN-NaN-NaNTNaN:NaN:NaNZ"
+              ? convertDate(user.endDate)
+              : null,
           degree: `${user.educationType.educationDegrees[0]?.name}`,
         }));
         console.log(response.data.data, "users");
@@ -562,7 +600,6 @@ function useDeleteUser() {
 const queryClient = new QueryClient();
 
 const Uxtable = () => (
-
   <QueryClientProvider client={queryClient}>
     <Example />
   </QueryClientProvider>

@@ -19,6 +19,7 @@ import Select from "@mui/material/Select";
 import btoa from "btoa-lite";
 import { convertDate } from "../utils/convertDate";
 import { validateEvent } from "../utils/validateUser";
+import { BASE_URL } from "../api/baseURL";
 export default function NewTrainings() {
   const navigate = useNavigate();
   const style = {
@@ -55,7 +56,7 @@ export default function NewTrainings() {
     const TrainingNamesData = async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/MesTrainingNames?page=1&pageSize=0`,
+          `${BASE_URL}/MesTrainingNames?page=1&pageSize=0`,
           {
             headers: { accept: "*/*" },
           }
@@ -89,7 +90,7 @@ export default function NewTrainings() {
     const TrainingNamesData = async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers?page=1&pageSize=0`,
+          `${BASE_URL}/Volunteers?page=1&pageSize=0`,
           {
             headers: { accept: "*/*" },
           }
@@ -182,64 +183,48 @@ export default function NewTrainings() {
       formData.append("EventAttachmentFiles", file);
     });
 
-    // Now you can use formData to send the blob to a server using fetch or XMLHttpRequest
-    if (Object.keys(errorNotfication).length === 0) {
-      console.log(formData);
-      axios
-        .post(`https://api-volunteers.fhn.gov.az/api/v1/Events`, formData)
-        .then((response) => {
-          setLoading(false);
-          openNotificationWithIcon(
-            "success",
-            "Success Message",
-            "This is a success notification."
-          );
-          console.log(response);
-        })
-        .catch((err) => {
-          setLoading(false);
-          console.error("Error:", err.response); // Log the detailed error response
-          if (err.response) {
-            if (err.response.status === 400) {
-              openNotificationWithIcon(
-                "error",
-                "Error Message",
-                "This is an error notification."
-              );
-              setError("xeta 400");
-            } else if (err.response.status === 404) {
-              openNotificationWithIcon(
-                "error",
-                "Error Message",
-                "This is an error notification."
-              );
-              setError("xeta 404");
-            } else {
-              openNotificationWithIcon(
-                "error",
-                "Error Message",
-                "This is an error notification."
-              );
-              setError("Something went wrong. Please try again later.");
-            }
-            setModalIsOpen(true); // Open modal to show error message
-          } else {
-            setError("xeta 500.");
+
+    console.log(formData);
+    axios
+      .post(`${BASE_URL}/Events`, formData)
+      .then((response) => {
+        setLoading(false);
+        openNotificationWithIcon(
+          "success",
+          "Uğurla əlavə olundu",
+          "Əlavə olundu"
+        );
+        console.log(response);
+        setTimeout(() => {
+          navigate(`/MesTrainings`);
+        }, 5000);
+      })
+      .catch((err) => {
+        setLoading(false);
+
+        if (err.response) {
+          if (err.response.status === 400) {
             openNotificationWithIcon(
               "error",
-              "Error Message",
-              "This is an error notification."
+              "Xəta mesajı",
+              "Bütün sahələri doldurmalısınız."
             );
-            setModalIsOpen(true); // Open modal to show error message
+            setError("Xəta 400");
+          } else if (err.response.status === 404) {
+            openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
+            setError("Xəta 404. Məlumat tapılmadı");
+          } else if (err.response.status === 409) {
+            openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
+            setError("Məlumat artıq mövcuddur");
           }
-        });
-        setLoading(false)
-         setTimeout(() => {
-        navigate(`/events`);
-      }, 20000);
-      }
-      
-    }
+          setModalIsOpen(true); // Open modal to show error message
+        } else {
+          setError("Xəta 500. Server xətası");
+          openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
+          setModalIsOpen(true); // Open modal to show error message
+        }
+      });
+  }
 
   const closeModal = () => {
     setModalIsOpen(false);
@@ -248,7 +233,7 @@ export default function NewTrainings() {
   return (
     <>
       {contextHolder}
-      {/* {isLoading && <div className="loader">Loading...</div>} */}
+      {isLoading && <div className="loader">Yüklənir</div>}
       {error && (
         <Modal
           aria-labelledby="transition-modal-title"

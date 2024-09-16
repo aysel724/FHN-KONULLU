@@ -313,7 +313,6 @@ export function validateEvent(userData) {
   return newErrors;
 }
 export function validateVolunteerİAMAS(passportData) {
-  // console.log(passportData,'PassportDaata')
   const newErrors = {};
   if (!passportData?.fin) newErrors.fin = "Bu xana boş qala bilməz";
   if (!passportData?.seriaNumber) newErrors.seriaNumber = "Bu xana boş qala bilməz";
@@ -321,7 +320,6 @@ export function validateVolunteerİAMAS(passportData) {
   return newErrors;
 }
 export function validateVolunteerAdd(userData) {
-  console.log(userData,'PassportDaata')
   const newErrors = {};
   if (!userData?.phoneNumber1) newErrors.phoneNumber1 = "Bu xana boş qala bilməz";
   if (!userData?.phoneNumber2) newErrors.phoneNumber2 = "Bu xana boş qala bilməz";

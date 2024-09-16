@@ -1,7 +1,8 @@
 import { useId, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../App.css";
-import TableForEducationDegree from "../components/TableForEducationDegree";
+import { message } from "antd";
+import { notification } from "antd";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -34,12 +35,7 @@ const Example = () => {
   const location = useLocation().pathname.substring(1);
   const [validationErrors, setValidationErrors] = useState({});
 
-  const pagBUTTON = document.querySelector(
-    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
-  );
-  if (pagBUTTON) {
-    pagBUTTON.textContent = "Göstərilən say";
-  }
+
   const columns = useMemo(
     () => [
       {
@@ -126,6 +122,8 @@ const Example = () => {
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
+
+    setValidationErrors({});
 
     await updateUser(values);
     table.setEditingRow(null); 
@@ -239,27 +237,43 @@ function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (user) => {
-      console.log(user);
-      const url = `${BASE_URL}/${location}`;
-      const headers = {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      };
-      axios
-        .post(url, user, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
+      try {
+        const url = `${BASE_URL}/${location}`;
+        const headers = {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        };
+        const response = await axios.post(url, user, { headers });
+        notification.success({
+          message: "Əlavə olundu",
+          description: "Yeni məlumat uğurla əlavə olundu",
         });
+        return response.data;
+      } catch (error) {
+        // Check if the error is an Axios error and has a response
+        if (axios.isAxiosError(error) && error.response) {
+          const status = error.response.status;
+          const description =
+            status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
+
+          notification.error({
+            message: "Xəta",
+            description,
+          });
+        } else {
+          // For other errors or network errors
+          notification.error({
+            message: "Xəta",
+            description: "Xəta baş verdi",
+          });
+        }
+        // Rethrow error to trigger onError
+      }
     },
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+        ...(prevUsers || []),
+        newUserInfo,
       ]);
     },
   });
@@ -280,7 +294,10 @@ function useGetUsers() {
         console.log(response.data);
         return response.data.data;
       } catch (error) {
-        console.error("Error fetching users:", error);
+        notification.error({
+          message: "Xəta ",
+          description: "Xəta baş verdi",
+        });
         throw error;
       }
     },
@@ -295,6 +312,13 @@ function useUpdateUser() {
 
   return useMutation({
     mutationFn: async (user) => {
+      if (!validateUser(user)) {
+        notification.error({
+          message: "Xəta",
+          description: "Bütün sahələri doldurmalısınız.",
+        });
+        return; // Exit the mutation function early
+      }
       const data = { ...user };
       console.log(data);
 
@@ -309,9 +333,16 @@ function useUpdateUser() {
         .put(url, data, { headers })
         .then((response) => {
           console.log("Response:", response.data);
+          notification.success({
+            message: "Yeniləndi",
+            description: "Yeni məlumat uğurla əlavə olundu",
+          });
         })
         .catch((error) => {
-          console.error("Error:", error);
+          notification.error({
+            message: "Xəta ",
+            description: "Xəta baş verdi",
+          });
         });
     },
     onMutate: (newUserInfo) => {
@@ -338,7 +369,10 @@ function useDeleteUser() {
             headers: { accept: "*/*" },
           }
         );
-        console.log(response.data);
+        notification.success({
+          message: "Məlumat silindi",
+          description: "Məlumatlar uğurla silindi",
+        });
 
         return response.data.data;
       } catch (error) {

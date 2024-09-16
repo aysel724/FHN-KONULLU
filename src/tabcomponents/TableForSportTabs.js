@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import "../App.css";
-
+import { useLocation } from "react-router-dom";
+import { createTheme, ThemeProvider, useTheme } from "@mui/material";
+import { notification } from "antd";
 import axios from "axios";
 import {
   MRT_EditActionButtons,
@@ -138,16 +140,81 @@ const Example = () => {
 
   const table = useMaterialReactTable({
     columns,
-    localization: MRT_Localization_AZ,
+    // localization: MRT_Localization_AZ,
+    localization: {
+      cancel: "İmtina",
+
+      clearFilter: "Filteri təmizlə",
+      clearSearch: "Axtarışı təmizlə",
+
+      clearSort: "Sıralamani təmizlə",
+      clickToCopy: "Kopyalamaq üçün klik et",
+      copy: "Kopyala",
+      collapse: "Collapse",
+
+      columnActions: "Əməliyyatlar",
+      copiedToClipboard: "Buferə kopyalandı",
+      of: "/",
+      edit: "Düzəliş et",
+      expand: "Genişləndirin",
+      expandAll: "Expand all",
+      rowNumber: "No",
+      rowNumbers: "Sıra nömrələri",
+      rowsPerPage: "Hər səhifədə sətir sayı",
+      save: "Yadda saxla",
+      search: "Axtar",
+      selectedCountOfRowCountRowsSelected:
+        "{selectedCount} of {rowCount} row(s) selected",
+      select: "Seç",
+      showAll: "Hamısını göstər",
+      showAllColumns: "Bütün sütunları göstərin",
+      showHideColumns: "Sütunları göstər/gizlə",
+      showHideFilters: "Filterləri göstər/gizlə",
+      showHideSearch: "Axtarışı göstər/gizlə",
+      sortByColumnAsc: "Artma üzrə çeşidləyin",
+      sortByColumnDesc: "Azalma üzrə çeşidləyin",
+      sortedByColumnAsc: "Artma üzrə çeşidləyin",
+      sortedByColumnDesc: "Azalma üzrə çeşidləyin",
+      thenBy: ", then by ",
+      groupByColumn: "{column} üzrə qruplaşdırın",
+      groupedBy: "Qruplaşdırın ",
+      hideAll: "Hamısını gizlədin",
+      hideColumn: "{column} sütununu gizlədin",
+      toggleDensity: "Sıxlığı dəyiş",
+      filterByColumn: "{column} üzrə filtrləmə",
+      filteringByColumn:
+        " {column}  üzrə filtrləmə- {filterType} {filterValue}",
+      toggleFullScreen: "Tam ekrana keçid",
+      toggleSelectAll: "Toggle select all",
+      toggleSelectRow: "Toggle select row",
+      toggleVisibility: "Görünüşü dəyişdirin",
+      ungroupByColumn: "Ungroup by {column}",
+      noRecordsToDisplay: "Göstəriləcək qeyd yoxdur",
+      noResultsFound: "Heç bir nəticə tapılmadı",
+    },
+    positionActionsColumn: "last",
     data: fetchedUsers,
-    createDisplayMode: "modal", 
-    editDisplayMode: "modal", 
+
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    getRowId: (row) => row.id,
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -155,6 +222,7 @@ const Example = () => {
         minHeight: "500px",
       },
     },
+
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
@@ -249,19 +317,36 @@ function useCreateUser() {
 
       try {
         const response = await axios.post(url, newUser, { headers });
-        window.location.reload();
-        // console.log(user);
-        console.log(response.data);
+        notification.success({
+          message: "Əlavə olundu",
+          description: "Yeni məlumat uğurla əlavə olundu",
+        });
+        return response.data;
       } catch (error) {
-        console.error("Error:", error);
+        // Check if the error is an Axios error and has a response
+        if (axios.isAxiosError(error) && error.response) {
+          const status = error.response.status;
+          const description =
+            status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
+
+          notification.error({
+            message: "Xəta",
+            description,
+          });
+        } else {
+          // For other errors or network errors
+          notification.error({
+            message: "Xəta",
+            description: "Xəta baş verdi",
+          });
+        }
+        // Rethrow error to trigger onError
       }
     },
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+      queryClient.setQueryData(["users"], (prevUsers) => [
+        ...(prevUsers || []),
+        newUserInfo,
       ]);
     },
   });

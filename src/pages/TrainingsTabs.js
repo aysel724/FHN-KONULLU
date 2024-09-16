@@ -8,11 +8,13 @@ import "../App.css";
 import TableForTrainingDetails from "../components/TableForTrainingDetails";
 
 import { Routes, Route, useParams } from "react-router-dom";
-import { Select, Space } from "antd";
+import { message, Select, Space } from "antd";
 import { Button } from "@mui/material";
 import axios from "axios";
 import Upload from "../components/Upload";
 import { useEffect, useState } from "react";
+import formatDateTİme from "../utils/convertDate";
+import { BASE_URL } from "../api/baseURL";
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -52,14 +54,22 @@ export default function TabsUser() {
   console.log(userId);
 
   const [volonteerIDs, setVolonteerIDs] = useState([]);
+  const [validationError, setValidationError] = useState(false);
+
 
   const handleChange1 = (value) => {
     setVolonteerIDs(value);
+    setValidationError(false)
     console.log(`selected ${value}`);
   };
 
   async function postVolonteers(array) {
-    const url = `https://api-volunteers.fhn.gov.az//api/v1/MesTrainings/AddVolunteerToMesTraining`;
+    if(volonteerIDs.length === 0){
+      setValidationError(false)
+      message.error("Zəhmət olmasa ən azı bir könüllü seçin."); 
+      return;
+      }
+    const url = `${BASE_URL}/MesTrainings/AddVolunteerToMesTraining`;
 
     const headers = {
       Accept: "*/*",
@@ -73,7 +83,7 @@ export default function TabsUser() {
 
     try {
       const response = await axios.post(url, newUser, { headers });
-      // window.location.reload();
+      window.location.reload();
       // console.log(user);
       console.log(response.data);
     } catch (error) {
@@ -90,12 +100,12 @@ export default function TabsUser() {
     trainingPlace: "",
     trainingMaster: "",
     priority: "",
-    volunteers: "",
+    volunteers: [],
   });
 
   useEffect(() => {
     axios
-      .get(`https://api-volunteers.fhn.gov.az/api/v1/MesTrainings/${userId}`)
+      .get(`${BASE_URL}/MesTrainings/${userId}`)
       .then((response) => {
         setUserData(response.data.data);
         return userData;
@@ -116,7 +126,7 @@ export default function TabsUser() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://api-volunteers.fhn.gov.az/api/v1/Volunteers`,
+          `${BASE_URL}/Volunteers`,
           {
             headers: { accept: "*/*" },
           }
@@ -179,11 +189,11 @@ export default function TabsUser() {
           </p>
           <p>
             <strong>Təlimin başlama tarixi : </strong>
-            {userData.startDate}
+            {formatDateTİme(userData.startDate)}
           </p>
           <p>
             <strong>Təlimin bitmə tarixi :</strong>
-            {userData.finishDate}
+            {formatDateTİme(userData.finishDate)}
           </p>
           <p>
             <strong>Təlimin müddəti :</strong> {userData.trainingDuration}
@@ -220,7 +230,7 @@ export default function TabsUser() {
                 marginBottom: "30px",
                 width: "100%",
               }}
-              placeholder="Könüllüləri seçin"
+              placeholder="Təlimə yeni könüllü əlavə edin"
               defaultValue={[]}
               onChange={handleChange1}
               options={options}
@@ -234,8 +244,13 @@ export default function TabsUser() {
               marginBottom: "30px",
               width: "100%",
             }}
-          >
+          >{validationError && (
+            <div style={{ color: "red" }}>
+              Zəhmət olmasa ən azı bir könüllü seçin.
+            </div>
+          )}
             <Button
+              variant="contained"
               onClick={() => {
                 postVolonteers(volonteerIDs);
               }}

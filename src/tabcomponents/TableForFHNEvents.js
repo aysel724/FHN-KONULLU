@@ -239,6 +239,21 @@ const Example = () => {
             }),
         },
       },
+      // {
+      //   accessorKey: "comments",
+      //   header: "Nəticə üzrə rəy",
+      //   muiEditTextFieldProps: {
+      //     required: true,
+      //     error: !!validationErrors?.comments,
+      //     helperText: validationErrors?.comments,
+      //     //remove any previous validation errors when user focuses on the input
+      //     onFocus: () =>
+      //       setValidationErrors({
+      //         ...validationErrors,
+      //         comments: undefined,
+      //       }),
+      //   },
+      // },
     ],
     [validationErrors]
   );

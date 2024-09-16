@@ -7,6 +7,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import { notification } from "antd";
 import {
   Box,
   Button,
@@ -24,7 +25,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { edudegree, edutype } from "../makeData";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import { validateFields, validateLaborActivity } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
@@ -201,11 +202,20 @@ const Example = () => {
     createDisplayMode: "modal", 
     editDisplayMode: "modal", 
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    getRowId: (row) => row.id,
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
@@ -213,6 +223,10 @@ const Example = () => {
         minHeight: "500px",
       },
     },
+
+    columns,
+    data: fetchedUsers,
+
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
@@ -309,19 +323,36 @@ function useCreateUser() {
 
       try {
         const response = await axios.post(url, newUser, { headers });
-        window.location.reload();
-        // console.log(user);
-        console.log(response.data);
+        notification.success({
+          message: "Əlavə olundu",
+          description: "Yeni məlumat uğurla əlavə olundu",
+        });
+        return response.data;
       } catch (error) {
-        console.error("Error:", error);
+        // Check if the error is an Axios error and has a response
+        if (axios.isAxiosError(error) && error.response) {
+          const status = error.response.status;
+          const description =
+            status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
+
+          notification.error({
+            message: "Xəta",
+            description,
+          });
+        } else {
+          // For other errors or network errors
+          notification.error({
+            message: "Xəta",
+            description: "Xəta baş verdi",
+          });
+        }
+        // Rethrow error to trigger onError
       }
     },
     onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+      queryClient.setQueryData(["users"], (prevUsers) => [
+        ...(prevUsers || []),
+        newUserInfo,
       ]);
     },
   });

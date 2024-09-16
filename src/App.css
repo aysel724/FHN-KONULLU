@@ -147,16 +147,29 @@ ul {
 .table-1 {
   max-height: 400px;
 }
+/* CSS Styles */
+.backdrop {
+  position: fixed; /* Make sure it covers the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex; /* Center the loader horizontally and vertically */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Make sure it appears on top of other content */
+}
+
 .loader {
   /* Styles for the loader */
   display: inline-block;
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-left-color: #7983ff;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 1s ease-in-out infinite;
-  margin-left: 5px;
+  width: 40px; /* Adjusted size */
+  height: 40px; /* Adjusted size */
+  /* animation: spin 1s ease-in-out infinite; */
 }
 
 @keyframes spin {

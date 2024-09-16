@@ -42,12 +42,6 @@ const Example = () => {
     return arr.map((e) => e.name);
   }
 
-  const pagBUTTON = document.querySelector(
-    ".css-uqq6zz-MuiFormLabel-root-MuiInputLabel-root"
-  );
-  if (pagBUTTON) {
-    pagBUTTON.textContent = "Göstərilən";
-  }
   const navigate = useNavigate();
   const columns = useMemo(
     () => [
@@ -58,7 +52,7 @@ const Example = () => {
         size: 80,
       },
       {
-        accessorKey: "name",
+        accessorKey: "fullname",
         header: "Ad soyad",
         muiEditTextFieldProps: {
           required: true,
@@ -163,30 +157,41 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
+    localization: MRT_Localization_AZ,
     positionActionsColumn: "last",
-    rowNumberDisplayMode: "original",
-    enableRowNumbers: true,
-    columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", //default ('row', and 'custom' are also available)
-    editDisplayMode: "modal", //default ('row', 'cell', 'table', and 'custom' are also available)
+
+    enableRowNumbers: true,
+    enableStickyHeader: true,
+    rowNumberDisplayMode: "original",
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
+    initialState: {
+      columnVisibility: { id: false },
+      columnPinning: { right: ["mrt-row-actions"] },
+    },
+    getRowId: (row) => row.id,
+    displayColumnDefOptions: {
+      "mrt-row-actions": { size: 150, header: "Əməliyyatlar" },
+    },
+
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
       ? {
           color: "error",
-          children: "Error loading data",
+          children: "Məlumatların yüklənməsi zamanı xəta baş verdi",
         }
       : undefined,
     muiTableContainerProps: {
       sx: {
         minHeight: "500px",
       },
-      initialState: {
-        columnPinning: { right: ["mrt-row-actions"] },
-      },
-      displayColumnDefOptions: { "mrt-row-actions": { size: 150 } },
     },
+
+    columns,
+    data: fetchedUsers,
+
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateUser,
     onEditingRowCancel: () => setValidationErrors({}),
@@ -282,10 +287,21 @@ function useGetUsers() {
           `${BASE_URL}/Events/${userId}`
         );
 
-        const user = response.data.data.volunteers;
+        const users = response.data.data.volunteers; // Assuming it's an array of user objects
 
-        console.log(user);
-        return user;
+        if (!users || !Array.isArray(users)) {
+          throw new Error("No users found");
+        }
+
+        // Create a new array with full names included
+        const usersWithFullNames = users.map((user) => {
+          const fullname = `${user.name || ""} ${user.surname || ""} ${
+            user.fatherName || ""
+          }`.trim();
+          return { ...user, fullname };
+        });
+
+        return usersWithFullNames; // Return array of users with full names
       } catch (error) {
         // Handle errors here if needed
         console.error("Error fetching users:", error);
@@ -359,8 +375,6 @@ function useDeleteUser() {
           }
         );
         console.log(response.data);
-
-        // Assuming your API returns data in response.data
         return response.data.data;
       } catch (error) {
         // Handle errors here if needed
@@ -368,7 +382,6 @@ function useDeleteUser() {
         throw error;
       }
     },
-    //client side optimistic update
     onMutate: (userId) => {
       queryClient.setQueryData(["users"], (prevUsers) =>
         prevUsers?.filter((user) => user.id !== userId)

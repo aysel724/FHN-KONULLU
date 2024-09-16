@@ -140,31 +140,28 @@ export default function NewVolonteer() {
       })
       .catch((err) => {
         setLoading(false);
-        console.error("Error:", err.response); 
+        // console.error("Error:", err.response); // Log the detailed error response
+
         if (err.response) {
           if (err.response.status === 400) {
-            openNotificationWithIcon("error", "Error Message", "Tkonullu");
-            setError("xeta 400 qq");
-          } else if (err.response.status === 404) {
             openNotificationWithIcon(
               "error",
-              "Error Message",
-              "This is an error notification."
+              "Xəta mesajı",
+              "Bütün sahələri doldurmalısınız."
             );
-            setError("xeta 404");
-          } else {
-            openNotificationWithIcon("error", "Error Message", "123456yui.");
-            setError("Something went wrong. Please try again later.");
+            setError("Xəta 400");
+          } else if (err.response.status === 404) {
+            openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
+            setError("Xəta 404. Məlumat tapılmadı");
+          } else if (err.response.status === 409) {
+            openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
+            setError("Məlumat artıq mövcuddur");
           }
           setModalIsOpen(true); 
         } else {
-          setError("xeta 500.");
-          openNotificationWithIcon(
-            "error",
-            "Error Message",
-            "This is an error notification."
-          );
-          setModalIsOpen(true); 
+          setError("Xəta 500. Server xətası");
+          openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
+          setModalIsOpen(true); // Open modal to show error message
         }
       });
     }
@@ -224,7 +221,7 @@ export default function NewVolonteer() {
   return (
     <>
       {contextHolder}
-      {isLoading && <div className="loader">Loading...</div>}
+      {isLoading && <div className="loader">Yüklənir</div>}
       {error && (
         <Modal
           aria-labelledby="transition-modal-title"
