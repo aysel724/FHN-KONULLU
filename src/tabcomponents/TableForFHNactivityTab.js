@@ -30,7 +30,8 @@ import  { validateFHNVolunterActivity } from '.././utils/validateUser'
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import { BASE_URL } from "../api/baseURL";
 import EditIcon from "../assets/icons/editIcon";
-import formatDateTİme, { convertDate } from "../utils/convertDate";
+import formatDateTİme from "../utils/convertDate";
+import convertDate from "../utils/converTime";
 
 import { MRT_Localization_AZ } from 'material-react-table/locales/az';
 
@@ -38,7 +39,6 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [endDate, setEndDate] = useState(false)
-
 
 
   useEffect(() => {
@@ -50,93 +50,22 @@ const Example = () => {
     if (!types) return [];
     return types.map(type => type.name);
   };
+  const getDateNames = (types) => {
+    if (!types) return [];
+    return types.map(type => type.startDate);
+  };
 
   const handleDateChange = (event) => {
     if (event.target.value) {
       setEndDate(true); 
+      
     } else {
       setEndDate(false);
     }
   };
 
 
-  const columns = useMemo(() => [
-    {
-      accessorKey: "id",
-      header: "Id",
-      enableEditing: false,
-      size: 80,
-    },
-    {
-      accessorKey: "startDate",
-      header: "Başlama tarixi",
-      Cell: ({ cell }) => formatDateTİme(cell.getValue()),
-      muiEditTextFieldProps: {
-        label:'',
-        required: true,
-        error: !!validationErrors?.startDate,
-        helperText: validationErrors?.startDate  ? validationErrors?.startDate : "Başlama tarixi",
-        onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            startDate: undefined,
-          }),
-        InputProps: {
-          inputProps: {
-            type: "date",
-          },
-        },
-      },
-    },
-    {
-      accessorKey: "endDate",
-      header: "Bitmə tarixi",
-      Cell: ({ cell }) => formatDateTİme(cell.getValue()),
-      muiEditTextFieldProps: {
-        label:'',
-        required: true,
-        error: !!validationErrors?.endDate,
-        helperText: validationErrors?.endDate  ? validationErrors?.endDate : "Bitmə tarixi",
-        onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            endDate: undefined,
-          }),
-        InputProps: {
-          inputProps: {
-            type: "date",
-            onChange: handleDateChange,
-          },
-        },
-      },
-    },
-      {
-        accessorKey: "mesVoluntaryActivityEndReason.name",
-        header: "Fəaliyyətin bitmə səbəbi",
-        editVariant: "select",
-        enableEditing: endDate,
-        editSelectOptions: getTypesNames(types),
-        muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.["mesVoluntaryActivityEndReason.name"],
-          helperText: validationErrors?.["mesVoluntaryActivityEndReason.name"],
-        },
-      },
-    {
-      accessorKey: "note",
-      header: "Qeyd",
-      muiEditTextFieldProps: {
-        required: true,
-        error: !!validationErrors?.note,
-        helperText: validationErrors?.note,
-        onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            note: undefined,
-          }),
-      },
-    },
-  ], [validationErrors, types, endDate]);
+ 
   
 
   //call CREATE hook
@@ -151,10 +80,91 @@ const Example = () => {
   } = useGetUsers();
   //call UPDATE hook
   const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-    useUpdateUser();
+    useUpdateUser(types);
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
+
+    const columns = useMemo(() => [
+      {
+        accessorKey: "id",
+        header: "Id",
+        enableEditing: false,
+        size: 80,
+      },
+      {
+        accessorKey: "startDate",
+        header: "Başlama tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
+        muiEditTextFieldProps: {
+          label:'',
+          required: true,
+          error: !!validationErrors?.startDate,
+          helperText: validationErrors?.startDate  ? validationErrors?.startDate : "Başlama tarixi",
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              startDate: undefined,
+            }),
+          InputProps: {
+            inputProps: {
+              type: "date",
+            },
+          },
+        },
+      },
+      {
+        accessorKey: "endDate",
+        header: "Bitmə tarixi",
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),  // Tarihi istediğiniz formatta göstermek için.
+        muiEditTextFieldProps: {
+          label: '',
+          required: true,
+          error: !!validationErrors?.endDate,
+          helperText: validationErrors?.endDate ? validationErrors?.endDate : "Bitmə tarixi",
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              endDate: undefined,
+            }),
+          InputProps: {
+            inputProps: {
+              type: "text", // 'date' yerine 'text' yaparak formatı manuel kontrol edebilirsiniz.
+              value: formatDateTİme(endDate), // İstediğiniz formata göre set edebilirsiniz.
+              onChange: handleDateChange, // Manuel tarih yönetimi
+              placeholder: "dd-MM-yyyy", // Kullanıcıya gösterilen format
+            },
+          },
+        },
+      },
+      
+        {
+          accessorKey: "mesVoluntaryActivityEndReason.name",
+          header: "Fəaliyyətin bitmə səbəbi",
+          editVariant: "select",
+          enableEditing: endDate,
+          editSelectOptions: getTypesNames(types),
+          muiEditTextFieldProps: {
+            select: true,
+            error: !!validationErrors?.["mesVoluntaryActivityEndReason.name"],
+            helperText: validationErrors?.["mesVoluntaryActivityEndReason.name"],
+          },
+        },
+      {
+        accessorKey: "note",
+        header: "Qeyd",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.note,
+          helperText: validationErrors?.note,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              note: undefined,
+            }),
+        },
+      },
+    ], [validationErrors, types, endDate]);
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
@@ -337,7 +347,6 @@ function useCreateUser(types) {
           const status = error.response.status;
           const description =
             status === 409 ? "İstifadəçi artıq mövcuddur." : "Xəta baş verdi";
-
           notification.error({
             message: "Xəta",
             description,
@@ -372,7 +381,8 @@ function useGetUsers() {
           `${BASE_URL}/VoluntaryOfMeses/GetAll/${userId}`
         );
 
-        console.log(response.data.data);
+        console.log(response.data.data,'get');
+        
         return response.data.data;
       } catch (error) {
         console.error("Xəta:", error);
@@ -390,12 +400,11 @@ function useUpdateUser(types) {
   return useMutation({
     mutationFn: async (user) => {
       function findArrayElementByTitle(array, title) {
-        if (title === undefined) {
+        if (title === undefined || array === undefined) {
           return null;
         } else {
-          return array.find((element) => {
-            return element.name === title;
-          }).id;
+          const foundElement = array.find((element) => element.name === title);
+          return foundElement ? foundElement.id : null;
         }
       }
       const url = `${BASE_URL}/VoluntaryOfMeses`;
@@ -404,7 +413,6 @@ function useUpdateUser(types) {
         "Content-Type": "application/json",
       };
 
-      
       const newUser = {
         id: user.id,
         volunteerId: parseInt(userId),
@@ -419,7 +427,7 @@ function useUpdateUser(types) {
         ),
         note: user.note,
       };
-      console.log(newUser);
+      console.log(newUser,'newUser');
       axios
         .put(url, newUser, { headers })
         .then((response) => {

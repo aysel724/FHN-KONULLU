@@ -56,7 +56,7 @@ export default function ModalForDailedFiltration() {
   ];
 
   // useContext
-  const { volunteers, setQueryString } = useVolunteers();
+  const { setQueryString,setStatusCode } = useVolunteers();
   const handleFilterChange = (setState) => (selected) => {
     setState(selected);
   };
@@ -98,6 +98,16 @@ export default function ModalForDailedFiltration() {
 
   setQueryString(queryString);
 };
+ const handleClearFilter = () =>{
+  setStatusCode(1)
+  setLanguage('')
+  setKnowledge('')
+  setEducation('')
+  setSecurity('')
+  setMarriage('')
+  setGender('')
+  setStatus('')
+ }
 
   return (
     <div>
@@ -162,7 +172,14 @@ export default function ModalForDailedFiltration() {
             variant="contained"
             sx={{ margin: "2%" }}
           >
-            Filtr et
+            Filter et
+          </Button>
+          <Button
+            onClick={handleClearFilter}
+            variant="contained"
+            sx={{ margin: "2%" }}
+          >
+            Filteri təmizlə
           </Button>
         </Box>
       </Modal>

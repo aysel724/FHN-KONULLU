@@ -36,6 +36,8 @@ import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
 import { validateEmail } from "../utils/validateEmail";
+import formatDateTİme from "../utils/convertDate";
+import { message } from "antd";
 
 const Example = () => {
   const [securityTypes, setSecurityTypes] = useState([]);
@@ -128,7 +130,10 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
   // CONTEXT VOLUNTER
-  const { volunteers } = useVolunteers();
+  const { volunteers,statusCode } = useVolunteers();
+  console.log(
+    statusCode,'statusCode'
+  )
   console.log(volunteers, "volunteers");
   const columns = useMemo(
     () => [
@@ -217,7 +222,6 @@ const Example = () => {
             }),
         },
       },
-
       {
         size: 90,
         accessorKey: "gender",
@@ -239,6 +243,7 @@ const Example = () => {
         accessorKey: "birthDate",
         header: "Doğum tarixi",
         enableEditing: false,
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.birthDate,
@@ -373,7 +378,11 @@ const Example = () => {
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
     columns,
-    data: volunteers.length > 0 ? volunteers : fetchedUsers,
+    data: statusCode === 1 
+    ? fetchedUsers 
+    : statusCode === 2 
+    ? volunteers 
+    : [],
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
         cursor: "pointer",

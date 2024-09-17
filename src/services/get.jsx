@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { BASE_URL } from "../api/baseURL";
 
 export const useLanguages = () => {
   const [languages, setLanguages] = useState([]);
@@ -7,7 +8,7 @@ export const useLanguages = () => {
     const fetchLanguages = async () => {
       try {
         const response = await axios.get(
-          "https://api-volunteers.fhn.gov.az/api/v1/LanguageNames"
+          `${BASE_URL}/LanguageNames`
         );
         setLanguages(response.data.data);
       } catch (error) {
@@ -25,7 +26,7 @@ export const useComputerSkills = () => {
     const fetchComputerSkills = async () => {
       try {
         const response = await axios.get(
-          "https://api-volunteers.fhn.gov.az/api/v1/ComputerSkillNames"
+          `${BASE_URL}/ComputerSkillNames`
         );
         setComputerSkill(response.data.data);
       } catch (error) {
@@ -43,7 +44,7 @@ export const useEducationDegree = () => {
     const fetchEducationDegrees = async () => {
       try {
         const response = await axios.get(
-          "https://api-volunteers.fhn.gov.az/api/v1/EducationDegrees"
+          `${BASE_URL}/EducationDegrees`
         );
         setEducation(response.data.data);
       } catch (error) {
@@ -61,7 +62,7 @@ export const useSecurityStatus = () => {
     const fetchSecurityStatus = async () => {
       try {
         const response = await axios.get(
-          "https://api-volunteers.fhn.gov.az/api/v1/SecurityCheckResultName"
+          `${BASE_URL}/SecurityCheckResultName`
         );
         setSecurityStatus(response.data.data);
       } catch (error) {
@@ -79,7 +80,7 @@ export const useVoluntaryStatus = () => {
     const fetchSecurityStatus = async () => {
       try {
         const response = await axios.get(
-          "https://api-volunteers.fhn.gov.az/api/v1/VoluntaryOfMesStatuses"
+          `${BASE_URL}/VoluntaryOfMesStatuses`
         );
         setValuntaryStatus(response.data.data);
       } catch (error) {
