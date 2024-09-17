@@ -140,7 +140,6 @@ export default function NewVolonteer() {
       })
       .catch((err) => {
         setLoading(false);
-        // console.error("Error:", err.response); // Log the detailed error response
 
         if (err.response) {
           if (err.response.status === 400) {
@@ -172,10 +171,11 @@ export default function NewVolonteer() {
   async function getData() {
     const errorNotfication = validateVolunteerİAMAS(passportData)
     setError(errorNotfication);
+    console.log(passportData,'passportData')
     if (Object.keys(errorNotfication).length === 0) {
       const options = {
         method: "GET",
-        url: `${BASE_URL}/Volunteers/GetInfoFromIamas?documentNumber=${passportData.seriaNumber}${passportData.docNumber}&fin=${passportData.fin}`,
+        url: `${BASE_URL}/Volunteers/GetInfoFromIamas?documentNumber=${passportData.seriaNumber=== "AA"?passportData.seriaNumber:''}${passportData.docNumber}&fin=${passportData.fin}`,
         headers: {
           accept: "*/*",
         },
@@ -303,7 +303,7 @@ export default function NewVolonteer() {
             helperText={error?.seriaNumber || ""}
           >
             <MenuItem value={"AA"}>AA</MenuItem>
-            <MenuItem value={""}>AZE</MenuItem>
+            <MenuItem value={"AZE"}>AZE</MenuItem>
           </Select>
           <FormHelperText>{error?.seriaNumber || ""}</FormHelperText>
         </FormControl>

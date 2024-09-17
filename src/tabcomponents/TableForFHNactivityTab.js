@@ -39,11 +39,11 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [endDate, setEndDate] = useState(false)
+//  console.log(queryClient.setQueryData(["users"],'kenan'))
 
 
   useEffect(() => {
     TypesData(setTypes,"MesVoluntaryActivityEndReasons");
-    console.log(types,'types');
   }, []);
 
   const getTypesNames = (types) => {
@@ -116,12 +116,12 @@ const Example = () => {
       {
         accessorKey: "endDate",
         header: "Bitmə tarixi",
-        Cell: ({ cell }) => formatDateTİme(cell.getValue()),  // Tarihi istediğiniz formatta göstermek için.
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
-          label: '',
+          label:'',
           required: true,
           error: !!validationErrors?.endDate,
-          helperText: validationErrors?.endDate ? validationErrors?.endDate : "Bitmə tarixi",
+          helperText: validationErrors?.endDate  ? validationErrors?.endDate : "Bitmə tarixi",
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -129,15 +129,12 @@ const Example = () => {
             }),
           InputProps: {
             inputProps: {
-              type: "text", // 'date' yerine 'text' yaparak formatı manuel kontrol edebilirsiniz.
-              value: formatDateTİme(endDate), // İstediğiniz formata göre set edebilirsiniz.
-              onChange: handleDateChange, // Manuel tarih yönetimi
-              placeholder: "dd-MM-yyyy", // Kullanıcıya gösterilen format
+              type: "date",
+              onChange: handleDateChange,
             },
           },
         },
       },
-      
         {
           accessorKey: "mesVoluntaryActivityEndReason.name",
           header: "Fəaliyyətin bitmə səbəbi",
@@ -412,7 +409,6 @@ function useUpdateUser(types) {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-
       const newUser = {
         id: user.id,
         volunteerId: parseInt(userId),
