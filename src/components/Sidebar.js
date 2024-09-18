@@ -2,7 +2,9 @@ import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import "../App.css";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import Login from "../pages/Login";
 import Admin from "../pages/Admin";
 import { Layout, Menu, theme, Button } from "antd";
@@ -35,7 +37,7 @@ import TraningIncon from "../assets/icons/traningIcon";
 import EventIcon from "../assets/icons/eventIcon";
 import ReportIcon from "../assets/icons/reportIcon";
 import AdminPanelIcon from "../assets/icons/adminPanelIcon";
-import { PiCertificateThin,PiCertificateDuotone } from "react-icons/pi";
+import { PiCertificateThin, PiCertificateDuotone } from "react-icons/pi";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -50,37 +52,44 @@ const items = [
   getItem(
     "Könüllülər",
     "1",
-    <Link to="/Volunteers"  style={{width:'35px'}}>
-     <VolunteerIcon/>
+    <Link to="/Volunteers" style={{ width: "35px" }}>
+      <VolunteerIcon />
+    </Link>
+  ),
+  getItem(
+    "Təhlükəsizlik nəticələri",
+    "21",
+    <Link to="/SecurityCheckResultName" style={{ width: "35px" }}>
+      <VerifiedUserIcon />
     </Link>
   ),
   getItem(
     "Təlimlər",
     "2",
-    <Link to="/MesTrainings" style={{width:'35px'}}>
-    <TraningIncon/>
+    <Link to="/MesTrainings" style={{ width: "35px" }}>
+      <TraningIncon />
     </Link>
   ),
   getItem(
     "Tədbirlər",
     "3",
-    <Link to="/events" style={{width:'35px'}}>
-     <EventIcon/>
+    <Link to="/events" style={{ width: "35px" }}>
+      <EventIcon />
     </Link>
   ),
 
   getItem(
     "Hesabatlar",
     "4",
-    <Link to="/reports" style={{width:'35px'}}>
-     <ReportIcon/>
+    <Link to="/reports" style={{ width: "35px" }}>
+      <ReportIcon />
     </Link>
   ),
   getItem(
     "Admin panel",
     "5",
-    <Link to="/admin" style={{width:'35px'}}>
-      <AdminPanelIcon/>
+    <Link to="/admin" style={{ width: "35px" }}>
+      <AdminPanelIcon />
     </Link>,
 
     [
@@ -197,15 +206,28 @@ const items = [
   getItem(
     "Sertifikat",
     "20",
-    <Link to="/certificate" style={{width:'35px'}}>
-      <PiCertificateDuotone style={{ width: '25px', height: '25px' }} />
+    <Link to="/certificate" style={{ width: "35px" }}>
+      <PiCertificateDuotone style={{ width: "25px", height: "25px" }} />
     </Link>
   ),
 ];
 const Sidebar = () => {
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
   const [collapsed, setCollapsed] = useState(false);
-
-  // &#9776;
+  const filteredItems = items.filter((item) => {
+    if (role !== "Volunteers") {
+      // Hide Admin panel and items with keys 2, 3, 4, 5 for non-Volunteers roles
+      if (["2", "3", "4", "5", "20"].includes(item.key)) {
+        return false;
+      }
+    }
+    // Show the Admin panel item only if the role is "admin"
+    if (role === "Volunteers" && item.key === "21") {
+      return false;
+    }
+    return true;
+  });
   return (
     <>
       {/* <Login /> */}
@@ -259,8 +281,7 @@ const Sidebar = () => {
             defaultOpenKeys={["5"]}
             darkitemselectedbg="#001529"
             mode="inline"
-            items={items}
-            
+            items={filteredItems}
           />
         </Sider>
 
@@ -332,7 +353,10 @@ const Sidebar = () => {
 
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<Admin />} />
-
+              <Route
+                path="/SecurityCheckResultName"
+                element={<TableForEducationType />}
+              />
               <Route
                 path="/TrainingResults"
                 element={<TableForEducationType />}

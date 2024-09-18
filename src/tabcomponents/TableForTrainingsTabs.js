@@ -7,6 +7,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import { jwtDecode } from "jwt-decode";
 import {
   Box,
   Button,
@@ -35,8 +36,10 @@ import { MRT_Localization_AZ } from "material-react-table/locales/az";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
   useEffect(() => {
-    TypesData(setTypes,"EducationTypes");
+    TypesData(setTypes, "EducationTypes");
   }, []);
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
@@ -130,7 +133,7 @@ const Example = () => {
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
-     const newValidationErrors = validateTraningTab(values);
+    const newValidationErrors = validateTraningTab(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
@@ -161,7 +164,7 @@ const Example = () => {
 
   const table = useMaterialReactTable({
     columns,
-    localization:MRT_Localization_AZ,
+    localization: MRT_Localization_AZ,
     data: fetchedUsers,
     enableRowNumbers: true,
     enableStickyHeader: true,
@@ -222,29 +225,38 @@ const Example = () => {
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true);
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -273,8 +285,6 @@ function useCreateUser() {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-
-      
 
       const newUser = {
         name: user.name,
@@ -391,12 +401,9 @@ function useDeleteUser() {
     mutationFn: async (userId) => {
       console.log(userId);
       try {
-        const response = await axios.delete(
-          `${BASE_URL}/Trainings/${userId}`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
+        const response = await axios.delete(`${BASE_URL}/Trainings/${userId}`, {
+          headers: { accept: "*/*" },
+        });
         console.log(response.data);
 
         return response.data.data;
@@ -422,4 +429,3 @@ const Uxtable = () => (
 );
 
 export default Uxtable;
-

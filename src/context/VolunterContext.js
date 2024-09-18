@@ -24,8 +24,7 @@ export const VolunteersProvider = ({ children }) => {
             ...user,
             fullName: `${user.name} ${user.surname} ${user.fatherName}`.trim(),
             security: `${
-              user.securityCheckResults[0]?.securityCheckResultName?.name ||
-              "Yoxlanmayıb"
+              user.securityCheckResults[0]?.securityCheckResultName?.name || ""
             }`,
           }));
           setVolunteers(users || []);

@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import "../App.css";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -39,7 +40,8 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [degrees, setDegrees] = useState([]);
-
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
   useEffect(() => {
     TypesData(setTypes,'EducationTypes');
   }, []);
@@ -343,29 +345,38 @@ const Example = () => {
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true); 
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -548,19 +559,32 @@ function useUpdateUser(types) {
 
       try {
         const response = await axios.put(url, newUser, { headers });
-        console.log(response.data);
+        console.log(response);
       } catch (error) {
         console.error("Error:", error);
       }
     },
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
-      ]);
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful update
     },
+    onMutate: async (newUserInfo) => {
+      // Optional: Optimistic update
+      await queryClient.cancelQueries(["users"]);
+      const previousUsers = queryClient.getQueryData(["users"]);
+
+      queryClient.setQueryData(["users"], (old = []) => [
+        ...old.filter((user) => user.id !== newUserInfo.id),
+        newUserInfo,
+      ]);
+
+      // Optionally, return a context to rollback if needed
+      return { previousUsers };
+    },
+    //   onError: (error, newUserInfo, context) => {
+    //     // Rollback in case of error
+    //     queryClient.setQueryData(["users"], context.previousUsers);
+    //     console.error("Error updating user:", error);
+    //   },
   });
 }
 

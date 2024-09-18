@@ -35,8 +35,7 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   useEffect(() => {
-    
-    TypesData(setTypes,'EducationTypes');
+    TypesData(setTypes, "EducationTypes");
   }, []);
 
   function getTypesNames(arr) {
@@ -135,13 +134,13 @@ const Example = () => {
 
     await createUser(values);
 
-    table.setCreatingRow(null); 
+    table.setCreatingRow(null);
   };
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
     await updateUser(values);
-    table.setEditingRow(null); 
+    table.setEditingRow(null);
   };
 
   //DELETE action
@@ -157,8 +156,8 @@ const Example = () => {
     columns,
     enableRowNumbers: true,
     data: fetchedUsers,
-    createDisplayMode: "modal", 
-    editDisplayMode: "modal", 
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
     initialState: {
       columnVisibility: { id: false },
@@ -215,7 +214,7 @@ const Example = () => {
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon/>
+            <EditIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -229,7 +228,7 @@ const Example = () => {
       <Button
         variant="contained"
         onClick={() => {
-          table.setCreatingRow(true); 
+          table.setCreatingRow(true);
         }}
       >
         Əlavə edin
@@ -310,12 +309,9 @@ function useGetUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/${location}`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
+        const response = await axios.get(`${BASE_URL}/${location}`, {
+          headers: { accept: "*/*" },
+        });
         return response.data.data;
       } catch (error) {
         // Handle errors here if needed
@@ -425,4 +421,3 @@ function validateUser(user) {
     priority: !validateRequired(user.priority) ? "Xana boş qala bilməz" : "",
   };
 }
-

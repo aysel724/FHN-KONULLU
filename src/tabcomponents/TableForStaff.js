@@ -8,6 +8,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import { jwtDecode } from "jwt-decode";
 import {
   Box,
   Button,
@@ -37,9 +38,11 @@ import { MRT_Localization_AZ } from "material-react-table/locales/az";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
 
   useEffect(() => {
-    TypesData(setTypes,"SupplyTypes");
+    TypesData(setTypes, "SupplyTypes");
   }, []);
 
   function getTypesNames(arr) {
@@ -75,7 +78,9 @@ const Example = () => {
           label: "",
           required: true,
           error: !!validationErrors?.receivingDate,
-          helperText:validationErrors?.receivingDate? validationErrors?.receivingDate : "Başlama tarixi",
+          helperText: validationErrors?.receivingDate
+            ? validationErrors?.receivingDate
+            : "Başlama tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -98,7 +103,9 @@ const Example = () => {
           label: "",
           required: true,
           error: !!validationErrors?.handOverDate,
-          helperText:validationErrors?.handOverDate? validationErrors?.handOverDate : "Bitmə tarixi",
+          helperText: validationErrors?.handOverDate
+            ? validationErrors?.handOverDate
+            : "Bitmə tarixi",
           //remove any previous validation errors when user focuses on the input
           onFocus: () =>
             setValidationErrors({
@@ -244,29 +251,38 @@ const Example = () => {
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true); 
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -295,7 +311,6 @@ function useCreateUser(types) {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      
 
       function findArrayElementByTitle(array, title) {
         console.log(
@@ -391,7 +406,7 @@ function useUpdateUser(types) {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-      
+
       function findArrayElementByTitle(array, title) {
         console.log(
           array.find((element) => {
@@ -435,12 +450,9 @@ function useDeleteUser() {
     mutationFn: async (userId) => {
       console.log(userId);
       try {
-        const response = await axios.delete(
-          `${BASE_URL}/Supplies/${userId}`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
+        const response = await axios.delete(`${BASE_URL}/Supplies/${userId}`, {
+          headers: { accept: "*/*" },
+        });
         console.log(response.data);
 
         return response.data.data;

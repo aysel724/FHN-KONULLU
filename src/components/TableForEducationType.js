@@ -116,16 +116,15 @@ const Example = () => {
 
     await createUser(values);
 
-    table.setCreatingRow(null); 
+    table.setCreatingRow(null);
   };
 
   //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
-
     setValidationErrors({});
 
     await updateUser(values);
-    table.setEditingRow(null); 
+    table.setEditingRow(null);
   };
 
   //DELETE action
@@ -199,7 +198,7 @@ const Example = () => {
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon/>
+            <EditIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Sil">
@@ -288,12 +287,9 @@ function useGetUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/${location}`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
+        const response = await axios.get(`${BASE_URL}/${location}`, {
+          headers: { accept: "*/*" },
+        });
         console.log(response.data);
         return response.data.data;
       } catch (error) {

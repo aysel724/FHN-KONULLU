@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { createTheme, ThemeProvider, useTheme } from "@mui/material";
 import { notification } from "antd";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -18,6 +19,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
+
 import {
   QueryClient,
   QueryClientProvider,
@@ -34,6 +36,8 @@ import { validateSport } from "../utils/validateUser";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
   const columns = useMemo(
     () => [
       {
@@ -116,7 +120,7 @@ const Example = () => {
     // }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); 
+    table.setCreatingRow(null);
   };
 
   //UPDATE action
@@ -128,7 +132,7 @@ const Example = () => {
     // }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); 
+    table.setEditingRow(null);
   };
 
   //DELETE action
@@ -183,7 +187,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -197,36 +201,45 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true);
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -239,7 +252,6 @@ const Example = () => {
 
   return <MaterialReactTable table={table} />;
 };
-
 
 function useCreateUser() {
   let params = useParams();
@@ -395,12 +407,10 @@ const queryClient = new QueryClient();
 
 const Uxtable = () => {
   return (
-      <QueryClientProvider client={queryClient}>
-        <Example />
-      </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <Example />
+    </QueryClientProvider>
   );
 };
 
 export default Uxtable;
-
-

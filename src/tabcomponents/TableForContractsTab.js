@@ -16,6 +16,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
+import { jwtDecode } from "jwt-decode";
 import {
   QueryClient,
   QueryClientProvider,
@@ -30,16 +31,17 @@ import { validateContract } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import formatDateTİme from "../utils/convertDate";
-import convertDate  from "../utils/converTime";
+import convertDate from "../utils/converTime";
 import { BASE_URL } from "../api/baseURL";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
-
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
   useEffect(() => {
-    TypesData(setTypes,"InsuranceCompanies");
+    TypesData(setTypes, "InsuranceCompanies");
   }, []);
 
   function getTypesNames(arr) {
@@ -155,7 +157,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); 
+    table.setCreatingRow(null);
   };
 
   const handleSaveUser = async ({ values, table }) => {
@@ -166,7 +168,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); 
+    table.setEditingRow(null);
   };
 
   const openDeleteConfirmModal = (row) => {
@@ -179,8 +181,8 @@ const Example = () => {
     localization: MRT_Localization_AZ,
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", 
-    editDisplayMode: "modal", 
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
     initialState: {
       columnVisibility: { id: false },
@@ -217,7 +219,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -231,36 +233,46 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-           <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true);
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            {" "}
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -285,7 +297,6 @@ function useCreateUser() {
         Accept: "*/*",
         "Content-Type": "application/json",
       };
-     
 
       const newUser = {
         number: user.number,
@@ -368,8 +379,6 @@ function useUpdateUser() {
         "Content-Type": "application/json",
       };
 
-     
-
       const newUser = {
         id: user.id,
         number: user.number,
@@ -388,13 +397,26 @@ function useUpdateUser() {
         console.error("Error:", error);
       }
     },
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        {
-          ...newUserInfo,
-        },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful update
+    },
+    onMutate: async (newUserInfo) => {
+      // Optional: Optimistic update
+      await queryClient.cancelQueries(["users"]);
+      const previousUsers = queryClient.getQueryData(["users"]);
+
+      queryClient.setQueryData(["users"], (old = []) => [
+        ...old.filter((user) => user.id !== newUserInfo.id),
+        newUserInfo,
       ]);
+
+      // Optionally, return a context to rollback if needed
+      return { previousUsers };
+    },
+    onError: (error, newUserInfo, context) => {
+      // Rollback in case of error
+      queryClient.setQueryData(["users"], context.previousUsers);
+      console.error("Error updating user:", error);
     },
   });
 }
@@ -405,12 +427,9 @@ function useDeleteUser() {
     mutationFn: async (userId) => {
       console.log(userId);
       try {
-        const response = await axios.delete(
-          `${BASE_URL}/Contracts/${userId}`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
+        const response = await axios.delete(`${BASE_URL}/Contracts/${userId}`, {
+          headers: { accept: "*/*" },
+        });
         console.log(response.data);
 
         return response.data.data;
@@ -436,5 +455,3 @@ const Uxtable = () => (
 );
 
 export default Uxtable;
-
-

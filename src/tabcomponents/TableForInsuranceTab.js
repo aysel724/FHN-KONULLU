@@ -7,6 +7,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import { jwtDecode } from "jwt-decode";
 import {
   Box,
   Button,
@@ -29,7 +30,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { validateInsurance } from "../utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
-import  convertDate  from "../utils/converTime";
+import convertDate from "../utils/converTime";
 import formatDateTİme from "../utils/convertDate";
 import { BASE_URL } from "../api/baseURL";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
@@ -37,9 +38,10 @@ import { MRT_Localization_AZ } from "material-react-table/locales/az";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
-
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
   useEffect(() => {
-    TypesData(setTypes,"InsuranceCompanies");
+    TypesData(setTypes, "InsuranceCompanies");
   }, []);
 
   function getTypesNames(arr) {
@@ -147,13 +149,13 @@ const Example = () => {
   const handleCreateUser = async ({ values, table }) => {
     const newValidationErrors = validateInsurance(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
-      console.log(newValidationErrors)
+      console.log(newValidationErrors);
       setValidationErrors(newValidationErrors);
       return;
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); 
+    table.setCreatingRow(null);
   };
 
   //UPDATE action
@@ -165,7 +167,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); 
+    table.setEditingRow(null);
   };
 
   //DELETE action
@@ -179,8 +181,8 @@ const Example = () => {
     localization: MRT_Localization_AZ,
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", 
-    editDisplayMode: "modal", 
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
     initialState: {
       columnVisibility: { id: false },
@@ -218,7 +220,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -232,36 +234,45 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true); 
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -302,8 +313,6 @@ function useCreateUser(types) {
           return element.name === title;
         }).id;
       }
-
-
 
       const newUser = {
         startDate: convertDate(user.startDate),
@@ -474,5 +483,3 @@ const Uxtable = () => (
 );
 
 export default Uxtable;
-
-

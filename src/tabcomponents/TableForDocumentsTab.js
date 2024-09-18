@@ -1,12 +1,13 @@
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
-import {useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import { jwtDecode } from "jwt-decode";
 import {
   Box,
   Button,
@@ -25,78 +26,84 @@ import {
 } from "@tanstack/react-query";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { BASE_URL } from "../api/baseURL";
-import { FaDownload } from "react-icons/fa6"
+import { FaDownload } from "react-icons/fa6";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import Base64ToBlob from "../utils/base64ToBlob";
-import {validateElectronDocument} from '.././utils/validateUser'
+import { validateElectronDocument } from ".././utils/validateUser";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [file, setFile] = useState(null);
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
 
- const handleFileChange = (event) => {
-  const file = event.target.files[0];
+    if (file) {
+      const validExtensions = ["docx", "pdf"];
+      const fileExtension = file.name.split(".").pop().toLowerCase();
 
-  if (file) {
-    const validExtensions = ['docx', 'pdf'];
-    const fileExtension = file.name.split('.').pop().toLowerCase();
+      if (!validExtensions.includes(fileExtension)) {
+        setValidationErrors({
+          ...validationErrors,
+          file: "Yalnız .docx ve .pdf dosyaları seçebilirsiniz.",
+        });
+        setFile(null);
+        return;
+      }
 
-    if (!validExtensions.includes(fileExtension)) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result.split(",")[1];
+        setFile(base64String);
+        setValidationErrors({
+          ...validationErrors,
+          file: undefined,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
       setValidationErrors({
         ...validationErrors,
-        file: "Yalnız .docx ve .pdf dosyaları seçebilirsiniz."
+        file: "Fayl seçilməlidir.",
       });
-      setFile(null); 
-      return;
+      setFile(null);
     }
+  };
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result.split(",")[1];
-      setFile(base64String);
-      setValidationErrors({
-        ...validationErrors,
-        file: undefined 
-      });
-    };
-    reader.readAsDataURL(file);
-  } else {
-    setValidationErrors({
-      ...validationErrors,
-      file: "Fayl seçilməlidir."
-    });
-    setFile(null); 
-  }
-};
-
-  
   useEffect(() => {
-        TypesData(setTypes,"ElectronicDocumentTypes");
-      }, []);
+    TypesData(setTypes, "ElectronicDocumentTypes");
+  }, []);
 
   function getTypesNames(arr) {
     return arr.map((e) => e.name);
   }
-    const handleDownload = async (documentUrl) => {
+  const handleDownload = async (documentUrl) => {
     try {
-      const response = await fetch(`${BASE_URL}/ElectronicDocuments/DownloadFile/${documentUrl}`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `${BASE_URL}/ElectronicDocuments/DownloadFile/${documentUrl}`,
+        {
+          method: "GET",
+        }
+      );
       const jsonResponse = await response.json();
       const { fileName, fileContent, contentType } = jsonResponse.data;
-      const blob = Base64ToBlob(fileContent, contentType || 'application/octet-stream');
+      const blob = Base64ToBlob(
+        fileContent,
+        contentType || "application/octet-stream"
+      );
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = fileName || 'downloaded_file'; 
+      a.download = fileName || "downloaded_file";
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Download failed:', error);
+      console.error("Download failed:", error);
     }
   };
 
@@ -136,34 +143,34 @@ const Example = () => {
         },
       },
       {
-                accessorKey: "documentUrl",
-                header: "Sənəd",
-                Cell: ({ row }) => (
-                  <button
-                  onClick={() => handleDownload(row.original.id)}
-                  style={{
-                    border: 'none',
-                    backgroundColor: 'transparent',
-                    color: '#4F75FF',
-                    display: 'flex',
-                    gap: '5px',
-                    cursor: 'pointer', 
-                  }}
-                >
-                  <FaDownload />
-                  Yüklə
-                </button>               
-                ),
-                muiEditTextFieldProps: {
-                  required: true,
-                  error: !!validationErrors?.documentUrl,
-                  onFocus: () =>
-                    setValidationErrors({
-                      ...validationErrors,
-                      documentUrl: undefined,
-                    }),
-                },
-              },
+        accessorKey: "documentUrl",
+        header: "Sənəd",
+        Cell: ({ row }) => (
+          <button
+            onClick={() => handleDownload(row.original.id)}
+            style={{
+              border: "none",
+              backgroundColor: "transparent",
+              color: "#4F75FF",
+              display: "flex",
+              gap: "5px",
+              cursor: "pointer",
+            }}
+          >
+            <FaDownload />
+            Yüklə
+          </button>
+        ),
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.documentUrl,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              documentUrl: undefined,
+            }),
+        },
+      },
       {
         accessorKey: "file",
         header: "Fayl",
@@ -176,10 +183,11 @@ const Example = () => {
             accept: ".pdf,.docx",
           },
           onChange: handleFileChange,
-          onFocus: () => setValidationErrors({
-            ...validationErrors,
-            file: undefined,
-          }),
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              file: undefined,
+            }),
         },
       },
       {
@@ -228,7 +236,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); 
+    table.setCreatingRow(null);
   };
 
   //UPDATE action
@@ -240,7 +248,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await updateUser(values);
-    table.setEditingRow(null); 
+    table.setEditingRow(null);
   };
 
   //DELETE action
@@ -317,29 +325,38 @@ const Example = () => {
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-           <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true);
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -359,8 +376,7 @@ function useCreateUser(types, file) {
 
   return useMutation({
     mutationFn: async (user) => {
-      const url =
-        `${BASE_URL}/ElectronicDocuments`;
+      const url = `${BASE_URL}/ElectronicDocuments`;
       const headers = {
         Accept: "*/*",
       };
@@ -380,14 +396,14 @@ function useCreateUser(types, file) {
       formData.append("VolunteerId", userId);
       console.log();
       try {
-        const contentType = "application/octet-stream"; 
-        const base64String = file; 
+        const contentType = "application/octet-stream";
+        const base64String = file;
         const blob = Base64ToBlob(base64String, contentType);
 
-        formData.append("File", blob, "filename"); 
+        formData.append("File", blob, "filename");
       } catch (error) {
         console.error("Error converting base64 to Blob:", error);
-        throw error; 
+        throw error;
       }
 
       try {
@@ -399,6 +415,9 @@ function useCreateUser(types, file) {
         throw error;
       }
     },
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+    // },
     onMutate: (newUserInfo) => {
       queryClient.setQueryData(["users"], (prevUsers = []) => [
         ...prevUsers,
@@ -486,11 +505,26 @@ function useUpdateUser(types) {
         console.error("Error:", error);
       }
     },
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers = []) => [
-        ...prevUsers,
-        { ...newUserInfo },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful update
+    },
+    onMutate: async (newUserInfo) => {
+      // Optional: Optimistic update
+      await queryClient.cancelQueries(["users"]);
+      const previousUsers = queryClient.getQueryData(["users"]);
+
+      queryClient.setQueryData(["users"], (old = []) => [
+        ...old.filter((user) => user.id !== newUserInfo.id),
+        newUserInfo,
       ]);
+
+      // Optionally, return a context to rollback if needed
+      return { previousUsers };
+    },
+    onError: (error, newUserInfo, context) => {
+      // Rollback in case of error
+      queryClient.setQueryData(["users"], context.previousUsers);
+      console.error("Error updating user:", error);
     },
   });
 }
@@ -532,4 +566,3 @@ const Uxtable = () => (
 );
 
 export default Uxtable;
-
