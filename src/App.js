@@ -45,6 +45,10 @@ function App() {
                   element={<TableForEducationType />}
                 />
                 <Route
+                  path="/SecurityCheckResultName"
+                  element={<TableForEducationType />}
+                />
+                <Route
                   path="/MesTrainingNames"
                   element={<TableForEducationType />}
                 />

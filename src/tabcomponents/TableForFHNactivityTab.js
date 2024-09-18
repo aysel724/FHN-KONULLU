@@ -6,6 +6,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import { jwtDecode } from "jwt-decode";
 import {
   Box,
   Button,
@@ -26,47 +27,41 @@ import {
 import axios from "axios";
 import { notification } from "antd";
 import DeleteIcon from "@mui/icons-material/Delete";
-import  { validateFHNVolunterActivity } from '.././utils/validateUser'
+import { validateFHNVolunterActivity } from ".././utils/validateUser";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import { BASE_URL } from "../api/baseURL";
 import EditIcon from "../assets/icons/editIcon";
 import formatDateTİme from "../utils/convertDate";
 import convertDate from "../utils/converTime";
 
-import { MRT_Localization_AZ } from 'material-react-table/locales/az';
+import { MRT_Localization_AZ } from "material-react-table/locales/az";
 
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
-  const [endDate, setEndDate] = useState(false)
-//  console.log(queryClient.setQueryData(["users"],'kenan'))
-
-
+  const [endDate, setEndDate] = useState(false);
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
   useEffect(() => {
-    TypesData(setTypes,"MesVoluntaryActivityEndReasons");
+    TypesData(setTypes, "MesVoluntaryActivityEndReasons");
   }, []);
 
   const getTypesNames = (types) => {
     if (!types) return [];
-    return types.map(type => type.name);
+    return types.map((type) => type.name);
   };
   const getDateNames = (types) => {
     if (!types) return [];
-    return types.map(type => type.startDate);
+    return types.map((type) => type.startDate);
   };
 
   const handleDateChange = (event) => {
     if (event.target.value) {
-      setEndDate(true); 
-      
+      setEndDate(true);
     } else {
       setEndDate(false);
     }
   };
-
-
- 
-  
 
   //call CREATE hook
   const { mutateAsync: createUser, isPending: isCreatingUser } =
@@ -85,7 +80,8 @@ const Example = () => {
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
 
-    const columns = useMemo(() => [
+  const columns = useMemo(
+    () => [
       {
         accessorKey: "id",
         header: "Id",
@@ -97,10 +93,12 @@ const Example = () => {
         header: "Başlama tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
-          label:'',
+          label: "",
           required: true,
           error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate  ? validationErrors?.startDate : "Başlama tarixi",
+          helperText: validationErrors?.startDate
+            ? validationErrors?.startDate
+            : "Başlama tarixi",
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -118,10 +116,12 @@ const Example = () => {
         header: "Bitmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
         muiEditTextFieldProps: {
-          label:'',
+          label: "",
           required: true,
           error: !!validationErrors?.endDate,
-          helperText: validationErrors?.endDate  ? validationErrors?.endDate : "Bitmə tarixi",
+          helperText: validationErrors?.endDate
+            ? validationErrors?.endDate
+            : "Bitmə tarixi",
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -135,18 +135,18 @@ const Example = () => {
           },
         },
       },
-        {
-          accessorKey: "mesVoluntaryActivityEndReason.name",
-          header: "Fəaliyyətin bitmə səbəbi",
-          editVariant: "select",
-          enableEditing: endDate,
-          editSelectOptions: getTypesNames(types),
-          muiEditTextFieldProps: {
-            select: true,
-            error: !!validationErrors?.["mesVoluntaryActivityEndReason.name"],
-            helperText: validationErrors?.["mesVoluntaryActivityEndReason.name"],
-          },
+      {
+        accessorKey: "mesVoluntaryActivityEndReason.name",
+        header: "Fəaliyyətin bitmə səbəbi",
+        editVariant: "select",
+        enableEditing: endDate,
+        editSelectOptions: getTypesNames(types),
+        muiEditTextFieldProps: {
+          select: true,
+          error: !!validationErrors?.["mesVoluntaryActivityEndReason.name"],
+          helperText: validationErrors?.["mesVoluntaryActivityEndReason.name"],
         },
+      },
       {
         accessorKey: "note",
         header: "Qeyd",
@@ -161,7 +161,9 @@ const Example = () => {
             }),
         },
       },
-    ], [validationErrors, types, endDate]);
+    ],
+    [validationErrors, types, endDate]
+  );
 
   //CREATE action
   const handleCreateUser = async ({ values, table }) => {
@@ -173,7 +175,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); 
+    table.setCreatingRow(null);
   };
 
   //UPDATE action
@@ -184,9 +186,8 @@ const Example = () => {
       return;
     }
     setValidationErrors({});
-    await updateUser(values);//exit editing mode
+    await updateUser(values); //exit editing mode
     table.setEditingRow(null); //exit editing mode
-
   };
 
   //DELETE action
@@ -199,11 +200,11 @@ const Example = () => {
     enableRowNumbers: true,
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
-    localization:MRT_Localization_AZ,
+    localization: MRT_Localization_AZ,
     columns,
     data: fetchedUsers,
-    createDisplayMode: "modal", 
-    editDisplayMode: "modal", 
+    createDisplayMode: "modal",
+    editDisplayMode: "modal",
     enableEditing: true,
     getRowId: (row) => row.id,
     muiToolbarAlertBannerProps: isLoadingUsersError
@@ -221,7 +222,7 @@ const Example = () => {
       columnVisibility: { id: false },
       columnPinning: { right: ["mrt-row-actions"] },
     },
-    onCreatingRowCancel:  () => {
+    onCreatingRowCancel: () => {
       setValidationErrors({});
       setEndDate(false);
     },
@@ -235,7 +236,7 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
@@ -249,36 +250,45 @@ const Example = () => {
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {internalEditComponents} 
+          {internalEditComponents}
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-           <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true); 
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -290,7 +300,6 @@ const Example = () => {
   });
 
   return <MaterialReactTable table={table} />;
-  
 };
 
 //CREATE hook (post new user to api)
@@ -378,8 +387,8 @@ function useGetUsers() {
           `${BASE_URL}/VoluntaryOfMeses/GetAll/${userId}`
         );
 
-        console.log(response.data.data,'get');
-        
+        console.log(response.data.data, "get");
+
         return response.data.data;
       } catch (error) {
         console.error("Xəta:", error);
@@ -389,10 +398,77 @@ function useGetUsers() {
     refetchOnWindowFocus: false,
   });
 }
-function useUpdateUser(types) {
-  let params = useParams();
-  let userId = params.id;
+// function useUpdateUser(types, endDate) {
+//   let params = useParams();
+//   let userId = params.id;
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: async (user) => {
+//       function findArrayElementByTitle(array, title) {
+//         console.log(
+//           array.find((element) => {
+//             return element.name === title;
+//           })
+//         );
+//         return array.find((element) => {
+//           return element.name === title;
+//         }).id;
+//       }
+//       const url = `${BASE_URL}/VoluntaryOfMeses`;
+//       const headers = {
+//         Accept: "*/*",
+//         "Content-Type": "application/json",
+//       };
+
+//       const newUser = {
+//         id: user.id,
+//         volunteerId: parseInt(userId),
+//         startDate: convertDate(user.startDate),
+//         endDate:
+//           convertDate(user.endDate) !== "NaN-NaN-NaNTNaN:NaN:NaNZ"
+//             ? convertDate(user.endDate)
+//             : null,
+//         mesVoluntaryActivityEndReasonId: findArrayElementByTitle(
+//           types,
+//           user["mesVoluntaryActivityEndReason.name"]
+//         ),
+//         note: user.note,
+//       };
+//       console.log(newUser);
+//       axios
+//         .put(url, newUser, { headers })
+//         .then((response) => {
+//           console.log("Response:", response.data);
+//         })
+//         .catch((error) => {
+//           console.error("Error:", error);
+//         });
+//     },
+//     onSuccess: () => {
+//       queryClient.invalidateQueries(["users"]); // Refetch users after successful creation
+//     },
+//     onMutate: (newUserInfo) => {
+//       queryClient.setQueryData(["users"], (prevUsers = []) => [
+//         ...prevUsers,
+//         {
+//           ...newUserInfo,
+//         },
+//       ]);
+//     },
+//   });
+// }
+
+function useUpdateUser(types, endDate) {
+  const params = useParams();
+  const userId = params.id;
   const queryClient = useQueryClient();
+
+  // Helper function to find ID by title
+  const findArrayElementByTitle = (array, title) => {
+    const element = array.find((element) => element.name === title);
+    return element ? element.id : null;
+  };
 
   return useMutation({
     mutationFn: async (user) => {
@@ -411,7 +487,7 @@ function useUpdateUser(types) {
       };
       const newUser = {
         id: user.id,
-        volunteerId: parseInt(userId),
+        volunteerId: parseInt(userId, 10),
         startDate: convertDate(user.startDate),
         endDate:
           convertDate(user.endDate) !== "NaN-NaN-NaNTNaN:NaN:NaNZ"
@@ -423,26 +499,32 @@ function useUpdateUser(types) {
         ),
         note: user.note,
       };
-      console.log(newUser,'newUser');
-      axios
-        .put(url, newUser, { headers })
-        .then((response) => {
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      console.log(newUser, "newUser");
+      axios.put(url, newUser, { headers }).then((response) => response.data);
     },
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(["users"], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
-        )
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]); // Refetch users after successful update
+    },
+    onMutate: async (newUserInfo) => {
+      // Optional: Optimistic update
+      await queryClient.cancelQueries(["users"]);
+      const previousUsers = queryClient.getQueryData(["users"]);
+
+      queryClient.setQueryData(["users"], (old = []) => [
+        ...old.filter((user) => user.id !== newUserInfo.id),
+        newUserInfo,
+      ]);
+
+      // Optionally, return a context to rollback if needed
+      return { previousUsers };
+    },
+    onError: (error, newUserInfo, context) => {
+      // Rollback in case of error
+      queryClient.setQueryData(["users"], context.previousUsers);
+      console.error("Error updating user:", error);
     },
   });
 }
-
 
 function useDeleteUser() {
   const location = useLocation().pathname.substring(1);
@@ -474,16 +556,11 @@ function useDeleteUser() {
 
 const queryClient = new QueryClient();
 
-
-
 const Uxtable = () => {
-
   return (
-  <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
       <Example />
-  </QueryClientProvider>)
-}
+    </QueryClientProvider>
+  );
+};
 export default Uxtable;
-
-
-

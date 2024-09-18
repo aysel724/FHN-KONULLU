@@ -39,7 +39,6 @@ export default function NewTrainings() {
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
-  
 
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type, message, description) => {
@@ -144,11 +143,11 @@ export default function NewTrainings() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [validation, setValidation] = useState({})
+  const [validation, setValidation] = useState({});
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const handleOpen = () => setModalIsOpen(true);
   const handleClose = () => setModalIsOpen(false);
-  
+
   const [userData, setUserData] = useState({
     mesTrainingNameId: "",
     departmentInCharge: "",
@@ -178,8 +177,7 @@ export default function NewTrainings() {
 
   function handleSubmit() {
     setLoading(true);
-    const errorNotfication = validateTraning(userData)
-   
+    const errorNotfication = validateTraning(userData);
 
     setError(errorNotfication);
     setUserData((prev) => {
@@ -214,49 +212,56 @@ export default function NewTrainings() {
     if (Object.keys(errorNotfication).length === 0) {
       console.log("Form məlumatları göndərilir:", userData);
       axios
-      .post(`https://api-volunteers.fhn.gov.az/api/v1/MesTrainings`, formData)
-      .then((response) => {
-        setLoading(false);
-        openNotificationWithIcon(
-          "success",
-          "Uğurla əlavə olundu",
-          "Əlavə olundu"
-        );
-        setTimeout(() => {
-          navigate(`/MesTrainings`);
-        }, 5000);
-      })
-      .catch((err) => {
-        setLoading(false);
+        .post(`https://api-volunteers.fhn.gov.az/api/v1/MesTrainings`, formData)
+        .then((response) => {
+          setLoading(false);
+          openNotificationWithIcon(
+            "success",
+            "Uğurla əlavə olundu",
+            "Əlavə olundu"
+          );
+          setTimeout(() => {
+            navigate(`/MesTrainings`);
+          }, 5000);
+        })
+        .catch((err) => {
+          setLoading(false);
 
-        if (err.response) {
-          if (err.response.status === 400) {
-            openNotificationWithIcon(
-              "error",
-              "Xəta mesajı",
-              "Bütün sahələri doldurmalısınız."
-            );
-            setError("Xəta 400");
-          } else if (err.response.status === 404) {
+          if (err.response) {
+            if (err.response.status === 400) {
+              openNotificationWithIcon(
+                "error",
+                "Xəta mesajı",
+                "Bütün sahələri doldurmalısınız."
+              );
+              setError("Xəta 400");
+            } else if (err.response.status === 404) {
+              openNotificationWithIcon(
+                "error",
+                "Xəta mesajı",
+                "Xəta baş verdi"
+              );
+              setError("Xəta 404. Məlumat tapılmadı");
+            } else if (err.response.status === 409) {
+              openNotificationWithIcon(
+                "error",
+                "Xəta mesajı",
+                "Xəta baş verdi"
+              );
+              setError("Məlumat artıq mövcuddur");
+            }
+            setModalIsOpen(true); // Open modal to show error message
+          } else {
+            setError("Xəta 500. Server xətası");
             openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
-            setError("Xəta 404. Məlumat tapılmadı");
-          } else if (err.response.status === 409) {
-            openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
-            setError("Məlumat artıq mövcuddur");
+            setModalIsOpen(true); // Open modal to show error message
           }
-          setModalIsOpen(true); // Open modal to show error message
-        } else {
-          setError("Xəta 500. Server xətası");
-          openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
-          setModalIsOpen(true); // Open modal to show error message
-        }
-      });
-      setLoading(false)
-       setTimeout(() => {
-      navigate(`/MesTrainings`);
-    }, 20000);
+        });
+      setLoading(false);
+      setTimeout(() => {
+        navigate(`/MesTrainings`);
+      }, 20000);
     }
-    
   }
 
   const closeModal = () => {
@@ -305,9 +310,7 @@ export default function NewTrainings() {
             flexDirection: "row",
             gap: "60px",
             padding: "1%",
-          
           }}
-          
         >
           <Box
             component="form"
@@ -320,27 +323,33 @@ export default function NewTrainings() {
               },
             }}
           >
-            <FormControl variant="outlined" fullWidth error={!!error?.mesTrainingNameId}>
-            <InputLabel id="321">Təlimin adı</InputLabel>
-            <Select
-              labelId="321"
-              id="321"
-              onChange={(e) => {
-                console.log(userData);
-                setUserData((prev) => {
-                  const data = { ...prev, mesTrainingNameId: e.target.value };
-                  return data;
-                });
-              }}
+            <FormControl
               variant="outlined"
+              fullWidth
               error={!!error?.mesTrainingNameId}
-              helperText={error?.mesTrainingNameId || ""}
             >
-              {trainingNames.map((training) => {
-                return <MenuItem value={training.id}>{training.name}</MenuItem>;
-              })}
-            </Select>
-            <FormHelperText>{error?.mesTrainingNameId || ""}</FormHelperText>
+              <InputLabel id="321">Təlimin adı</InputLabel>
+              <Select
+                labelId="321"
+                id="321"
+                onChange={(e) => {
+                  console.log(userData);
+                  setUserData((prev) => {
+                    const data = { ...prev, mesTrainingNameId: e.target.value };
+                    return data;
+                  });
+                }}
+                variant="outlined"
+                error={!!error?.mesTrainingNameId}
+                helperText={error?.mesTrainingNameId || ""}
+              >
+                {trainingNames.map((training) => {
+                  return (
+                    <MenuItem value={training.id}>{training.name}</MenuItem>
+                  );
+                })}
+              </Select>
+              <FormHelperText>{error?.mesTrainingNameId || ""}</FormHelperText>
             </FormControl>
             <TextField
               label="Təlimin adı keçirən qurum*"
@@ -397,7 +406,7 @@ export default function NewTrainings() {
               name="finishDate"
               id="FinishDate"
               variant="outlined"
-              value={userData.finishDate || ""} 
+              value={userData.finishDate || ""}
               error={!!error?.finishDate}
               helperText={error?.finishDate || ""}
               onChange={(e) => {
@@ -443,33 +452,40 @@ export default function NewTrainings() {
               }}
             >
               {" "}
-            <FormControl variant="outlined" fullWidth error={!!error?.trainingResultId}>
-              <InputLabel id="arestrdytfy">Təlimin neticesi</InputLabel>
-              <Select
-                sx={{
-                  width: "50ch",
-                }}
-                labelId="arestrdytfy"
-                id="arestrdytfy"
-                onChange={(e) => {
-                  console.log(userData);
-                  setUserData((prev) => {
-                    const data = { ...prev, trainingResultId: e.target.value };
-                    return data;
-                  });
-                }}
+              <FormControl
                 variant="outlined"
+                fullWidth
                 error={!!error?.trainingResultId}
-                helperText={error?.trainingResultId || ""}
               >
-                {trainingResult.map((training) => {
-                  return (
-                    <MenuItem value={training.id}>{training.name}</MenuItem>
-                  );
-                })}
-              </Select>
-              <FormHelperText>{error?.trainingResultId || ""}</FormHelperText>
-            </FormControl>
+                <InputLabel id="arestrdytfy">Təlimin neticesi</InputLabel>
+                <Select
+                  sx={{
+                    width: "50ch",
+                  }}
+                  labelId="arestrdytfy"
+                  id="arestrdytfy"
+                  onChange={(e) => {
+                    console.log(userData);
+                    setUserData((prev) => {
+                      const data = {
+                        ...prev,
+                        trainingResultId: e.target.value,
+                      };
+                      return data;
+                    });
+                  }}
+                  variant="outlined"
+                  error={!!error?.trainingResultId}
+                  helperText={error?.trainingResultId || ""}
+                >
+                  {trainingResult.map((training) => {
+                    return (
+                      <MenuItem value={training.id}>{training.name}</MenuItem>
+                    );
+                  })}
+                </Select>
+                <FormHelperText>{error?.trainingResultId || ""}</FormHelperText>
+              </FormControl>
               <TextField
                 id="filled-basic"
                 name="militaryReward"
@@ -570,8 +586,8 @@ export default function NewTrainings() {
                   <TextField
                     {...params}
                     label="Konulluler"
-                    error={!!error?.volunteerIds} 
-                    helperText={error?.volunteerIds || ""} 
+                    error={!!error?.volunteerIds}
+                    helperText={error?.volunteerIds || ""}
                   />
                 )}
               />

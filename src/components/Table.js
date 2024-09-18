@@ -78,8 +78,19 @@ const Example = () => {
 
   const token = localStorage.getItem("authToken");
   const role = jwtDecode(token).unique_name;
-  // const role = "atef";
-  console.log(role);
+  const [securityname, setName] = useState("");
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setName((decodedToken.name || "").toString()); // Safely extract the name
+      } catch (error) {
+        console.error("Failed to decode token", error);
+      }
+    }
+  }, [token]);
+  console.log(securityname);
   const handleExportToExcel = async (table) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sheet1");
@@ -130,10 +141,8 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
   // CONTEXT VOLUNTER
-  const { volunteers,statusCode } = useVolunteers();
-  console.log(
-    statusCode,'statusCode'
-  )
+  const { volunteers, statusCode } = useVolunteers();
+  console.log(statusCode, "statusCode");
   console.log(volunteers, "volunteers");
   const columns = useMemo(
     () => [
@@ -179,34 +188,6 @@ const Example = () => {
         },
       },
 
-      {
-        accessorKey: "security",
-        header: "Daxili təhlükəzlik rəyi",
-        enableEditing: role !== "Volunteers",
-        editVariant: "select",
-        editSelectOptions: getSecurityTypesNames(securityTypes),
-        muiEditTextFieldProps: {
-          select: true,
-          error: !!validationErrors?.security,
-          helperText: validationErrors?.security,
-        },
-      },
-      {
-        size: 250,
-        accessorKey: "description",
-        header: "Daxili təhlükəzlik qeydi",
-        enableEditing: role !== "Volunteers",
-        muiEditTextFieldProps: {
-          required: true,
-          error: !!validationErrors?.description,
-          helperText: validationErrors?.description,
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              description: undefined,
-            }),
-        },
-      },
       {
         size: 250,
         accessorKey: "voluntaryOfMesStatus.name",
@@ -319,6 +300,34 @@ const Example = () => {
             }),
         },
       },
+      {
+        accessorKey: "security",
+        header: "Daxili təhlükəzlik rəyi",
+        enableEditing: role !== "Volunteers",
+        editVariant: "select",
+        editSelectOptions: getSecurityTypesNames(securityTypes),
+        muiEditTextFieldProps: {
+          select: true,
+          error: !!validationErrors?.security,
+          helperText: validationErrors?.security,
+        },
+      },
+      {
+        size: 250,
+        accessorKey: "description",
+        header: "Daxili təhlükəzlik qeydi",
+        enableEditing: role !== "Volunteers",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.description,
+          helperText: validationErrors?.description,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              description: undefined,
+            }),
+        },
+      },
     ],
     [validationErrors, securityTypes]
   );
@@ -332,7 +341,8 @@ const Example = () => {
   } = useGetUsers();
   const { mutateAsync: updateUser, isPending: isUpdatingUser } = useUpdateUser(
     role,
-    securityTypes
+    securityTypes,
+    securityname
   );
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
@@ -378,11 +388,7 @@ const Example = () => {
     enableStickyHeader: true,
     rowNumberDisplayMode: "original",
     columns,
-    data: statusCode === 1 
-    ? fetchedUsers 
-    : statusCode === 2 
-    ? volunteers 
-    : [],
+    data: statusCode === 1 ? fetchedUsers : statusCode === 2 ? volunteers : [],
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
         cursor: "pointer",
@@ -436,7 +442,12 @@ const Example = () => {
     //optionally customize modal content
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Düzəliş edin</DialogTitle>
+        <DialogTitle
+          variant="h6
+        "
+        >
+          Düzəliş edin
+        </DialogTitle>
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
@@ -460,32 +471,38 @@ const Example = () => {
         </Tooltip>
         <Tooltip title="Düzəliş et">
           <IconButton onClick={() => table.setEditingRow(row)}>
-          <EditIcon/>
+            <EditIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        {role === "Volunteers" && ( // Only render delete button if role is Volunteers
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
       <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
-        <Button
-          variant="contained"
-          onClick={() => {
-            navigate("/newvolonteer");
-          }}
-        >
-          Yeni könüllü əlavə edin
-        </Button>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate("/newvolonteer");
+            }}
+          >
+            Yeni könüllü əlavə edin
+          </Button>
+        )}
         <Button variant="contained" onClick={() => handleExportToExcel(table)}>
           Excelə export
         </Button>
       </div>
     ),
-
     state: {
       isLoading: isLoadingUsers,
       isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
@@ -528,20 +545,18 @@ function useGetUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/Volunteers`
-        );
+        const response = await axios.get(`${BASE_URL}/Volunteers`);
 
         const users = response.data.data.map((user) => ({
           ...user,
           fullName: `${user.name} ${user.surname} ${user.fatherName}`.trim(),
           security: `${
             user.securityCheckResults[user.securityCheckResults.length - 1]
-              ?.securityCheckResultName?.name || "Yoxlanmayıb"
+              ?.securityCheckResultName?.name
           }`,
           description: `${
             user.securityCheckResults[user.securityCheckResults.length - 1]
-              ?.description || "Yoxlanmayıb"
+              ?.description
           }`,
         }));
 
@@ -555,15 +570,14 @@ function useGetUsers() {
     refetchOnWindowFocus: false,
   });
 }
-
-//UPDATE hook (put user in api)
-function useUpdateUser(role, securityTypes) {
+function useUpdateUser(role, securityTypes, securityname) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (user) => {
       if (role === "Volunteers") {
         const newUserInfo = {
+          author: securityname,
           id: user.id,
           email: user.email,
           phoneNumber1: user.phoneNumber1,
@@ -575,10 +589,7 @@ function useUpdateUser(role, securityTypes) {
             additionalProp3: "string",
           },
         };
-
-        console.log("salam");
-        //send api update request here
-
+        console.log(securityname.toString());
         const url = `${BASE_URL}/Volunteers`;
 
         const headers = {
@@ -620,16 +631,11 @@ function useUpdateUser(role, securityTypes) {
           ),
           volunteerId: user.id,
           description: user.description,
+          author: securityname,
         };
+
+        await axios.post(url, data, { headers });
         console.log(data);
-        axios
-          .post(url, data, { headers })
-          .then((response) => {
-            console.log("Response:", response.data);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
       }
     },
 
@@ -686,7 +692,6 @@ const Uxtable = () => (
 export default Uxtable;
 
 const validateRequired = (value) => !!value.length;
-
 
 function validateUser(user) {
   return {

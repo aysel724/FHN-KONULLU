@@ -29,6 +29,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { BASE_URL } from "../api/baseURL";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
 
+import { jwtDecode } from "jwt-decode"; // Ensure this is installed and correctly imported
+
 const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -69,6 +71,38 @@ const Example = () => {
             setValidationErrors({
               ...validationErrors,
               description: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+      {
+        accessorKey: "createdDate",
+        header: "Qeyd tarixi",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.createdDate,
+          helperText: validationErrors?.createdDate,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              createdDate: undefined,
+            }),
+          //optionally add validation checking for onBlur or onChange
+        },
+      },
+      {
+        accessorKey: "author",
+        header: "Rəy  yazan",
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.author,
+          helperText: validationErrors?.author,
+          //remove any previous validation errors when user focuses on the input
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              author: "undefined",
             }),
           //optionally add validation checking for onBlur or onChange
         },
@@ -191,9 +225,7 @@ function useGetUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/Volunteers/${userId}`
-        );
+        const response = await axios.get(`${BASE_URL}/Volunteers/${userId}`);
 
         console.log(response.data.data);
         return response.data.data.securityCheckResults;
@@ -218,7 +250,7 @@ function useUpdateUser(types) {
       console.log(data);
       //send api update request here
 
-      const url = `https://api-volunteers.fhn.gov.az//api/v1/Education`;
+      const url = `https://api-volunteers.fhn.gov.az/api/v1/Education`;
 
       const headers = {
         Accept: "*/*",
@@ -294,4 +326,3 @@ const Uxtable = () => (
 );
 
 export default Uxtable;
-

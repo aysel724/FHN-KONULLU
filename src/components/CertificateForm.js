@@ -148,7 +148,7 @@ import React, { useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { Button } from "@mui/material";
 import html2canvas from "html2canvas";
-import back from "../components/images/certificationApproved.png";
+import back from "../components/images/LUXURY.pdf.png";
 
 const CertificateGenerator = () => {
   const [name, setName] = useState("");
@@ -283,14 +283,20 @@ const CertificateGenerator = () => {
             color: "#000",
           }}
         >
-          <p style={{ fontSize: "20px", marginTop: "170px" }}>
+          <p
+            style={{
+              fontSize: "20px",
+              marginTop: "180px",
+              // marginBottom: "90px",
+            }}
+          >
             AZƏRBAYCAN RESPUBLİKASININ FÖVQƏLADƏ HALLAR NAZİRLİYİ
           </p>
-          <p style={{ fontSize: "30px", marginTop: "130px" }}>{name || ""}</p>
-          <p style={{ fontSize: "24px", marginTop: "20px" }}>
+          <p style={{ fontSize: "30px", marginTop: "140px" }}>{name || ""}</p>
+          <p style={{ fontSize: "20px", marginTop: "50px" }}>
             {date1} - {date2}-cü il tarixində
           </p>
-          <p style={{ fontSize: "30px" }}>
+          <p style={{ fontSize: "20px" }}>
             "Fövqəladə Hallar Könüllüləri Proqramı" çərçivəsində könüllü
             fəaliyyətini başa vurduğu üçün verilir
           </p>

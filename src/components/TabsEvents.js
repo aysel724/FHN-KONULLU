@@ -227,6 +227,7 @@ export default function TabsUser() {
             <Select
               mode="multiple"
               allowClear
+              showSearch
               style={{
                 marginBottom: "30px",
                 width: "100%",
@@ -235,6 +236,9 @@ export default function TabsUser() {
               defaultValue={[]}
               onChange={handleChange1}
               options={options}
+              filterOption={(input, option) =>
+                option.label.toLowerCase().includes(input.toLowerCase())
+              }
             />
           </Space>{" "}
           <div

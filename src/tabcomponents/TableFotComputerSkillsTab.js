@@ -16,6 +16,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
+import { jwtDecode } from "jwt-decode";
 import {
   QueryClient,
   QueryClientProvider,
@@ -35,9 +36,11 @@ const Example = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [types, setTypes] = useState([]);
   const [degrees, setDegrees] = useState([]);
+  const token = localStorage.getItem("authToken");
+  const role = jwtDecode(token).unique_name;
   useEffect(() => {
-    TypesData(setTypes,"ComputerSkillNames");
-    TypesData(setDegrees,"SkillLevels");
+    TypesData(setTypes, "ComputerSkillNames");
+    TypesData(setDegrees, "SkillLevels");
   }, []);
 
   function getTypesNames(arr) {
@@ -144,7 +147,7 @@ const Example = () => {
     }
     setValidationErrors({});
     await createUser(values);
-    table.setCreatingRow(null); 
+    table.setCreatingRow(null);
   };
 
   //UPDATE action
@@ -167,7 +170,7 @@ const Example = () => {
   };
 
   const table = useMaterialReactTable({
-    localization:MRT_Localization_AZ,
+    localization: MRT_Localization_AZ,
     columns,
     enableRowNumbers: true,
     enableStickyHeader: true,
@@ -228,29 +231,38 @@ const Example = () => {
         </DialogActions>
       </>
     ),
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: "flex", gap: "1rem" }}>
-        <Tooltip title="Düzəliş et">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Sil">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    ),
+    renderRowActions: ({ row, table }) =>
+      role === "Volunteers" && (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip title="Düzəliş et">
+            <IconButton onClick={() => table.setEditingRow(row)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sil">
+            <IconButton
+              color="error"
+              onClick={() => openDeleteConfirmModal(row)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true); 
-        }}
-      >
-        Əlavə edin
-      </Button>
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+        {role === "Volunteers" && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Əlavə edİn
+          </Button>
+        )}
+      </div>
     ),
 
     state: {
@@ -461,5 +473,3 @@ const Uxtable = () => (
 );
 
 export default Uxtable;
-
-

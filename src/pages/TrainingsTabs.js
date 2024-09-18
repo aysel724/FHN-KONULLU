@@ -56,19 +56,18 @@ export default function TabsUser() {
   const [volonteerIDs, setVolonteerIDs] = useState([]);
   const [validationError, setValidationError] = useState(false);
 
-
   const handleChange1 = (value) => {
     setVolonteerIDs(value);
-    setValidationError(false)
+    setValidationError(false);
     console.log(`selected ${value}`);
   };
 
   async function postVolonteers(array) {
-    if(volonteerIDs.length === 0){
-      setValidationError(false)
-      message.error("Zəhmət olmasa ən azı bir könüllü seçin."); 
+    if (volonteerIDs.length === 0) {
+      setValidationError(false);
+      message.error("Zəhmət olmasa ən azı bir könüllü seçin.");
       return;
-      }
+    }
     const url = `${BASE_URL}/MesTrainings/AddVolunteerToMesTraining`;
 
     const headers = {
@@ -125,12 +124,9 @@ export default function TabsUser() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/Volunteers`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
+        const response = await axios.get(`${BASE_URL}/Volunteers`, {
+          headers: { accept: "*/*" },
+        });
 
         const newData = response.data.data.map((e) => ({
           label: `${e.name} ${e.surname}  ${e.fatherName}`,
@@ -226,6 +222,7 @@ export default function TabsUser() {
             <Select
               mode="multiple"
               allowClear
+              showSearch
               style={{
                 marginBottom: "30px",
                 width: "100%",
@@ -234,6 +231,9 @@ export default function TabsUser() {
               defaultValue={[]}
               onChange={handleChange1}
               options={options}
+              filterOption={(input, option) =>
+                option.label.toLowerCase().includes(input.toLowerCase())
+              }
             />
           </Space>{" "}
           <div
@@ -244,11 +244,12 @@ export default function TabsUser() {
               marginBottom: "30px",
               width: "100%",
             }}
-          >{validationError && (
-            <div style={{ color: "red" }}>
-              Zəhmət olmasa ən azı bir könüllü seçin.
-            </div>
-          )}
+          >
+            {validationError && (
+              <div style={{ color: "red" }}>
+                Zəhmət olmasa ən azı bir könüllü seçin.
+              </div>
+            )}
             <Button
               variant="contained"
               onClick={() => {

@@ -15,7 +15,10 @@ import { useNavigate } from "react-router-dom";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import btoa from "btoa-lite";
-import { validateVolunteerAdd, validateVolunteerİAMAS } from "../utils/validateUser";
+import {
+  validateVolunteerAdd,
+  validateVolunteerİAMAS,
+} from "../utils/validateUser";
 import { BASE_URL } from "../api/baseURL";
 import { FormHelperText } from "@mui/material";
 import convertDate from "../utils/converTime";
@@ -81,47 +84,45 @@ export default function NewVolonteer() {
   });
 
   function handleSubmit(statusCode) {
-
-    const errorNotfication = validateVolunteerAdd(userData)
+    const errorNotfication = validateVolunteerAdd(userData);
     setError(errorNotfication);
     if (Object.keys(errorNotfication).length === 0) {
-    setLoading(true);
-    // setTimeout(() => {
-    //   navigate(`/Volunteers`);
-    // }, 2000);
-  
+      setLoading(true);
+      // setTimeout(() => {
+      //   navigate(`/Volunteers`);
+      // }, 2000);
 
-    const formData = new FormData();
-    formData.append(
-      "IdentityCardReceivingDate",
-      convertDate(userData.identityCardReceivingDate)
-    );
-    formData.append("Gender", userData.gender);
-    formData.append("Citizenship", userData.citizenship);
-    formData.append("PINCode", passportData.fin);
-    formData.append(
-      "IDCardNumber",
-      `${passportData.seriaNumber}${passportData.docNumber}`
-    );
-    formData.append("BloodType", userData.bloodType);
-    formData.append("MaritalStatus", userData.maritalStatus);
-    formData.append("Height", userData.height);
-    formData.append("FatherName", userData.fatherName);
-    formData.append("BirthPlace", userData.birthPlace);
-    formData.append("IsIAMASInfo", "true");
-    formData.append("Name", userData.name);
-    formData.append("BirthDate", convertDate(userData.birthDate));
-    formData.append(
-      "IdentityCardGivenStructureName",
-      userData.identityCardGivenStructureName
-    );
-    formData.append("PhoneNumber1", userData.phoneNumber1);
-    formData.append("CurrentAddress", userData.currentAddress);
-    formData.append("Surname", userData.surname);
-    formData.append("RegistrationAddress", userData.registrationAddress);
-    formData.append("PhoneNumber2", userData.phoneNumber2);
-    formData.append("MilitaryReward", userData.militaryReward);
-    formData.append("Email", userData.email);
+      const formData = new FormData();
+      formData.append(
+        "IdentityCardReceivingDate",
+        convertDate(userData.identityCardReceivingDate)
+      );
+      formData.append("Gender", userData.gender);
+      formData.append("Citizenship", userData.citizenship);
+      formData.append("PINCode", passportData.fin);
+      formData.append(
+        "IDCardNumber",
+        `${passportData.seriaNumber}${passportData.docNumber}`
+      );
+      formData.append("BloodType", userData.bloodType);
+      formData.append("MaritalStatus", userData.maritalStatus);
+      formData.append("Height", userData.height);
+      formData.append("FatherName", userData.fatherName);
+      formData.append("BirthPlace", userData.birthPlace);
+      formData.append("IsIAMASInfo", "true");
+      formData.append("Name", userData.name);
+      formData.append("BirthDate", convertDate(userData.birthDate));
+      formData.append(
+        "IdentityCardGivenStructureName",
+        userData.identityCardGivenStructureName
+      );
+      formData.append("PhoneNumber1", userData.phoneNumber1);
+      formData.append("CurrentAddress", userData.currentAddress);
+      formData.append("Surname", userData.surname);
+      formData.append("RegistrationAddress", userData.registrationAddress);
+      formData.append("PhoneNumber2", userData.phoneNumber2);
+      formData.append("MilitaryReward", userData.militaryReward);
+      formData.append("Email", userData.email);
 
   
     const contentType = "image/jpeg";
@@ -141,35 +142,41 @@ export default function NewVolonteer() {
       .catch((err) => {
         setLoading(false);
 
-        if (err.response) {
-          if (err.response.status === 400) {
-            openNotificationWithIcon(
-              "error",
-              "Xəta mesajı",
-              "Bütün sahələri doldurmalısınız."
-            );
-            setError("Xəta 400");
-          } else if (err.response.status === 404) {
+          if (err.response) {
+            if (err.response.status === 400) {
+              openNotificationWithIcon(
+                "error",
+                "Xəta mesajı",
+                "Bütün sahələri doldurmalısınız."
+              );
+              setError("Xəta 400");
+            } else if (err.response.status === 404) {
+              openNotificationWithIcon(
+                "error",
+                "Xəta mesajı",
+                "Xəta baş verdi"
+              );
+              setError("Xəta 404. Məlumat tapılmadı");
+            } else if (err.response.status === 409) {
+              openNotificationWithIcon(
+                "error",
+                "Xəta mesajı",
+                "Xəta baş verdi"
+              );
+              setError("Məlumat artıq mövcuddur");
+            }
+            setModalIsOpen(true);
+          } else {
+            setError("Xəta 500. Server xətası");
             openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
-            setError("Xəta 404. Məlumat tapılmadı");
-          } else if (err.response.status === 409) {
-            openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
-            setError("Məlumat artıq mövcuddur");
+            setModalIsOpen(true); // Open modal to show error message
           }
-          setModalIsOpen(true); 
-        } else {
-          setError("Xəta 500. Server xətası");
-          openNotificationWithIcon("error", "Xəta mesajı", "Xəta baş verdi");
-          setModalIsOpen(true); // Open modal to show error message
-        }
-      });
+        });
     }
   }
 
-
-
   async function getData() {
-    const errorNotfication = validateVolunteerİAMAS(passportData)
+    const errorNotfication = validateVolunteerİAMAS(passportData);
     setError(errorNotfication);
     console.log(passportData,'passportData')
     if (Object.keys(errorNotfication).length === 0) {
@@ -199,7 +206,8 @@ export default function NewVolonteer() {
           maritalStatus: response.data.data.maritalStatus,
           identityCardGivenStructureName:
             response.data.data.identityCardGivenStructureName,
-          identityCardReceivingDate: response.data.data.identityCardReceivingDate,
+          identityCardReceivingDate:
+            response.data.data.identityCardReceivingDate,
           bloodType: response.data.data.bloodType,
           registrationAddress: response.data.data.registrationAddress,
           currentAddress: response.data.data.currentAddress,
@@ -258,7 +266,7 @@ export default function NewVolonteer() {
           flexDirection: "row",
           gap: "23px",
           padding: "1%",
-          height:"100px"
+          height: "100px",
         }}
       >
         <TextField
@@ -327,7 +335,7 @@ export default function NewVolonteer() {
         />
 
         <Button
-          style={{ width: "300px",height:'56px'}}
+          style={{ width: "300px", height: "56px" }}
           variant="contained"
           onClick={() => getData()}
         >
@@ -627,7 +635,7 @@ export default function NewVolonteer() {
               id="filled-basic"
               label="Elektron-poçt ünvanı"
               variant="outlined"
-              type='email'
+              type="email"
               value={userData.email}
               error={!!error?.email}
               helperText={error?.email || ""}
