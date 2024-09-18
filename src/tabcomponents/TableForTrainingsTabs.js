@@ -28,7 +28,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { TypesData } from "../api/tabComponentsGet/TypesData";
 import EditIcon from "../assets/icons/editIcon";
 import formatDateTİme from "../utils/convertDate";
-import  convertDate  from "../utils/converTime";
+import  convertDate, { formatDateForInput }  from "../utils/converTime";
 import { BASE_URL } from "../api/baseURL";
 import { validateTraningTab } from "../utils/validateUser";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
@@ -67,35 +67,34 @@ const Example = () => {
         accessorKey: "startDate",
         header: "Başlalma tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
-        muiEditTextFieldProps: {
-          label: "",
-          required: true,
-          error: !!validationErrors?.startDate,
-          helperText:validationErrors?.startDate? validationErrors?.startDate : "Başlama tarixi",
-          
-          onFocus: () =>
-            setValidationErrors({
-              ...validationErrors,
-              startDate: undefined,
-            }),
-          InputProps: {
-            inputProps: {
-              type: "date",
-              helperText: "", 
+        muiEditTextFieldProps: ({row})=>({
+            label: "",
+            required: true,
+            error: !!validationErrors?.startDate,
+            helperText:validationErrors?.startDate? validationErrors?.startDate : "Başlama tarixi",
+            onFocus: () =>
+              setValidationErrors({
+                ...validationErrors,
+                startDate: undefined,
+              }),
+            InputProps: {
+              inputProps: {
+                type: "date",
+                value: formatDateForInput(row.original.startDate), 
+              },
             },
-          },
-        },
+          }
+        ),
       },
       {
         accessorKey: "finishDate",
         header: "Bitmə tarixi",
         Cell: ({ cell }) => formatDateTİme(cell.getValue()),
-        muiEditTextFieldProps: {
+        muiEditTextFieldProps: ({ row }) =>({
           label: "",
           required: true,
           error: !!validationErrors?.finishDate,
-          helperText:validationErrors?.finishDate? validationErrors?.finishDate : "Başlama tarixi",
-          //remove any previous validation errors when user focuses on the input
+          helperText:validationErrors?.finishDate? validationErrors?.finishDate : "Bitmə tarixi",
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -103,10 +102,11 @@ const Example = () => {
             }),
           InputProps: {
             inputProps: {
-              type: "date", // Set the input type to 'date'
+              type: "date", 
+              value: formatDateForInput(row.original.finishDate), 
             },
           },
-        },
+        }),
       },
     ],
     [validationErrors]

@@ -84,6 +84,14 @@ const Example = () => {
   //call DELETE hook
   const { mutateAsync: deleteUser, isPending: isDeletingUser } =
     useDeleteUser();
+    function formatDateForInput(date) {
+  if (!date) return '';
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
     const columns = useMemo(() => [
       {
@@ -95,12 +103,12 @@ const Example = () => {
       {
         accessorKey: "startDate",
         header: "Başlama tarixi",
-        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
-        muiEditTextFieldProps: {
-          label:'',
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()), // Tablo için gösterilen tarih formatı
+        muiEditTextFieldProps: ({ row }) => ({
+          label: '',
           required: true,
           error: !!validationErrors?.startDate,
-          helperText: validationErrors?.startDate  ? validationErrors?.startDate : "Başlama tarixi",
+          helperText: validationErrors?.startDate ? validationErrors?.startDate : "Başlama tarixi",
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -109,19 +117,20 @@ const Example = () => {
           InputProps: {
             inputProps: {
               type: "date",
+              value: formatDateForInput(row.original.startDate), // Tarihi doğru formatta göster
             },
           },
-        },
+        }),
       },
       {
         accessorKey: "endDate",
         header: "Bitmə tarixi",
-        Cell: ({ cell }) => formatDateTİme(cell.getValue()),
-        muiEditTextFieldProps: {
-          label:'',
+        Cell: ({ cell }) => formatDateTİme(cell.getValue()), // Tablo için gösterilen tarih formatı
+        muiEditTextFieldProps: ({ row }) => ({
+          label: '',
           required: true,
           error: !!validationErrors?.endDate,
-          helperText: validationErrors?.endDate  ? validationErrors?.endDate : "Bitmə tarixi",
+          helperText: validationErrors?.endDate ? validationErrors?.endDate : "Bitmə tarixi",
           onFocus: () =>
             setValidationErrors({
               ...validationErrors,
@@ -130,23 +139,23 @@ const Example = () => {
           InputProps: {
             inputProps: {
               type: "date",
-              onChange: handleDateChange,
+              value: formatDateForInput(row.original.endDate), // Tarihi doğru formatta göster
             },
           },
+        }),
+      },
+      {
+        accessorKey: "mesVoluntaryActivityEndReason.name",
+        header: "Fəaliyyətin bitmə səbəbi",
+        editVariant: "select",
+        enableEditing: endDate,
+        editSelectOptions: getTypesNames(types),
+        muiEditTextFieldProps: {
+          select: true,
+          error: !!validationErrors?.["mesVoluntaryActivityEndReason.name"],
+          helperText: validationErrors?.["mesVoluntaryActivityEndReason.name"],
         },
       },
-        {
-          accessorKey: "mesVoluntaryActivityEndReason.name",
-          header: "Fəaliyyətin bitmə səbəbi",
-          editVariant: "select",
-          enableEditing: endDate,
-          editSelectOptions: getTypesNames(types),
-          muiEditTextFieldProps: {
-            select: true,
-            error: !!validationErrors?.["mesVoluntaryActivityEndReason.name"],
-            helperText: validationErrors?.["mesVoluntaryActivityEndReason.name"],
-          },
-        },
       {
         accessorKey: "note",
         header: "Qeyd",
@@ -404,6 +413,7 @@ function useUpdateUser(types) {
           return foundElement ? foundElement.id : null;
         }
       }
+      console.log(user,'user')
       const url = `${BASE_URL}/VoluntaryOfMeses`;
       const headers = {
         Accept: "*/*",

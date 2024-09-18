@@ -30,46 +30,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-
 import { useVolunteers } from "../context/VolunterContext";
 import EditIcon from "../assets/icons/editIcon";
 import { BASE_URL } from "../api/baseURL";
 import { MRT_Localization_AZ } from "material-react-table/locales/az";
 import { validateEmail } from "../utils/validateEmail";
 import formatDateTİme from "../utils/convertDate";
-import { message } from "antd";
+import { TypesData } from "../api/tabComponentsGet/TypesData";
 
 const Example = () => {
   const [securityTypes, setSecurityTypes] = useState([]);
-
   useEffect(() => {
-    const TypesData = async () => {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}/SecurityCheckResultName`,
-          {
-            headers: { accept: "*/*" },
-          }
-        );
-        console.log(response.data.data);
-        const newData = response.data.data.map((e) => {
-          const user = {
-            name: e.name,
-            id: e.id,
-          };
-
-          return user;
-        });
-
-        console.log(newData);
-        setSecurityTypes(newData);
-      } catch (error) {
-        // Handle errors here if needed
-        console.error("Error fetching users:", error);
-        throw error;
-      }
-    };
-    TypesData();
+    TypesData(setSecurityTypes,'SecurityCheckResultName');
   }, []);
 
   function getSecurityTypesNames(arr) {
